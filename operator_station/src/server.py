@@ -14,7 +14,6 @@ import socket
 import socketserver
 import time
 
-
 class Handler(socketserver.BaseRequestHandler):
     """
     A handler for connection requests.
