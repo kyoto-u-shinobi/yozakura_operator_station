@@ -13,6 +13,40 @@ import pickle
 import socket
 import socketserver
 import time
+import rospy
+from std_msgs.msg import Float32
+
+
+class SensorDataSender:
+    def __init__(self):
+        ros_topic_name = 'sensor_data_server'
+        data_for_jointstate = ['body_front_pitch_deg', 'body_front_roll_deg',
+                               'body_back_pitch_deg', 'body_back_roll_deg',
+                               'flipper_left_deg', 'flipper_right_deg',
+                               'starwheel_front_deg', 'starwheel_back_deg',
+                               'armjack_triangle_topangle_deg',
+                               'armbase_yaw_deg', 'armbase_pitch_deg']
+
+        data_for_sensordisplay = ['voltage_motor', 'voltage_battery']
+
+        publish_data_list = data_for_jointstate + data_for_sensordisplay
+
+        rospy.init_node(ros_topic_name, anonymous=True)
+
+        self.publisher_list = []
+        self.published_data_list = []
+        for idx, name in enumerate(publish_data_list):
+            self.publisher_list[idx] = rospy.Publisher(name, Float32, queue_size=10)
+            self.published_data_list[idx] = 0
+
+    def set_data(self, raw_data):
+        for idx in range(len(self.published_data_list)):
+            self.published_data_list[idx] = raw_data
+
+    def publish_data(self):
+        for idx, data in enumerate(self.published_data_list):
+            self.publisher_list[idx].publish(data)
+
 
 
 class Handler(socketserver.BaseRequestHandler):
@@ -32,10 +66,14 @@ class Handler(socketserver.BaseRequestHandler):
         are both inverted.
 
     """
+
     def __init__(self, request, client_address, server):
         self._logger = logging.getLogger("{client_ip}_handler".format(
             client_ip=client_address[0]))
         self._logger.debug("New handler created")
+
+        self._sensor_data_sender = SensorDataSender()
+
         super().__init__(request, client_address, server)
 
     def handle(self):
@@ -118,6 +156,9 @@ class Handler(socketserver.BaseRequestHandler):
                 # Receive sensor data
                 raw_data, address = self._sensors_client.recvfrom(64)
                 self._logger.debug("{}".format(pickle.loads(raw_data)))
+
+                self._sensor_data_sender.set_data(raw_data)
+                self._sensor_data_sender.publish_data()
 
         finally:
             self._sensors_client.close()
