@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<robot>	
+
+	<property name="PI" 		value= "3.141592653" />
+	<property name="DEG2RAD" 	value= "0.017453293" />
+	<property name="RAD2DEG" 	value="57.295779513" />
+
+</robot>

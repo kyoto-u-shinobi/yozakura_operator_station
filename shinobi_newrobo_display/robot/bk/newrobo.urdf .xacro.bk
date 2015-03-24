@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<robot name="newrobo" xmlns:xacro="http://www.ros.org/wiki/xacro">
+	<xacro:include filename="$(find xacro)/define.xacro" />
+	<xacro:include filename="$(find shinobi_newrobo_display)/robot/config.xacro" />
+	<xacro:include filename="$(find shinobi_newrobo_display)/robot/flipper_macro.xacro" />
+	<xacro:include filename="$(find shinobi_newrobo_display)/robot/starWheel_macro.xacro" />
+
+	<link name="${base_link}">
+		<visual>
+			<origin rpy="0 0 0" 
+							xyz="${bodyFront_depth/2.0} 0 0"/>
+			<geometry>
+				<mesh filename="${robotPackagePath}/newRobotDaes/small_bodyFront2.dae"/>
+			</geometry>
+		</visual>
+	</link>
+
+  <joint name="joint_pitch2body_back" type="revolute">
+    <axis xyz="0 1 0"/>
+    <limit 	lower="${DEG2RAD*bodyPitchAngle_min}" effort="1000.0"  		
+						upper="${DEG2RAD*bodyPitchAngle_max}" velocity="0.5"/>
+    <origin rpy="0 0 0" 
+						xyz="${-bodyFront_depth/2.0} 0 ${-bodyFront_height/2.0}"/>
+    <parent link="${base_link}"/>
+    <child link="virtual_body_link"/>
+  </joint>
+
+	<link name="virtual_body_link"> 
+    <origin rpy="0 0 0"	xyz="0 0 0"/>			
+	</link>
+			
+  <joint name="joint_roll2body_back" type="continuous">
+    <axis xyz="1 0 0"/>
+    <origin rpy="0 0 0" 
+						xyz="${-bodyLink_length/2.0} 0 ${bodyFront_height/2.0}"/>
+    <parent link="virtual_body_link"/>
+    <child link="body_back"/>
+  </joint>
+
+	<link name="body_back">
+		<visual>
+			<origin rpy="0 0 0" 
+							xyz="${bodyLink_length/2.0} 0 0"/>
+			<geometry>
+				<mesh filename="${robotPackagePath}/newRobotDaes/small_bodyBack2.dae"/>
+			</geometry>
+		</visual>
+	</link>
+
+	<xacro:flipper left_joint_name="joint_flipper_left" right_joint_name="joint_flipper_right"
+									parent="${base_link}" tread="${flipper_tread}" suffix="front">
+		<origin rpy="0 0 0" xyz="${flipperAxis_fromBodyCenter} 0 0"/>
+	</xacro:flipper>
+
+	<xacro:starWheel joint_name="joint_starwheel_front" parent="${base_link}" suffix="front"
+										wheel_tread="${frontwheel_tread}">
+		<origin rpy="0 0 0" 
+						xyz="${frontwheelAxis_fromBodyCenter} 0 0" />
+	</xacro:starWheel>
+
+	<xacro:starWheel joint_name="joint_starwheel_back" parent="body_back" suffix="back" 
+										wheel_tread="${backwheel_tread}">
+		<origin rpy="0 0 0" 
+						xyz="${backwheelAxis_fromBodyCenter} 0 0" />
+	</xacro:starWheel>
+
+
+</robot>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

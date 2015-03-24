@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+	<xacro:include filename="$(find shinobi_newrobo_display)/robot/config.xacro" />
+
+	<xacro:macro 	name="combineLeftRightFlippers" 
+								params="joint_name parent joint_name_suffix wheel_tread *origin">
+
+	<!-- Axis -->
+		<joint name="${joint_name}" type="continuous">
+  	  <axis xyz="0 1 0"/>
+			<insert_block name="origin" />
+  	  <parent link="${parent}"/>
+  	  <child link="virtual_starWheelAxisLink_${suffix}"/>
+  	</joint>
+
+		<link name="virtual_starWheelAxisLink_${suffix}" />
+
+	<!-- left -->
+		<joint name="fixedJoint_left_${suffix}" type="fixed">
+			<parent link="virtual_starWheelAxisLink_${suffix}"/>
+  	  <child  link="starWheel_left_${suffix}"/>
+  	  <origin xyz="0 ${wheel_tread/2.0} 0"/>
+		</joint>
+
+		<link name="starWheel_left_${suffix}">
+			<visual>
+				<origin rpy="0 0 0" 
+								xyz="0 0 0"/>
+				<geometry>
+					<mesh filename="${robotPackagePath}/${modelDataResourseFolder}/wheel_left.stl"/>
+				</geometry>
+			</visual>
+		</link>
+
+	<!-- right -->
+		<joint name="fixedJoint_right_${suffix}" type="fixed">
+			<parent link="virtual_starWheelAxisLink_${suffix}"/>
+  	  <child  link="starWheel_right_${suffix}"/>
+  	  <origin xyz="0 ${-wheel_tread/2.0} 0"/>
+		</joint>
+
+		<link name="starWheel_right_${suffix}">
+			<visual>
+				<origin rpy="0 0 0" 
+								xyz="0 0 0"/>
+				<geometry>
+					<mesh filename="${robotPackagePath}/${modelDataResourseFolder}/wheel_right.stl"/>
+				</geometry>
+			</visual>
+		</link>
+
+	</xacro:macro>
+</robot>
+
+
+
+
+

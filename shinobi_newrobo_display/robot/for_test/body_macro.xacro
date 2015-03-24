@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+	<xacro:include filename="$(find shinobi_newrobo_display)/robot/config.xacro" />
+
+	<xacro:macro 	name="body" 
+								params="bodyPitch_joint_name bodyYaw_joint_name parent suffix *origin">
+
+	<link name="body_front_${suffix}">
+		<visual>
+			<origin rpy="0 0 0" 
+							xyz="${bodyFront_depth/2.0} 0 0"/>
+			<geometry>
+				<mesh filename="${robotPackagePath}/newRobotDaes/small_bodyFront2.dae"/>
+			</geometry>
+		</visual>
+	</link>
+
+  <joint name="joint_pitch2body_back" type="revolute">
+    <axis xyz="0 1 0"/>
+    <limit 	lower="${DEG2RAD*bodyPitchAngle_min}" effort="1000.0"  		
+						upper="${DEG2RAD*bodyPitchAngle_max}" velocity="0.5"/>
+    <origin rpy="0 0 0" 
+						xyz="${-bodyFront_depth/2.0} 0 ${-bodyFront_height/2.0}"/>
+    <parent link="body_front"/>
+    <child link="virtual_body_link"/>
+  </joint>
+
+	<link name="virtual_body_link" />
+			
+  <joint name="joint_roll2body_back" type="continuous">
+    <axis xyz="1 0 0"/>
+    <origin rpy="0 0 0" 
+						xyz="${-bodyLink_length/2.0} 0 ${bodyFront_height/2.0}"/>
+    <parent link="virtual_body_link"/>
+    <child link="body_back"/>
+  </joint>
+
+	<link name="body_back">
+		<visual>
+			<origin rpy="0 0 0" 
+							xyz="${bodyLink_length/2.0} 0 0"/>
+			<geometry>
+				<mesh filename="${robotPackagePath}/newRobotDaes/small_bodyBack2.dae"/>
+			</geometry>
+		</visual>
+	</link>
+
+
+	</xacro:macro>
+</robot>

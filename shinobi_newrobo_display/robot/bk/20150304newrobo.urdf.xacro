@@ -1,0 +1,213 @@
+<?xml version="1.0"?>
+<robot name="newrobo" xmlns:xacro="http://www.ros.org/wiki/xacro">
+	<xacro:include filename="$(find xacro)/define.xacro" />
+	<xacro:include filename="$(find shinobi_newrobo_display)/robot/config.xacro" />
+	<xacro:include filename="$(find shinobi_newrobo_display)/robot/flipper_macro.xacro" />
+	<xacro:include filename="$(find shinobi_newrobo_display)/robot/starWheel_macro.xacro" />
+	<xacro:include filename="$(find shinobi_newrobo_display)/robot/armjack_left_macro.xacro" />
+	<xacro:include filename="$(find shinobi_newrobo_display)/robot/armjack_right_macro.xacro" />
+
+	<!-- BODY -->
+	<link name="body_front">
+		<visual>
+			<origin rpy="0 0 0" 
+							xyz="0 0 0"/>	
+			<geometry>
+				<mesh filename="${robotPackagePath}/${modelDataResourseFolder}/body_front.stl"/>
+			</geometry>
+		</visual>
+	</link>
+
+  <joint name="joint_body_pitch" type="revolute">
+    <axis xyz="0 1 0"/>
+    <limit 	lower="${DEG2RAD*bodyPitchAngle_min}" effort="1000.0"  		
+						upper="${DEG2RAD*bodyPitchAngle_max}" velocity="0.5"/>
+    <origin rpy="0 0 0" 
+						xyz="${-bodyFront_depth/2.0} 0 ${-bodyFront_height/2.0}"/>
+    <parent link="body_front"/>
+    <child link="body_link"/>
+  </joint>
+
+	<link name="body_link">
+		<visual>
+			<origin rpy="0 0 0" 
+							xyz="${-bodyLink_length/2.0} 0 ${bodyFront_height/2.0}"/>
+			<geometry>
+				<mesh filename="${robotPackagePath}/${modelDataResourseFolder}/body_link.stl"/>
+			</geometry>
+		</visual>
+	</link>
+			
+  <joint name="joint_body_roll" type="continuous">
+    <axis xyz="1 0 0"/>
+    <origin rpy="0 0 0" 
+						xyz="0 0 0"/>
+    <parent link="body_link"/>
+    <child link="body_back"/>
+  </joint>
+
+	<link name="body_back">
+		<visual>
+			<origin rpy="0 0 0" 
+							xyz="${-bodyLink_length - bodyBack_depth/2.0} 0 ${bodyBack_height/2.0}"/>
+			<geometry>
+				<mesh filename="${robotPackagePath}/${modelDataResourseFolder}/body_back.stl"/>
+			</geometry>
+		</visual>
+	</link>
+
+	<!-- FLIPPERS -->
+	<xacro:combine_lr_flippers
+									left_joint_name="joint_flipper_left" right_joint_name="joint_flipper_right"
+									parent="body_front" flipper_tread="${flipper_tread}" suffix="front">
+		<origin rpy="0 0 0" xyz="${flipperAxis_fromBodyCenter} 0 0"/>
+	</xacro:combine_lr_flippers>
+
+	<!-- WHEELS -->
+	<xacro:combine_lr_wheels 
+									joint_name="joint_starwheel_front" parent="body_front" 
+									suffix="front" wheel_tread="${frontwheel_tread}">
+		<origin rpy="0 0 0" 
+						xyz="${frontwheelAxis_fromBodyCenter} 0 0" />
+	</xacro:combine_lr_wheels>
+
+	<xacro:combine_lr_wheels 
+									joint_name="joint_starwheel_back" parent="body_back" 
+									suffix="back" wheel_tread="${backwheel_tread}">
+		<origin rpy="0 0 0" 
+						xyz="${backwheelAxis_fromBodyCenter} 0 ${bodyBack_height/2.0}" />
+	</xacro:combine_lr_wheels>
+
+
+	<!-- ARM BASE -->
+  <joint name="virtualjoint_arm_base" type="fixed">
+    <origin rpy="0 0 0" xyz="${-armBase_fromBodyCenter_X} 0 ${bodyFront_height/2.0}"/>
+    <parent link="body_front"/>
+    <child link="arm_base"/>
+  </joint>
+
+	<link name="arm_base">
+		<visual>
+			<origin rpy="0 0 0"	xyz="0 0 0"/>	
+			<geometry>
+				<mesh filename="${robotPackagePath}/${modelDataResourseFolder}/arm_base.stl"/>
+			</geometry>
+		</visual>
+	</link>
+
+  <joint name="joint_arm_yaw" type="revolute">
+    <axis xyz="0 0 1"/>
+    <limit 	lower="${DEG2RAD*armYawAngle_min}" effort="1000.0"  		
+						upper="${DEG2RAD*armYawAngle_max}" velocity="0.5"/>
+    <origin rpy="0 0 0" 
+						xyz="0 0 ${armYawStage_fromBodyTop}"/>
+    <parent link="arm_base"/>
+    <child link="arm_yaw"/>
+  </joint>
+
+	<link name="arm_yaw">
+		<visual>
+			<origin rpy="0 0 0" 
+							xyz="0 0 0"/>
+			<geometry>
+				<mesh filename="${robotPackagePath}/${modelDataResourseFolder}/arm_yaw.stl"/>
+			</geometry>
+		</visual>
+	</link>
+			
+  <joint name="joint_arm_pitch" type="revolute">
+    <axis xyz="0 1 0"/>
+    <limit 	lower="${DEG2RAD*armPitchAngle_min}" effort="1000.0"  		
+						upper="${DEG2RAD*armPitchAngle_max}" velocity="0.5"/>
+    <origin rpy="0 0 0" 
+						xyz="${-armPitchAxis_fromYawAxis} 0 ${armPitchAxis_fromYawStage}"/>
+    <parent link="arm_yaw"/>
+    <child link="arm_pitch"/>
+  </joint>
+
+	<link name="arm_pitch">
+		<visual>
+			<origin rpy="0 0 0" 
+							xyz="${-armLinearAxis_fromPitchAxis} 
+									0 
+									${-armPitchAxis_fromYawStage + armLinearAxis_fromYawStage}"/>
+			<geometry>
+				<mesh filename="${robotPackagePath}/${modelDataResourseFolder}/arm_pitch.stl"/>
+			</geometry>
+		</visual>
+	</link>
+
+	<!-- ARM BELLOWS -->
+  <joint name="virtualjoint_arm_bellows_base" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 ${-armLinearBase_ArmLinearAxis}"/>
+    <parent link="arm_pitch"/>
+    <child link="arm_linear_frame_base"/>
+  </joint>
+
+	<link name="arm_linear_frame_base">
+			<origin rpy="0 0 0" xyz="0 0 0"/>	
+	</link>
+
+	<!-- right -->
+  <joint name="virtualJoint_armLinear_base_right" type="prismatic">
+    <axis xyz="0 1 0"/>
+    <limit 	lower="${DEG2RAD*armYawAngle_min}" effort="1000.0"  		
+						upper="${DEG2RAD*armYawAngle_max}" velocity="0.5"/>
+    <origin rpy="0 0 0" xyz="0 ${-armLinear_frame_length/2.0} 0"/>
+    <parent link="arm_linear_frame_base"/>
+    <child link="virtualLink_armLinear_base_right"/>
+  </joint>
+
+	<link name="virtualLink_armLinear_base_right">
+		<origin rpy="0 0 0"	xyz="0 0 0"/>			
+	</link>
+
+	<xacro:armjack_right parent="virtualLink_armLinear_base_right" suffix="1" />
+	<xacro:armjack_right parent="${arm_linear_frame_right_B}_1" suffix="2" />
+	<xacro:armjack_right parent="${arm_linear_frame_right_B}_2" suffix="3" />
+	<xacro:armjack_right parent="${arm_linear_frame_right_B}_3" suffix="4" />
+
+
+	<!-- left -->
+  <joint name="virtualJoint_armLinear_base_left" type="prismatic">
+    <axis xyz="0 1 0"/>
+    <limit 	lower="${DEG2RAD*armYawAngle_min}" effort="1000.0"  		
+						upper="${DEG2RAD*armYawAngle_max}" velocity="0.5"/>
+    <origin rpy="0 0 0" xyz="0 ${armLinear_frame_length/2.0} 0"/>
+    <parent link="arm_linear_frame_base"/>
+    <child link="virtualLink_armLinear_base_left"/>
+  </joint>
+
+	<link name="virtualLink_armLinear_base_left">
+		<origin rpy="0 0 0"	xyz="0 0 0"/>			
+	</link>
+
+	<xacro:armjack_left parent="virtualLink_armLinear_base_left" suffix="1" />
+	<xacro:armjack_left parent="${arm_linear_frame_left_B}_1" suffix="2" />
+	<xacro:armjack_left parent="${arm_linear_frame_left_B}_2" suffix="3" />
+	<xacro:armjack_left parent="${arm_linear_frame_left_B}_3" suffix="4" />
+
+</robot>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<robot name="newrobo" xmlns:xacro="http://www.ros.org/wiki/xacro">
+	<xacro:include filename="$(find xacro)/define.xacro" />
+	<xacro:include filename="$(find shinobi_newrobo_display)/robot/config.xacro" />
+	<xacro:include filename="$(find shinobi_newrobo_display)/robot/armjack_left_macro.xacro" />
+	<xacro:include filename="$(find shinobi_newrobo_display)/robot/armjack_right_macro.xacro" />
+
+	<link name="arm_linear_frame_base">
+			<origin rpy="0 0 0" xyz="0 0 0"/>	
+	</link>
+
+	<!-- right -->
+  <joint name="virtualJoint_armLinear_base_right" type="prismatic">
+    <axis xyz="0 1 0"/>
+    <limit 	lower="${DEG2RAD*armYawAngle_min}" effort="1000.0"  		
+						upper="${DEG2RAD*armYawAngle_max}" velocity="0.5"/>
+    <origin rpy="0 0 0" xyz="0 ${-armLinear_frame_length/2.0} 0"/>
+    <parent link="arm_linear_frame_base"/>
+    <child link="virtualLink_armLinear_base_right"/>
+  </joint>
+
+	<link name="virtualLink_armLinear_base_right">
+		<origin rpy="0 0 0"	xyz="0 0 0"/>			
+	</link>
+
+	<xacro:armjack_right parent="virtualLink_armLinear_base_right" suffix="1" />
+	<xacro:armjack_right parent="${arm_linear_frame_right_B}_1" suffix="2" />
+	<xacro:armjack_right parent="${arm_linear_frame_right_B}_2" suffix="3" />
+	<xacro:armjack_right parent="${arm_linear_frame_right_B}_3" suffix="4" />
+
+
+	<!-- left -->
+  <joint name="virtualJoint_armLinear_base_left" type="prismatic">
+    <axis xyz="0 1 0"/>
+    <limit 	lower="${DEG2RAD*armYawAngle_min}" effort="1000.0"  		
+						upper="${DEG2RAD*armYawAngle_max}" velocity="0.5"/>
+    <origin rpy="0 0 0" xyz="0 ${armLinear_frame_length/2.0} 0"/>
+    <parent link="arm_linear_frame_base"/>
+    <child link="virtualLink_armLinear_base_left"/>
+  </joint>
+
+	<link name="virtualLink_armLinear_base_left">
+		<origin rpy="0 0 0"	xyz="0 0 0"/>			
+	</link>
+
+	<xacro:armjack_left parent="virtualLink_armLinear_base_left" suffix="1" />
+	<xacro:armjack_left parent="${arm_linear_frame_left_B}_1" suffix="2" />
+	<xacro:armjack_left parent="${arm_linear_frame_left_B}_2" suffix="3" />
+	<xacro:armjack_left parent="${arm_linear_frame_left_B}_3" suffix="4" />
+
+</robot>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
