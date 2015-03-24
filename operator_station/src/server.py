@@ -26,8 +26,13 @@ class SensorDataSender:
                                'starwheel_front_deg', 'starwheel_back_deg',
                                'armjack_triangle_topangle_deg',
                                'armbase_yaw_deg', 'armbase_pitch_deg']
-
-        data_for_sensordisplay = ['voltage_motor', 'voltage_battery']
+                               
+        data_for_sensordisplay = ['current_motor_left', 'current_motor_right', 
+                                  'current_flipper_left', 'current_flipper_right',
+                                  'voltage_motor_left', 'voltage_motor_right', 
+                                  'voltage_flipper_left', 'voltage_flipper_right',
+                                  'current_battery', 'voltage_battery',  
+                                  'heat_sensor', 'co2_sensor']
 
         publish_data_list = data_for_jointstate + data_for_sensordisplay
 
@@ -157,7 +162,7 @@ class Handler(socketserver.BaseRequestHandler):
                 raw_data, address = self._sensors_client.recvfrom(64)
                 self._logger.debug("{}".format(pickle.loads(raw_data)))
 
-                self._sensor_data_sender.set_data(raw_data)
+                self._sensor_data_sender.set_data(pickle.loads(raw_data))
                 self._sensor_data_sender.publish_data()
 
         finally:

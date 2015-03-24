@@ -83,7 +83,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES operator_station
-#  CATKIN_DEPENDS diagnostic_msgs rospy sensor_msgs std_msgs
+ CATKIN_DEPENDS diagnostic_msgs rospy sensor_msgs std_msgs
 #  DEPENDS system_lib
 )
 

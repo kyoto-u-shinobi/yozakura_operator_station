@@ -4,9 +4,9 @@ import logging
 
 import pygame
 
-from common.networking import get_ip_address
-from opstn.controller import Controller
-from opstn.server import Server, Handler
+from networking import get_ip_address
+from controller import Controller
+from server import Server, Handler
 
 
 def main():
