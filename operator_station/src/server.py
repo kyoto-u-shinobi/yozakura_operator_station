@@ -26,32 +26,52 @@ class SensorDataSender:
                                'starwheel_front_deg', 'starwheel_back_deg',
                                'armjack_triangle_topangle_deg',
                                'armbase_yaw_deg', 'armbase_pitch_deg']
-                               
-        data_for_sensordisplay = ['current_motor_left', 'current_motor_right', 
+
+        data_for_sensordisplay = ['current_motor_left', 'current_motor_right',
                                   'current_flipper_left', 'current_flipper_right',
-                                  'voltage_motor_left', 'voltage_motor_right', 
+                                  'voltage_motor_left', 'voltage_motor_right',
                                   'voltage_flipper_left', 'voltage_flipper_right',
-                                  'current_battery', 'voltage_battery',  
+                                  'current_battery', 'voltage_battery',
                                   'heat_sensor', 'co2_sensor']
 
-        publish_data_list = data_for_jointstate + data_for_sensordisplay
+        self.publish_dataname_list = data_for_jointstate + data_for_sensordisplay
 
         rospy.init_node(ros_topic_name, anonymous=True)
 
-        self.publisher_list = []
-        self.published_data_list = []
-        for idx, name in enumerate(publish_data_list):
-            self.publisher_list[idx] = rospy.Publisher(name, Float32, queue_size=10)
-            self.published_data_list[idx] = 0
+        self.publishers = {}
+        self.published_data = {}
+        for name in self.publish_dataname_list:
+            self.publishers[name] = rospy.Publisher(name, Float32, queue_size=10)
+            self.published_data[name] = 0
 
-    def set_data(self, raw_data):
-        for idx in range(len(self.published_data_list)):
-            self.published_data_list[idx] = raw_data
+    def set_data(self, pose, flipper_angles, arm_angles, current, voltage, heat, co2):
+        self.published_data['body_front_pitch_deg'] = pose[0]
+        self.published_data['body_front_roll_deg'] = pose[1]
+        self.published_data['body_back_pitch_deg'] = pose[2]
+        self.published_data['body_back_roll_deg'] = pose[3]
+        self.published_data['flipper_left_deg'] = flipper_angles[0]
+        self.published_data['flipper_right_deg'] = flipper_angles[1]
+        self.published_data['armjack_triangle_topangle_deg'] = arm_angles[0]
+        self.published_data['armbase_yaw_deg'] = arm_angles[1]
+        self.published_data['armbase_pitch_deg'] = arm_angles[2]
+
+        self.published_data['current_motor_left'] = current[0]
+        self.published_data['current_motor_right'] = current[1]
+        self.published_data['current_flipper_left'] = current[2]
+        self.published_data['current_flipper_right'] = current[3]
+        self.published_data['current_battery'] = current[4]
+        self.published_data['voltage_motor_left'] = voltage[0]
+        self.published_data['voltage_motor_right'] = voltage[1]
+        self.published_data['voltage_flipper_left'] = voltage[2]
+        self.published_data['voltage_flipper_right'] = voltage[3]
+        self.published_data['voltage_battery'] = voltage[4]
+
+        self.published_data['heat_sensor'] = heat
+        self.published_data['co2_sensor'] = co2
 
     def publish_data(self):
-        for idx, data in enumerate(self.published_data_list):
-            self.publisher_list[idx].publish(data)
-
+        for name in self.publish_dataname_list:
+            self.publishers[name].publish(self.published_data[name])
 
 
 class Handler(socketserver.BaseRequestHandler):
@@ -162,7 +182,13 @@ class Handler(socketserver.BaseRequestHandler):
                 raw_data, address = self._sensors_client.recvfrom(64)
                 self._logger.debug("{}".format(pickle.loads(raw_data)))
 
-                self._sensor_data_sender.set_data(pickle.loads(raw_data))
+                pose_sensor_data, current_sensor_data = pickle.loads(raw_data)
+                flipper_angles = [0.0, 0.0]  # TODO
+                arm_angles = [0.0, 0.0, 0.0]  # TODO
+                heat = 0.0  # TODO
+                co2 = 0.0  # TODO
+                self._sensor_data_sender.set_data(pose_sensor_data, flipper_angles, arm_angles,
+                                                  current_sensor_data[:][0], current_sensor_data[:][2], heat, co2)
                 self._sensor_data_sender.publish_data()
 
         finally:
