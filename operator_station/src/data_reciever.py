@@ -1,8 +1,13 @@
-# (C) 2015  Kyoto University Mechatronics Laboratory
+#!/usr/bin/env python
+#  (C) 2015  Kyoto University Mechatronics Laboratory
 # Released under the GNU General Public License, version 3
-import logging
 
-import pygame, socket, struct, fcntl
+
+import logging
+import pygame
+import socket
+import struct
+import fcntl
 
 from controller import Controller
 from server import Server, Handler
@@ -12,8 +17,8 @@ def get_ip_address(interface):
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     packed = struct.pack("256s", str.encode(interface))
     return socket.inet_ntoa(fcntl.ioctl(s.fileno(),
-                                        0x8915,  # SIOCGIFADDR
-                                        packed)[20:24])
+        0x8915,  # SIOCGIFADDR
+        packed)[20:24])
 
 
 def main():
