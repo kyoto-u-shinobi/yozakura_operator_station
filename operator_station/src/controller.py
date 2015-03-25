@@ -1,3 +1,5 @@
+# coding: utf-8
+
 # (C) 2015  Kyoto University Mechatronics Laboratory
 # Released under the GNU General Public License, version 3
 """
@@ -34,6 +36,7 @@ class Position(object):
         Whether the direction is y-inverted.
 
     """
+
     def __init__(self, x, y, inverted=False):
         self.x = x
         self.y = y
@@ -126,10 +129,10 @@ class Buttons(object):
         If the mapping of the controller buttons is unknown.
 
     """
-    _button_list = ("□", "✕", "○", "△",   # 0-3
+    _button_list = ("□", "✕", "○", "△",  # 0-3
                     "L1", "R1", "L2", "R2",  # 4-7
-                    "select", "start",       # 8-9
-                    "L3", "R3", "PS")        # 10-12
+                    "select", "start",  # 8-9
+                    "L3", "R3", "PS")  # 10-12
 
     _mappings = {"Logitech Logitech RumblePad 2 USB": {},
                  "Elecom Wireless Gamepad": {1: 3, 2: 1, 3: 2}}
@@ -218,6 +221,7 @@ class State(object):
         The state of the buttons.
 
     """
+
     def __init__(self, dpad, lstick, rstick, buttons):
         self.dpad = dpad
         self.lstick = lstick
