@@ -9,16 +9,9 @@ import socket
 import struct
 import fcntl
 
+from common.networking import get_ip_address
 from controller import Controller
 from server import Server, Handler
-
-
-def get_ip_address(interface):
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    packed = struct.pack("256s", str.encode(interface))
-    return socket.inet_ntoa(fcntl.ioctl(s.fileno(),
-        0x8915,  # SIOCGIFADDR
-        packed)[20:24])
 
 
 def main():
