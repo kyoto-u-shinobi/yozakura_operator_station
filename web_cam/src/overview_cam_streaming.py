@@ -1,10 +1,6 @@
 #!/usr/bin/env python
 
-import rospy
-from cv_bridge import CvBridge, CvBridgeError
-from sensor_msgs.msg import Image
-
-import cv2
+from image_streaming import WebCamManager
 
 '''
 http://wiki.ros.org/cv_bridge/Tutorials/ConvertingBetweenROSImagesAndOpenCVImagesPython
@@ -14,36 +10,7 @@ http://venuschjp.blogspot.jp/2015/02/pythonopencvweb.html
 
 DEBUG = True
 
-AI_BALL_IP_FRONT = '192.168.0.151'
-AI_BALL_IP_OVERVIEW = '192.168.0.152'
-AI_BALL_IP_BACK = '192.168.0.153'
-
-
-class WebCamManager:
-    def __init__(self, _ipaddress, _nodename, _topicname):
-        self.cvbridge = CvBridge()
-        self.capture = cv2.VideoCapture('http://' + _ipaddress + '/?action=stream.mjpeg')
-        self.nodename = _nodename
-        self.topicname = _topicname
-
-    def open(self):
-        return self.capture.isOpened()
-
-    def run(self):
-        rospy.init_node(self.nodename, anonymous=True)
-        pub_ros_image = rospy.Publisher(self.topicname, Image)
-        ros_looprate_manager = rospy.Rate(30)  # hz
-
-        while not rospy.is_shutdown():
-            has_image, cv_image = self.capture.read()
-            if has_image == False:
-                continue
-            try:
-                pub_ros_image.publish(self.cvbridge.cv2_to_imgmsg(cv_image, "bgr8"))
-            except CvBridgeError, e:
-                print e
-            ros_looprate_manager.sleep()
-
+AI_BALL_IP_OVERVIEW = '192.168.54.163'
 
 if __name__ == '__main__':
     web_cam_overview = WebCamManager(AI_BALL_IP_OVERVIEW, 'overview_web_cam', 'overview_cam_img')

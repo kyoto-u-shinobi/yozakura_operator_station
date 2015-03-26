@@ -103,6 +103,7 @@ class Handler(SocketServer.BaseRequestHandler):
         are both inverted.
 
     """
+
     def __init__(self, request, client_address, server):
         self._logger = logging.getLogger("{client_ip}_handler".format(
             client_ip=client_address[0]))
@@ -203,10 +204,13 @@ class Handler(SocketServer.BaseRequestHandler):
                 front_pose_sensor, rear_pose_sensor = pose_sensor_data
                 front_pose_sensor_degrees = [np.rad2deg(i) if i is not None else None for i in front_pose_sensor]
                 rear_pose_sensor_degrees = [np.rad2deg(i) if i is not None else None for i in rear_pose_sensor]
-                self._sensor_data_sender.set_data([front_pose_sensor_degrees, rear_pose_sensor_degrees], flipper_angles, arm_angles,
-                                                  [reading[0]  if reading is not None else None for reading in current_sensor_data],
-					          [reading[2]  if reading is not None else None for reading in current_sensor_data], 
-						  heat, co2)
+                self._sensor_data_sender.set_data([front_pose_sensor_degrees, rear_pose_sensor_degrees], flipper_angles,
+                                                  arm_angles,
+                                                  [reading[0] if reading is not None else None for reading in
+                                                   current_sensor_data],
+                                                  [reading[2] if reading is not None else None for reading in
+                                                   current_sensor_data],
+                                                  heat, co2)
                 self._sensor_data_sender.publish_data()
 
         finally:

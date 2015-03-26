@@ -14,9 +14,7 @@ http://venuschjp.blogspot.jp/2015/02/pythonopencvweb.html
 
 DEBUG = True
 
-AI_BALL_IP_FRONT = '192.168.0.151'
-AI_BALL_IP_OVERVIEW = '192.168.0.152'
-AI_BALL_IP_BACK = '192.168.0.153'
+AI_BALL_IP_ADDRESS = '192.168.2.1'
 
 
 class WebCamManager:
@@ -46,7 +44,7 @@ class WebCamManager:
 
 
 if __name__ == '__main__':
-    web_cam_back = WebCamManager(AI_BALL_IP_BACK, 'back_web_cam', 'back_cam_img')
+    web_cam_back = WebCamManager(AI_BALL_IP_ADDRESS, 'ai_ball', 'ai_ball_img')
     if DEBUG: print 'initialize!'
     if web_cam_back.open():
         if DEBUG: print 'run!'
