@@ -26,9 +26,10 @@ class ImageListener:
 
 class ImageSwitcher:
     def __init__(self):
+        self.num_of_cams = 4
         self.switching_mode = 1
-        self.switching_order = [0, 1, 2]
-        self.display_imgs = [Image()] * 3
+        self.switching_order = range(self.num_of_cams)
+        self.display_imgs = [Image()] * self.num_of_cams
 
         self.front_cam_imglistener = ImageListener('front_cam', 'front_cam_img', 0, self.display_imgs)
         self.front_cam_imglistener.run()
@@ -73,12 +74,12 @@ if __name__ == '__main__':
     image_switcher = ImageSwitcher()
     image_switcher.run()
     try:
-        for i in range(3):
+        for i in range(image_switcher.num_of_cams):
             img_publishers.append(rospy.Publisher('display' + str(i + 1), Image, queue_size=10))
 
         ros_looprate_manager = rospy.Rate(30)  # hz
         while not rospy.is_shutdown():
-            for i in range(3):
+            for i in range(image_switcher.num_of_cams):
                 img_publishers[i].publish(image_switcher.display_imgs[i])
             ros_looprate_manager.sleep()
 
