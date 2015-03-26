@@ -2,3 +2,4 @@
 *.pyc
 /\.
 ./CMakeLists.txt
+./operator_station/src/client_test.py
