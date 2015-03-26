@@ -195,6 +195,7 @@ class Handler(SocketServer.BaseRequestHandler):
                 self._logger.debug("{}".format(pickle.loads(raw_data)))
 
                 flipper_angles, current_sensor_data, pose_sensor_data = pickle.loads(raw_data)
+                #print(pose_sensor_data)
                 # flipper_angles = [0.0, 0.0]  # TODO
                 arm_angles = [0.0, 0.0, 0.0]  # TODO
                 heat = 0.0  # TODO
