@@ -389,7 +389,8 @@ class Server(SocketServer.ForkingMixIn, SocketServer.TCPServer):
     allow_reuse_address = True  # Can resume immediately after shutdown
 
     def __init__(self, server_address, handler_class):
-        super(type(Server), self).__init__(server_address = server_address, RequestHandlerClass = handler_class)
+        SocketServer.ForkingMixIn.__init__(self)
+        SocketServer.TCPServer.__init__(self, server_address, handler_class)
 
         self._logger = logging.getLogger("{}_server".format(server_address[0]))
         self._logger.debug("Creating server")
