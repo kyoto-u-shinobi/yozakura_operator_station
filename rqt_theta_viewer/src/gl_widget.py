@@ -1,4 +1,4 @@
-from __future__ import d.3 3.4 違いivision
+from __future__ import division
 import math
 import numpy
 
