@@ -102,9 +102,7 @@ class Handler(SocketServer.BaseRequestHandler):
 
         self._sensor_data_sender = SensorDataSender()
 
-        super(request, self).__init__()
-        super(client_address, self).__init__()
-        super(server, self).__init__()
+        SocketServer.BaseRequestHandler.__init__(self, request, client_address, server)
 
     def handle(self):
         """
@@ -389,7 +387,6 @@ class Server(SocketServer.ForkingMixIn, SocketServer.TCPServer):
     allow_reuse_address = True  # Can resume immediately after shutdown
 
     def __init__(self, server_address, handler_class):
-        SocketServer.ForkingMixIn.__init__(self)
         SocketServer.TCPServer.__init__(self, server_address, handler_class)
 
         self._logger = logging.getLogger("{}_server".format(server_address[0]))
@@ -410,7 +407,7 @@ class Server(SocketServer.ForkingMixIn, SocketServer.TCPServer):
         """
         self._logger.info("Server started")
         try:
-            SocketServer.TCPServer.serve_forever(poll_interval)
+            SocketServer.TCPServer.serve_forever(self, poll_interval)
         except (KeyboardInterrupt, SystemExit):
             pass
 
