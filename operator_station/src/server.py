@@ -16,6 +16,8 @@ import pickle
 import socket
 import SocketServer
 import time
+
+import numpy as np
 import rospy
 from std_msgs.msg import Float32
 
@@ -47,30 +49,37 @@ class SensorDataSender:
             self.publishers[name] = rospy.Publisher(name, Float32, queue_size=10)
             self.published_data[name] = 0
 
+    def _send_published_data(self, destination, value):
+        if value is not None:
+            self.published_data[destination] = value
+        else:
+            self.published_data[destination] = -10000.0
+
     def set_data(self, pose, flipper_angles, arm_angles, current, voltage, heat, co2):
-        self.published_data['body_front_pitch_deg'] = pose[0]
-        self.published_data['body_front_roll_deg'] = pose[1]
-        self.published_data['body_back_pitch_deg'] = pose[2]
-        self.published_data['body_back_roll_deg'] = pose[3]
-        self.published_data['flipper_left_deg'] = flipper_angles[0]
-        self.published_data['flipper_right_deg'] = flipper_angles[1]
-        self.published_data['armjack_triangle_topangle_deg'] = arm_angles[0]
-        self.published_data['armbase_yaw_deg'] = arm_angles[1]
-        self.published_data['armbase_pitch_deg'] = arm_angles[2]
+        print(pose)
+        self._send_published_data('body_front_pitch_deg', pose[0][1])
+        self._send_published_data('body_front_roll_deg', pose[0][0])
+        self._send_published_data('body_back_pitch_deg', pose[1][1])
+        self._send_published_data('body_back_roll_deg', pose[1][0])
+        self._send_published_data('flipper_left_deg', flipper_angles[0])
+        self._send_published_data('flipper_right_deg', flipper_angles[1])
+        self._send_published_data('armjack_triangle_topangle_deg', arm_angles[0])
+        self._send_published_data('armbase_yaw_deg', arm_angles[1])
+        self._send_published_data('armbase_pitch_deg', arm_angles[2])
 
-        self.published_data['current_motor_left'] = current[0]
-        self.published_data['current_motor_right'] = current[1]
-        self.published_data['current_flipper_left'] = current[2]
-        self.published_data['current_flipper_right'] = current[3]
-        self.published_data['current_battery'] = current[4]
-        self.published_data['voltage_motor_left'] = voltage[0]
-        self.published_data['voltage_motor_right'] = voltage[1]
-        self.published_data['voltage_flipper_left'] = voltage[2]
-        self.published_data['voltage_flipper_right'] = voltage[3]
-        self.published_data['voltage_battery'] = voltage[4]
+        self._send_published_data('current_motor_left', current[0])
+        self._send_published_data('voltage_motor_left', voltage[0])
+        self._send_published_data('current_motor_right', current[1])
+        self._send_published_data('voltage_motor_right', voltage[1])
+        self._send_published_data('current_flipper_left', current[2])
+        self._send_published_data('voltage_flipper_left', voltage[2])
+        self._send_published_data('current_flipper_right', current[3])
+        self._send_published_data('voltage_flipper_right', voltage[3])
+        self._send_published_data('current_battery', current[4])
+        self._send_published_data('voltage_battery', voltage[4])
 
-        self.published_data['heat_sensor'] = heat
-        self.published_data['co2_sensor'] = co2
+        self._send_published_data('heat_sensor', heat)
+        self._send_published_data('co2_sensor', co2)
 
     def publish_data(self):
         for name in self.publish_dataname_list:
@@ -94,7 +103,6 @@ class Handler(SocketServer.BaseRequestHandler):
         are both inverted.
 
     """
-
     def __init__(self, request, client_address, server):
         self._logger = logging.getLogger("{client_ip}_handler".format(
             client_ip=client_address[0]))
@@ -133,6 +141,7 @@ class Handler(SocketServer.BaseRequestHandler):
         # TODO(murata): Remove everything related to _sensors_client and the
         # try/finally block once you add your udp server.
         self._sensors_client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self._sensors_client.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self._sensors_client.bind(("", 9999))
 
         try:
@@ -182,16 +191,21 @@ class Handler(SocketServer.BaseRequestHandler):
                     self.request.sendall(reply)
 
                 # Receive sensor data
-                raw_data, address = self._sensors_client.recvfrom(64)
+                raw_data, address = self._sensors_client.recvfrom(512)
                 self._logger.debug("{}".format(pickle.loads(raw_data)))
 
-                pose_sensor_data, current_sensor_data = pickle.loads(raw_data)
-                flipper_angles = [0.0, 0.0]  # TODO
+                flipper_angles, current_sensor_data, pose_sensor_data = pickle.loads(raw_data)
+                # flipper_angles = [0.0, 0.0]  # TODO
                 arm_angles = [0.0, 0.0, 0.0]  # TODO
                 heat = 0.0  # TODO
                 co2 = 0.0  # TODO
-                self._sensor_data_sender.set_data(pose_sensor_data, flipper_angles, arm_angles,
-                                                  current_sensor_data[:][0], current_sensor_data[:][2], heat, co2)
+                front_pose_sensor, rear_pose_sensor = pose_sensor_data
+                front_pose_sensor_degrees = [np.rad2deg(i) if i is not None else None for i in front_pose_sensor]
+                rear_pose_sensor_degrees = [np.rad2deg(i) if i is not None else None for i in rear_pose_sensor]
+                self._sensor_data_sender.set_data([front_pose_sensor_degrees, rear_pose_sensor_degrees], flipper_angles, arm_angles,
+                                                  [reading[0]  if reading is not None else None for reading in current_sensor_data],
+					          [reading[2]  if reading is not None else None for reading in current_sensor_data], 
+						  heat, co2)
                 self._sensor_data_sender.publish_data()
 
         finally:
