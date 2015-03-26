@@ -36,23 +36,28 @@ class ImageSwitcher:
         self.overview_cam_imglistener.run()
         self.back_cam_imglistener = ImageListener('back_cam', 'back_cam_img', 2, self.display_imgs)
         self.back_cam_imglistener.run()
+        self.arm_cam_imglistener = ImageListener('arm_cam', 'arm_cam_img', 3, self.display_imgs)
+        self.arm_cam_imglistener.run()
 
         self.set_cimage_msg()
 
     def handle_image_switcher(self, _req):
         if DEBUG: print 'switch!'
         if _req.switching_mode == 1:
-            self.switching_order = [0, 1, 2]
+            self.switching_order = [0, 1, 2, 3]
         elif _req.switching_mode == 2:
-            self.switching_order = [1, 2, 0]
+            self.switching_order = [1, 2, 3, 0]
         elif _req.switching_mode == 3:
-            self.switching_order = [2, 0, 1]
+            self.switching_order = [2, 3, 0, 1]
+        elif _req.switching_mode == 4:
+            self.switching_order = [3, 0, 1, 2]
         self.set_cimage_msg()
 
     def set_cimage_msg(self):
         self.front_cam_imglistener.set_order(self.switching_order[0])
         self.overview_cam_imglistener.set_order(self.switching_order[1])
         self.back_cam_imglistener.set_order(self.switching_order[2])
+        self.arm_cam_imglistener.set_order(self.switching_order[3])
 
     def run(self):
         self.set_cimage_msg()
