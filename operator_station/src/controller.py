@@ -1,4 +1,5 @@
-# coding: utf-8
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 # (C) 2015  Kyoto University Mechatronics Laboratory
 # Released under the GNU General Public License, version 3
@@ -371,6 +372,7 @@ class Controller(object):
         if not Controller.controllers:
             pygame.quit()
 
+    @staticmethod
     def shutdown_all():
         """A class method to safely quit all controllers."""
         logging.info("Closing all controller handlers")
@@ -390,7 +392,7 @@ if __name__ == "__main__":
 
     while True:
         try:
-            print(stick_body.get_state(), end="\r")
+            print(stick_body.get_state() + "\r")
         except (KeyboardInterrupt, SystemExit):  # Exit safely.
             logging.info("")
             logging.info("Exiting")

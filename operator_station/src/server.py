@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 # (C) 2015  Kyoto University Mechatronics Laboratory
 # Released under the GNU General Public License, version 3
 """
@@ -11,7 +14,7 @@ simultaneously.
 import logging
 import pickle
 import socket
-import socketserver
+import SocketServer
 import time
 import rospy
 from std_msgs.msg import Float32
@@ -74,7 +77,7 @@ class SensorDataSender:
             self.publishers[name].publish(self.published_data[name])
 
 
-class Handler(socketserver.BaseRequestHandler):
+class Handler(SocketServer.BaseRequestHandler):
     """
     A handler for connection requests.
 
@@ -99,7 +102,9 @@ class Handler(socketserver.BaseRequestHandler):
 
         self._sensor_data_sender = SensorDataSender()
 
-        super().__init__(request, client_address, server)
+        super(request, self).__init__()
+        super(client_address, self).__init__()
+        super(server, self).__init__()
 
     def handle(self):
         """
@@ -355,7 +360,7 @@ class Handler(socketserver.BaseRequestHandler):
             self._reverse_timestamp = current_time
 
 
-class Server(socketserver.ForkingMixIn, socketserver.TCPServer):
+class Server(SocketServer.ForkingMixIn, SocketServer.TCPServer):
     """
     A TCP Server.
 
@@ -384,9 +389,11 @@ class Server(socketserver.ForkingMixIn, socketserver.TCPServer):
     allow_reuse_address = True  # Can resume immediately after shutdown
 
     def __init__(self, server_address, handler_class):
+        super(type(Server), self).__init__(server_address = server_address, RequestHandlerClass = handler_class)
+
         self._logger = logging.getLogger("{}_server".format(server_address[0]))
         self._logger.debug("Creating server")
-        super().__init__(server_address, handler_class)
+
         self._logger.info("Listening to port {}".format(server_address[1]))
         self.controllers = {}
 
@@ -402,7 +409,7 @@ class Server(socketserver.ForkingMixIn, socketserver.TCPServer):
         """
         self._logger.info("Server started")
         try:
-            super().serve_forever(poll_interval)
+            SocketServer.TCPServer.serve_forever(poll_interval)
         except (KeyboardInterrupt, SystemExit):
             pass
 

@@ -1,13 +1,10 @@
 #!/usr/bin/env python
-#  (C) 2015  Kyoto University Mechatronics Laboratory
+# (C) 2015  Kyoto University Mechatronics Laboratory
 # Released under the GNU General Public License, version 3
 
 
 import logging
 import pygame
-import socket
-import struct
-import fcntl
 
 from common.networking import get_ip_address
 from controller import Controller
