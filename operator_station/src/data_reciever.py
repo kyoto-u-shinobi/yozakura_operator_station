@@ -4,7 +4,6 @@
 
 
 import logging
-import pygame
 
 from common.networking import get_ip_address
 from controller import Controller
@@ -20,11 +19,9 @@ def main():
     server = Server((ip_address, 9999), Handler)
 
     logging.debug("Initializing controllers")
-    try:
-        stick_body = Controller(0, name="main")
-        server.add_controller(stick_body)
-    except pygame.error:
-        logging.warning("No controller attached")
+
+    stick_body = Controller(0, name="main")
+    server.add_controller(stick_body)
 
     try:
         logging.debug("Starting server")

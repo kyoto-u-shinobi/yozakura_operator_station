@@ -119,57 +119,42 @@ class Controller(object):
     ----------
     stick_id : int
         The ID of the controller.
-    make : str
-        The make of the controller.
-    name : str, optional
-        The name of the controller.
-    controllers : dict
-        A class variable containing all registered controllers. It is used to
-        keep track of all controllers to make sure that they all exit safely.
-
-        **Dictionary format :** {stick_id (int): controller (Controller)}
-
     """
     controllers = {}
 
     def __init__(self, stick_id, name=None):
         self._logger = logging.getLogger("controller-{}".format(stick_id))
         self._logger.debug("Initializing controller")
-        self.stick_id = stick_id
-        self.make = self.controller.get_name()
-        self.name = name if name is not None else self.make
-
-        if self.make not in Buttons.known_makes:
-            self._logger.warning("{} has no registered ".format(self.make) +
-                                 "button mapping. Results may be wrong.")
+        self.name = name if not None else 'joystick'
 
         self.initialize_js_data()
         rospy.init_node('controller', anonymous=True)
-        rospy.Subscriber('joystick', Joy, self.js_callback)
-
-        self._logger.debug("Registering controller")
-        Controller.controllers[stick_id] = self
+        rospy.Subscriber('joy', Joy, self.js_callback)
 
         self._logger.info("Controller initialized")
 
     def initialize_js_data(self):
-        self.hat.x = 0
-        self.hat.y = 0
-        self.lstick.x = 0
-        self.lstick.y = 0
-        self.rstick.x = 0
-        self.rstick.y = 0
+        self.hat = {'x': 0, 'y': 0}
+        self.lstick = {'x': 0, 'y': 0}
+        self.rstick = {'x': 0, 'y': 0}
         self.buttons = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 
     def js_callback(self, joy_data):
-        self.hat.x = joy_data.axes[5]
-        self.hat.y = joy_data.axes[4]
-        self.lstick.x = joy_data.axes[2]
-        self.lstick.y = joy_data.axes[1]
-        self.rstick.x = joy_data.axes[4]
-        self.rstick.y = joy_data.axes[3]
+        self.hat['x'] = joy_data.axes[5]
+        self.hat['y'] = joy_data.axes[4]
+        self.lstick['x'] = joy_data.axes[2]
+        self.lstick['y'] = joy_data.axes[1]
+        self.rstick['x'] = joy_data.axes[4]
+        self.rstick['y'] = joy_data.axes[3]
         self.buttons = joy_data.buttons
+
+        dpad = Axis(self.hat.x, self.hat.y)
+        lstick = Axis(self.lstick.x, self.lstick.y, inverted=True)
+        rstick = Axis(self.rstick.x, self.rstick.y, inverted=True)
+        buttons = Buttons(self.make, self.buttons)
+        print State(dpad, lstick, rstick, buttons)
+
 
     def get_state(self):
         """
@@ -197,19 +182,6 @@ class Controller(object):
 
         return State(dpad, lstick, rstick, buttons)
 
-    def shutdown(self):
-        """Safely quits a controller."""
-        self._logger.info("Closing controller handler")
-        self.controller.quit()
-        del Controller.controllers[self.stick_id]
-
-    @staticmethod
-    def shutdown_all():
-        """A class method to safely quit all controllers."""
-        logging.info("Closing all controller handlers")
-        for controller in list(Controller.controllers.values()):
-            controller.shutdown()
-
     def __repr__(self):
         return "{} (ID# {})".format(self.name, self.stick_id())
 
@@ -227,5 +199,4 @@ if __name__ == "__main__":
         except (KeyboardInterrupt, SystemExit):  # Exit safely.
             logging.info("")
             logging.info("Exiting")
-            Controller.shutdown_all()
             break
