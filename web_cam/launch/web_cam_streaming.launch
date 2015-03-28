@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+    <node ns="ns" name="name" pkg="image_switcher" type="image_switcher_node.py" output="screen"/>
+</launch>
+
+

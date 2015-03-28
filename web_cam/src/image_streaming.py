@@ -44,10 +44,10 @@ class WebCamManager:
 
 
 if __name__ == '__main__':
-    web_cam_back = WebCamManager(AI_BALL_IP_ADDRESS, 'ai_ball', 'ai_ball_img')
+    web_cam = WebCamManager(AI_BALL_IP_ADDRESS, 'ai_ball', 'ai_ball_img')
     if DEBUG: print 'initialize!'
-    if web_cam_back.open():
+    if web_cam.open():
         if DEBUG: print 'run!'
-        web_cam_back.run()
+        web_cam.run()
     else:
         print 'fail to open!'

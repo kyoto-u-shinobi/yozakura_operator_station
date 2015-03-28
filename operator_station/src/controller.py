@@ -12,187 +12,9 @@ state, as well as a ``Controller`` class.
 """
 
 import logging
-
-import pygame
-
-from common.exceptions import UnknownControllerError
-
-
-class Position(object):
-    """
-    A class representing a controller axis position.
-
-    Parameters
-    ----------
-    x, y : float
-        The positions of the axis..
-    inverted : bool, optional
-        Whether the direction is y-inverted.
-
-    Attributes
-    ----------
-    x, y : float
-        The positions of the axis..
-    inverted : bool
-        Whether the direction is y-inverted.
-
-    """
-
-    def __init__(self, x, y, inverted=False):
-        self.x = x
-        self.y = y
-        self.inverted = inverted
-
-    @property
-    def direction(self):
-        """
-        Determine the direction represented by the controller axis position.
-
-        The directions are Up, Down, Left, and Right, and their intermediates.
-
-        Returns
-        -------
-        str
-            "U", "D", "L", and "R" represent Up, Down, Left, and Right
-            respectively. Return "U", "D", "L", "R" if the positions are either
-            only ``x`` or only ``y``. Otherwise, return "U" or "D", followed by
-            "L" or "R", as appropriate. If both the ``x`` and ``y`` positions
-            are zero, return "none".
-
-        Examples
-        --------
-        >>> position = Position(0.5, 0.7)
-        >>> position.direction
-        'UR'
-        >>> position = Position(0.9, 0)
-        >>> position.direction
-        'R'
-        >>> position = Position(0, 0)
-        >>> position.direction
-        'none'
-
-        """
-        if self.y > 0:
-            vertical = "D" if self.inverted else "U"
-        elif self.y < 0:
-            vertical = "U" if self.inverted else "D"
-        else:
-            vertical = ""
-
-        if self.x > 0:
-            horizontal = "R"
-        elif self.x < 0:
-            horizontal = "L"
-        else:
-            horizontal = ""
-
-        if not vertical and not horizontal:
-            direction = "none"
-        else:
-            direction = "{}{}".format(vertical, horizontal)
-
-        return direction
-
-    def __repr__(self):
-        return str((self.x, self.y))
-
-    def __str__(self):
-        return "[{:5.2f}, {:5.2f}]".format(self.x, self.y)
-
-
-class Buttons(object):
-    """
-    A class representing the button configuration of a controller.
-
-    Note that this is only tested with the Logitech RumblePad 2. Other input
-    devices may have different configurations.
-
-    When registering the mapping for a new controller, please run the
-    ``get_name()`` function to obtain the name to use.
-
-    Parameters
-    ----------
-    buttons : iterable
-        A list containing the state of each button. 1 if pressed, 0 otherwise.
-
-    Attributes
-    ----------
-    buttons : list of int
-        A list containing the state of each button.
-    pressed_buttons: list of str
-        A list containing the names of each button that is pressed.
-    known_makes : list of str
-        A list containing all the makes whose mappings have been registered.
-
-    Raises
-    ------
-    UnknownControllerError
-        If the mapping of the controller buttons is unknown.
-
-    """
-    _button_list = ("□", "✕", "○", "△",  # 0-3
-                    "L1", "R1", "L2", "R2",  # 4-7
-                    "select", "start",  # 8-9
-                    "L3", "R3", "PS")  # 10-12
-
-    _mappings = {"Logitech Logitech RumblePad 2 USB": {},
-                 "Elecom Wireless Gamepad": {1: 3, 2: 1, 3: 2}}
-
-    # Populate the mappings.
-    for make in _mappings:
-        for i in range(13):
-            _mappings[make].setdefault(i, i)
-
-    known_makes = list(_mappings.keys())
-
-    def __init__(self, make, buttons):
-        if make not in Buttons.known_makes:
-            raise UnknownControllerError(make)
-
-        self._make = make
-        self.buttons = buttons
-        self.pressed = [Buttons._button_list[Buttons._mappings[self._make][i]]
-                        for i, button in enumerate(self.buttons) if button]
-
-    def is_pressed(self, button):
-        """
-        Whether a given button is pressed.
-
-        Parameters
-        ----------
-        button : str
-            The name of the button to be checked.
-
-        Returns
-        -------
-        bool
-            Whether the button is pressed.
-
-        """
-        return button in self.pressed
-
-    def all_pressed(self, *buttons):
-        """
-        Whether all given buttons are pressed.
-
-        Parameters
-        ----------
-        buttons : one or more str
-            The name(s) of the buttons to be checked.
-
-        Returns
-        -------
-        bool
-            True if all the buttons are pressed.
-
-        """
-        return all([self.is_pressed(button) for button in buttons])
-
-    def __repr__(self):
-        return str(self.buttons)
-
-    def __str__(self):
-        return str(self.pressed)
+from controller_commands import Axis, Buttons
+import rospy
+from sensor_msgs.msg import Joy
 
 
 class State(object):
@@ -201,22 +23,22 @@ class State(object):
 
     Parameters
     ----------
-    dpad : Position
+    dpad : Axis
         The position of the dpad.
-    lstick : Position
+    lstick : Axis
         The position of the left analog stick.
-    rstick : Position
+    rstick : Axis
         The position of the right analog stick.
     buttons : Buttons
         The state of the buttons.
 
     Attributes
     ----------
-    dpad : Position
+    dpad : Axis
         The position of the dpad.
-    lstick : Position
+    lstick : Axis
         The position of the left analog stick.
-    rstick : Position
+    rstick : Axis
         The position of the right analog stick.
     buttons : Buttons
         The state of the buttons.
@@ -295,8 +117,6 @@ class Controller(object):
 
     Attributes
     ----------
-    controller : pygame.joystick.Joystick
-        The controller itself.
     stick_id : int
         The ID of the controller.
     make : str
@@ -310,31 +130,46 @@ class Controller(object):
         **Dictionary format :** {stick_id (int): controller (Controller)}
 
     """
-    pygame.init()
     controllers = {}
 
     def __init__(self, stick_id, name=None):
         self._logger = logging.getLogger("controller-{}".format(stick_id))
         self._logger.debug("Initializing controller")
-        self.controller = pygame.joystick.Joystick(stick_id)
         self.stick_id = stick_id
         self.make = self.controller.get_name()
-
-        if name is not None:
-            self.name = name
-        else:
-            self.name = self.make
+        self.name = name if name is not None else self.make
 
         if self.make not in Buttons.known_makes:
             self._logger.warning("{} has no registered ".format(self.make) +
                                  "button mapping. Results may be wrong.")
 
-        self.controller.init()
+        self.initialize_js_data()
+        rospy.init_node('controller', anonymous=True)
+        rospy.Subscriber('joystick', Joy, self.js_callback)
 
         self._logger.debug("Registering controller")
         Controller.controllers[stick_id] = self
 
         self._logger.info("Controller initialized")
+
+    def initialize_js_data(self):
+        self.hat.x = 0
+        self.hat.y = 0
+        self.lstick.x = 0
+        self.lstick.y = 0
+        self.rstick.x = 0
+        self.rstick.y = 0
+        self.buttons = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+
+    def js_callback(self, joy_data):
+        self.hat.x = joy_data.axes[5]
+        self.hat.y = joy_data.axes[4]
+        self.lstick.x = joy_data.axes[2]
+        self.lstick.y = joy_data.axes[1]
+        self.rstick.x = joy_data.axes[4]
+        self.rstick.y = joy_data.axes[3]
+        self.buttons = joy_data.buttons
 
     def get_state(self):
         """
@@ -353,14 +188,12 @@ class Controller(object):
         n_buttons = stick.get_numbuttons()
 
         self._logger.debug("Syncronizing pygame")
-        pygame.event.pump()
 
         self._logger.debug("Getting state")
-        dpad = Position(*stick.get_hat(0))
-        lstick = Position(stick.get_axis(0), stick.get_axis(1), inverted=True)
-        rstick = Position(stick.get_axis(2), stick.get_axis(3), inverted=True)
-        buttons = Buttons(self.make,
-                          [stick.get_button(i) for i in range(n_buttons)])
+        dpad = Axis(self.hat.x, self.hat.y)
+        lstick = Axis(self.lstick.x, self.lstick.y, inverted=True)
+        rstick = Axis(self.rstick.x, self.rstick.y, inverted=True)
+        buttons = Buttons(self.make, self.buttons)
 
         return State(dpad, lstick, rstick, buttons)
 
@@ -369,8 +202,6 @@ class Controller(object):
         self._logger.info("Closing controller handler")
         self.controller.quit()
         del Controller.controllers[self.stick_id]
-        if not Controller.controllers:
-            pygame.quit()
 
     @staticmethod
     def shutdown_all():
