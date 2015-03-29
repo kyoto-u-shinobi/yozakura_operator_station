@@ -120,8 +120,6 @@ class Controller(object):
     stick_id : int
         The ID of the controller.
     """
-    controllers = {}
-
     def __init__(self, stick_id, name=None):
         self._logger = logging.getLogger("controller-{}".format(stick_id))
         self._logger.debug("Initializing controller")
@@ -149,13 +147,6 @@ class Controller(object):
         self.rstick['y'] = joy_data.axes[3]
         self.buttons = joy_data.buttons
 
-        dpad = Axis(self.hat.x, self.hat.y)
-        lstick = Axis(self.lstick.x, self.lstick.y, inverted=True)
-        rstick = Axis(self.rstick.x, self.rstick.y, inverted=True)
-        buttons = Buttons(self.make, self.buttons)
-        print State(dpad, lstick, rstick, buttons)
-
-
     def get_state(self):
         """
         Read the state of all the inputs of the controller.
@@ -167,17 +158,12 @@ class Controller(object):
         -------
         State
             The controller state.
-
         """
-        stick = self.controller
-        n_buttons = stick.get_numbuttons()
-
-        self._logger.debug("Syncronizing pygame")
 
         self._logger.debug("Getting state")
-        dpad = Axis(self.hat.x, self.hat.y)
-        lstick = Axis(self.lstick.x, self.lstick.y, inverted=True)
-        rstick = Axis(self.rstick.x, self.rstick.y, inverted=True)
+        dpad = Axis(self.hat['x'], self.hat['y'])
+        lstick = Axis(self.lstick['x'], self.lstick['y'], inverted=True)
+        rstick = Axis(self.rstick['x'], self.rstick['y'], inverted=True)
         buttons = Buttons(self.make, self.buttons)
 
         return State(dpad, lstick, rstick, buttons)
