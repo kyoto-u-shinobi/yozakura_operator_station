@@ -334,7 +334,7 @@ class Handler(SocketServer.BaseRequestHandler):
             else:
                 rflipper = 0
 
-        return lmotor, -rmotor, -lflipper, rflipper
+        return lmotor, rmotor, lflipper, rflipper
 
     def _switch_control_mode(self):
         """
