@@ -7,8 +7,8 @@
 import logging
 
 from common.networking import get_ip_address
-from controller import Controller
-from server import Server, Handler
+from src.operator_station.src.bk.controller import Controller
+from src.operator_station.src.bk.server import Server, Handler
 
 
 def main():

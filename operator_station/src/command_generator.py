@@ -20,8 +20,8 @@ class CommandGenerator(object):
         self.js_mapping_mode = 1
         self.direction_flag = True
         self._culc_speed_command_funcs = [
-            self._culc_speed_command_single_stick_mode,
-            self._culc_speed_command_dual_stick_mode
+            self._calc_speed_command_single_stick_mode,
+            self._calc_speed_command_dual_stick_mode
         ]
 
         if main_controller_name is not None:
@@ -65,7 +65,7 @@ class CommandGenerator(object):
         return self._culc_speed_command_funcs[self.js_mapping_mode - 1](self.direction_mode)
 
 
-    def _culc_speed_command_single_stick_mode(self, direction_flag):
+    def _calc_speed_command_single_stick_mode(self, direction_flag):
         _dpad, _lstick, _rstick, buttons = self.get_jsstate()
 
         # convert direction
@@ -108,7 +108,7 @@ class CommandGenerator(object):
         return lwheel, rwheel, lflipper, rflipper
 
 
-    def _culc_speed_command_dual_stick_mode(self, direction_flag):
+    def _calc_speed_command_dual_stick_mode(self, direction_flag):
         _dpad, _lstick, _rstick, buttons = self.get_jsstate()
 
         # convert direction

@@ -156,3 +156,79 @@ class Buttons(object):
 
     def __str__(self):
         return str(self.pressed)
+
+
+class State(object):
+    """
+    The state of the object.
+    Parameters
+    ----------
+    dpad : Position
+        The position of the dpad.
+    lstick : Position
+        The position of the left analog stick.
+    rstick : Position
+        The position of the right analog stick.
+    buttons : Buttons
+        The state of the buttons.
+    Attributes
+    ----------
+    dpad : Position
+        The position of the dpad.
+    lstick : Position
+        The position of the left analog stick.
+    rstick : Position
+        The position of the right analog stick.
+    buttons : Buttons
+        The state of the buttons.
+    """
+
+    def __init__(self, dpad, lstick, rstick, buttons):
+        self.dpad = dpad
+        self.lstick = lstick
+        self.rstick = rstick
+        self.buttons = buttons
+
+    @property
+    def data(self):
+        """
+        Return the raw data.
+        Returns
+        -------
+        dpad, lstick, rstick : 2-tuple of float
+            The positions of the dpad and the left and right analog sticks.
+        buttons : list of int
+            The list of buttons. 1 if pressed, 0 otherwise.
+        """
+        return self.dpad, self.lstick, self.rstick, self.buttons
+
+    def __repr__(self):
+        return str(self.data)
+
+    def __str__(self):
+        """
+        A human-readable representation of the state.
+        To print on a single line, ensure that the terminal is at least 144
+        characters wide, and end your `print` function with a carriage return
+        character to go back to the start of the line.
+        Returns
+        -------
+        str
+            A string with a maximum length of 144 characters, showing the
+            positions of the dpad, and left and right analog sticks; as well
+            as a list showing all the buttons that are currently pressed.
+        Examples
+        --------
+        >>> stick = Controller(0, "body")
+        >>> try:
+        ...     While True:  # Below, end="backslash r"
+        ...         print(stick_body.get_state(), end="\r")
+        ... except (KeyboardInterrupt, SystemExit):  # Exit safely.
+        ...     Controller.shutdown_all()
+        dpad: UR   lstick: [-1.00,  0.00]  rstick: [ 0.12, -0.45]  buttons: []
+        """
+        return "dpad: {dpad:4}  lstick: {ls}  rstick: {rs}  buttons: {b:75}" \
+            .format(dpad=self.dpad.direction,
+                    ls=self.lstick, rs=self.rstick,
+                    b=str(self.buttons))
+

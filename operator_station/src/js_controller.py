@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import rospy
-from js_state import Axis, Buttons
+from js_state import Axis, Buttons, State
 from sensor_msgs.msg import Joy
 
 DEFAULT_JS_MAKER = "Elecom Wireless Gamepad"
@@ -40,7 +40,7 @@ class JoyStickController(object):
 
     @property
     def state(self):
-        return self.dpad, self.lstick, self.rstick, self.buttons
+        return State(self.dpad, self.lstick, self.rstick, self.buttons)
 
 
 # -------------------------------------------------------------------------
