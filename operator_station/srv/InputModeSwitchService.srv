@@ -10,7 +10,7 @@ int64 js_mapping_mode
 # False: reverse
 bool direction_flag
 
-# for switching js (for future)
+# for switching joystick (for future)
 string main_controller_name
 ---
 

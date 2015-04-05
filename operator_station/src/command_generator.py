@@ -41,7 +41,7 @@ class CommandGenerator(object):
 
     def _input_mode_switching_handler(self, req):
         self.js_mapping_mode = req.js_mapping_mode
-        self.direction_mode = req.direction_mode
+        self.direction_flag = req.direction_flag
         self.main_controller_name = req.main_controller_name
 
     def activate(self):
@@ -62,7 +62,7 @@ class CommandGenerator(object):
                 buttons.buttons)
 
     def get_speed_commands(self):
-        return self._culc_speed_command_funcs[self.js_mapping_mode - 1](self.direction_mode)
+        return self._culc_speed_command_funcs[self.js_mapping_mode - 1](self.direction_flag)
 
 
     def _calc_speed_command_single_stick_mode(self, direction_flag):

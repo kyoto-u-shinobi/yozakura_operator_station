@@ -1,11 +1,10 @@
 Header header
 
-# csd = CurrentSensorData
 CurrentSensorData wheel_left
 CurrentSensorData wheel_right
 CurrentSensorData flipper_left
 CurrentSensorData flipper_right
-CurrentSensorData buttery
+CurrentSensorData battery
 
 HeatSensorData heat
 
