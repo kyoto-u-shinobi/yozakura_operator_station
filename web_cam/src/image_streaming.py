@@ -24,6 +24,7 @@ class WebCamManager:
         self.capture = cv2.VideoCapture('http://' + ip_address + '/?action=stream.mjpeg')
         self.topic_name = topic_name
         self.overlayed_text = overlayed_text
+        print self.overlayed_text
         self.is_active = False
 
     def open(self):
@@ -31,27 +32,28 @@ class WebCamManager:
 
     def activate(self):
         self.is_active = True
-        self.pub_image = rospy.Publisher(self.topic_name, Image)
+        self.pub_image = rospy.Publisher(self.topic_name, Image, queue_size=1)
 
     def publish_img(self):
-        has_image, cv_image = self.capture.read()
-        w, h = cv_image.shape[0], cv_image.shape[1]
-
-        if has_image is False:
-            print('fail to grub image')
-            text_length = 100.0
-            cv2.putText(cv_image, '!! FAIL TO GRUB !!',
-                        (w / 2.0 - text_length / 2.0, h / 2.0 - text_length / 2.0),
-                        cv2.FONT_HERSHEY_SIMPLEX, fontScale=30, color=(255, 0, 0), thickness=20)
-
         if not self.is_active:
             self.activate()
 
+        has_image, cv_image = self.capture.read()
+        h, w = cv_image.shape[0], cv_image.shape[1]
+
+        if has_image is False:
+            print('fail to grub image')
+            text = '!! FAIL TO GRUB !!'
+            text_pxlength = 13.0 * len(text)
+            cv2.putText(cv_image, text,
+                        (int(w / 2.0 - text_pxlength / 2.0), int(h / 2.0)),
+                        cv2.FONT_HERSHEY_SIMPLEX, fontScale=30, color=(255, 0, 0), thickness=20)
+
         if self.overlayed_text is not None:
-            text_length = 100.0
+            text_pxlength = 13.0 * len(self.overlayed_text)
             cv2.putText(cv_image, self.overlayed_text,
-                        (w / 2.0 - text_length / 2.0, 20.0),
-                        cv2.FONT_HERSHEY_SIMPLEX, fontScale=15, color=(255, 255, 255), thickness=10)
+                        (int(w / 2.0 - text_pxlength / 2.0), int(h / 16.0)),
+                        cv2.FONT_HERSHEY_SIMPLEX, fontScale=1, color=(255, 0, 255), thickness=2)
 
         try:
             self.pub_image.publish(self.cvbridge.cv2_to_imgmsg(cv_image, "bgr8"))
@@ -63,8 +65,9 @@ if __name__ == '__main__':
     rospy.init_node(DEFAULT_NODE_NAME, anonymous=True)
     rate_mgr = rospy.Rate(30)  # Hz
     web_cam_ip = rospy.get_param('~ip_address', DEFAULT_IP_ADDRESS)
+    overlay_text = rospy.get_param('~overlay_text', DEFAULT_IP_ADDRESS)
 
-    web_cam = WebCamManager(web_cam_ip, DEFAULT_TOPIC_NAME)
+    web_cam = WebCamManager(web_cam_ip, DEFAULT_TOPIC_NAME, overlay_text)
 
     if not web_cam.open():
         print('fail to open!')
