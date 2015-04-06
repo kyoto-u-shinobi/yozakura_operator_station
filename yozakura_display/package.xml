@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package>
-  <name>shinobi_newrobo_display</name>
+  <name>yozakura_display</name>
   <version>0.0.0</version>
-  <description>The shinobi_newrobo_display package</description>
+  <description>The yozakura display package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag --> 
   <!-- Example:  -->
@@ -19,7 +19,7 @@
   <!-- Url tags are optional, but mutiple are allowed, one per tag -->
   <!-- Optional attribute type can be: website, bugtracker, or repository -->
   <!-- Example: -->
-  <!-- <url type="website">http://wiki.ros.org/shinobi_newrobo_display</url> -->
+  <!-- <url type="website">http://wiki.ros.org/yozakura_display</url> -->
 
 
   <!-- Author tags are optional, mutiple are allowed, one per tag -->

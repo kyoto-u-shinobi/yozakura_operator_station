@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
-<robot name="newrobo" xmlns:xacro="http://www.ros.org/wiki/xacro">
+<robot name="yozakura" xmlns:xacro="http://www.ros.org/wiki/xacro">
 	<xacro:include filename="$(find xacro)/define.xacro" />
-	<xacro:include filename="$(find shinobi_newrobo_display)/robot/config.xacro" />
-	<xacro:include filename="$(find shinobi_newrobo_display)/robot/flipper_macro.xacro" />
-	<xacro:include filename="$(find shinobi_newrobo_display)/robot/starWheel_macro.xacro" />
+	<xacro:include filename="$(find yozakura_display)/robot/config.xacro" />
+	<xacro:include filename="$(find yozakura_display)/robot/flipper_macro.xacro" />
+	<xacro:include filename="$(find yozakura_display)/robot/starWheel_macro.xacro" />
 
 	<link name="arm_base">
 		<visual>

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <launch>  
-	<param name="robot_description" command="$(find xacro)/xacro.py '$(find shinobi_newrobo_display)/robot/newrobo_arm.urdf.xacro'" />
+	<param name="robot_description" command="$(find xacro)/xacro.py '$(find yozakura_display)/robot/yozakura_arm.urdf.xacro'" />
 	<param name="use_gui" value="true"/>  
 	<node name="joint_state_publisher" pkg="my_joint_state_publisher" type="my_arm_joint_state_publisher.py" /> 
 	<node name="data_publisher" pkg="rqt_ez_publisher" type="rqt_ez_publisher" /> 

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot>	
 
-	<property name="robotPackagePath" value="package://shinobi_newrobo_display/robot"/>
+	<property name="robotPackagePath" value="package://yozakura_display/robot"/>
 	<property name="modelDataResourseFolder" value="newRobotStls"/>
 	
 	<property name="bodyFront_depth" 	value="0.262" />
