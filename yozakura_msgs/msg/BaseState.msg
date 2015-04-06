@@ -1,0 +1,10 @@
+bool is_ok
+
+BodyState body_front
+BodyState body_back
+
+FlipperState flipper_left
+FlipperState flipper_right
+
+WheelState wheel_left
+WheelState wheel_right

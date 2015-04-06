@@ -8,7 +8,7 @@ from body_jointstate_manager import BodyJointStateManager
 if __name__ == '__main__':
     rospy.init_node('my_jointstate_manager', anonymous=True)
 
-    joint_state_msg = JointState()
+    jointstate_msg = JointState()
 
     arm_js_mgr = ArmJointStateManager()
     arm_js_mgr.run()
@@ -18,16 +18,16 @@ if __name__ == '__main__':
 
     try:
         pub = rospy.Publisher('joint_states', JointState, queue_size=10)
-        ros_looprate_mgr = rospy.Rate(10)  # 10hz
+        rate_mgr = rospy.Rate(10)  # 10hz
         print 'Run!'
         while not rospy.is_shutdown():
-            joint_state_msg.header.stamp = rospy.Time.now()
-            joint_state_msg.name = body_js_mgr.get_jointstate_name() + arm_js_mgr.get_jointstate_name()
-            joint_state_msg.position = body_js_mgr.get_jointstate_position() + arm_js_mgr.get_jointstate_position()
-            joint_state_msg.velocity = []
-            joint_state_msg.effort = []
+            jointstate_msg.header.stamp = rospy.Time.now()
+            jointstate_msg.name = body_js_mgr.get_jointstate().name + arm_js_mgr.get_jointstate().name
+            jointstate_msg.position = body_js_mgr.get_jointstate().position + arm_js_mgr.get_jointstate().position
+            jointstate_msg.velocity = []
+            jointstate_msg.effort = []
 
-            pub.publish(joint_state_msg)
-            ros_looprate_mgr.sleep()  # this has rospy.spin()
+            pub.publish(jointstate_msg)
+            rate_mgr.sleep()  # this has rospy.spin()
     except rospy.ROSInterruptException:
         pass

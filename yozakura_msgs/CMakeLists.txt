@@ -49,6 +49,8 @@ add_message_files( FILES
   ArmState.msg
   BodyState.msg
   FlipperState.msg
+  WheelState.msg
+  BaseState.msg
 
   CO2SensorData.msg
   CurrentSensorData.msg
