@@ -12,7 +12,8 @@ from server import Server, Handler
 
 def main():
     try:
-        ip_address = get_ip_address("eth0")
+        # ip_address = get_ip_address("eth0")
+        ip_address = "localhost"
     except OSError:
         # ip_address = get_ip_address("enp2s0")
         ip_address = get_ip_address("wlan0")
