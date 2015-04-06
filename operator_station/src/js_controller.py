@@ -5,10 +5,12 @@ import rospy
 from js_state import Axis, Buttons, State
 from sensor_msgs.msg import Joy
 
-DEFAULT_JS_MAKER = "Elecom Wireless Gamepad"
+# remap-able
 DEFAULT_NODE_NAME = "js_controller"
 DEFAULT_TOPIC_NAME = "joy"
 DEFAULT_CONTROLLER_NAME = "main"
+# param-able
+DEFAULT_JS_MAKER = "Elecom Wireless Gamepad"
 
 
 class JoyStickController(object):
@@ -26,13 +28,10 @@ class JoyStickController(object):
             self.name = topic_name
 
     def joy_callback(self, joy_data):
-        self.dpad.x = joy_data.axes[5]
-        self.dpad.y = joy_data.axes[4]
-        self.lstick.x = joy_data.axes[1]
-        self.lstick.y = joy_data.axes[0]
-        self.rstick.x = joy_data.axes[3]
-        self.rstick.y = joy_data.axes[2]
-        self.buttons = joy_data.buttons
+        self.dpad.set_data(joy_data.axes[5], joy_data.axes[4])
+        self.lstick.set_data(joy_data.axes[1], joy_data.axes[0])
+        self.rstick.set_data(joy_data.axes[3], joy_data.axes[2])
+        self.buttons.set_data(joy_data.buttons)
 
     def activate(self):
         self.is_active = True

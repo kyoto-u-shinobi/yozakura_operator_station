@@ -26,6 +26,10 @@ class Axis(object):
         self.y = y
         self.inverted = inverted
 
+    def set_data(self, x, y):
+        self.x = x
+        self.y = y
+
     @property
     def direction(self):
         """
@@ -122,6 +126,9 @@ class Buttons(object):
         self.buttons = buttons
         self.pressed = [Buttons._button_list[Buttons._mappings[self._maker][i]]
                         for i, button in enumerate(self.buttons) if button]
+
+    def set_data(self, buttons):
+        self.buttons = buttons
 
     def is_pressed(self, button):
         """
