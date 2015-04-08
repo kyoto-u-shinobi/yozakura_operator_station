@@ -3,7 +3,7 @@
     <xacro:include filename="$(find yozakura_display)/robot/define.xacro"/>
     <xacro:include filename="$(find yozakura_display)/robot/config.xacro"/>
     <xacro:include filename="$(find yozakura_display)/robot/flipper_macro.xacro"/>
-    <xacro:include filename="$(find yozakura_display)/robot/starWheel_macro.xacro"/>
+    <xacro:include filename="$(find yozakura_display)/robot/wheel_macro.xacro"/>
     <xacro:include filename="$(find yozakura_display)/robot/armjack_left_macro.xacro"/>
     <xacro:include filename="$(find yozakura_display)/robot/armjack_right_macro.xacro"/>
 
@@ -37,7 +37,7 @@
             <origin rpy="0 0 0"
                     xyz="0 0 0"/>
             <geometry>
-                <mesh filename="${robotPackagePath}/${modelDataResourseFolder}/body_front.stl"/>
+                <mesh filename="${robotPackagePath}/${modelDataResourseFolder}/body_front.dae"/>
             </geometry>
         </visual>
     </link>
@@ -57,7 +57,7 @@
             <origin rpy="0 0 0"
                     xyz="${-bodyLink_length/2.0} 0 ${bodyFront_height/2.0}"/>
             <geometry>
-                <mesh filename="${robotPackagePath}/${modelDataResourseFolder}/body_link.stl"/>
+                <mesh filename="${robotPackagePath}/${modelDataResourseFolder}/body_link.dae"/>
             </geometry>
         </visual>
     </link>
@@ -75,7 +75,7 @@
             <origin rpy="0 0 0"
                     xyz="${-bodyLink_length - bodyBack_depth/2.0} 0 ${bodyBack_height/2.0}"/>
             <geometry>
-                <mesh filename="${robotPackagePath}/${modelDataResourseFolder}/body_back.stl"/>
+                <mesh filename="${robotPackagePath}/${modelDataResourseFolder}/body_back.dae"/>
             </geometry>
         </visual>
     </link>
@@ -107,16 +107,11 @@
     <joint name="virtualjoint_arm_base" type="fixed">
         <origin rpy="0 0 0" xyz="${-armBase_fromBodyCenter_X} 0 ${bodyFront_height/2.0}"/>
         <parent link="body_front"/>
-        <child link="arm_base"/>
+        <child link="virtual_arm_base"/>
     </joint>
 
-    <link name="arm_base">
-        <visual>
-            <origin rpy="0 0 0" xyz="0 0 0"/>
-            <geometry>
-                <mesh filename="${robotPackagePath}/${modelDataResourseFolder}/arm_base.stl"/>
-            </geometry>
-        </visual>
+    <link name="virtual_arm_base">
+        <origin rpy="0 0 0" xyz="0 0 0"/>
     </link>
 
     <joint name="joint_arm_yaw" type="revolute">
@@ -125,7 +120,7 @@
                upper="${DEG2RAD*armYawAngle_max}" velocity="0.5"/>
         <origin rpy="0 0 0"
                 xyz="0 0 ${armYawStage_fromBodyTop}"/>
-        <parent link="arm_base"/>
+        <parent link="virtual_arm_base"/>
         <child link="arm_yaw"/>
     </joint>
 
@@ -134,7 +129,7 @@
             <origin rpy="0 0 0"
                     xyz="0 0 0"/>
             <geometry>
-                <mesh filename="${robotPackagePath}/${modelDataResourseFolder}/arm_yaw.stl"/>
+                <mesh filename="${robotPackagePath}/${modelDataResourseFolder}/arm_yaw.dae"/>
             </geometry>
         </visual>
     </link>
@@ -154,7 +149,7 @@
             <origin rpy="0 0 0"
                     xyz="${-armLinearAxis_fromPitchAxis} 0	${-armPitchAxis_fromYawStage + armLinearAxis_fromYawStage}"/>
             <geometry>
-                <mesh filename="${robotPackagePath}/${modelDataResourseFolder}/arm_pitch.stl"/>
+                <mesh filename="${robotPackagePath}/${modelDataResourseFolder}/arm_pitch.dae"/>
             </geometry>
         </visual>
     </link>
