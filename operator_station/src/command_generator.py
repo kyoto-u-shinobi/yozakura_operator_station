@@ -4,17 +4,23 @@ import logging
 
 import rospy
 from js_controller import JoyStickController
+from yozakura_msgs.msg import YozakuraCommand
 from operator_station.srv import InputModeSwitchService
 
 # remap-able names
 DEFAULT_INPUT_MODE_SWITCH_SERVICENAME = "input_mode_switcher"
+DEFAULT_PUB_COMMAND_TOPICNAME = "yozakura_command"
 
 
 class CommandGenerator(object):
-    def __init__(self, logger, main_jstopic_name, main_controller_name=None):
+    def __init__(self, logger, main_jstopic_name, main_controller_name="main"):
         self._logger = logger
+        self.main_controller_name = main_controller_name
         self.js_controllers = {}
-        self.add_controller(main_jstopic_name, main_controller_name)
+        self.add_controller(main_jstopic_name, self.main_controller_name)
+
+        self._ycommand = YozakuraCommand()
+        self._pub_command = rospy.Publisher(DEFAULT_PUB_COMMAND_TOPICNAME, YozakuraCommand, queue_size=10)
 
         # see: srv/InputModeSwitchService.srv
         self.js_mapping_mode = 1
@@ -24,10 +30,6 @@ class CommandGenerator(object):
             self._calc_speed_command_dual_stick_mode
         ]
 
-        if main_controller_name is not None:
-            self.main_controller_name = main_controller_name
-        else:
-            self.main_controller_name = "main"
 
     def add_controller(self, topic_name, controller_name=None):
         controller = JoyStickController(topic_name, controller_name)
@@ -45,14 +47,37 @@ class CommandGenerator(object):
         self.main_controller_name = req.main_controller_name
 
     def activate(self):
-        # run publishers for getting joystick data
-        for controller in self.js_controllers:
-            if not controller.is_active: controller.activate()
         # build server
         rospy.Service(DEFAULT_INPUT_MODE_SWITCH_SERVICENAME, InputModeSwitchService, self._input_mode_switching_handler)
+        # run publishers for getting joystick data
+        for controller in self.js_controllers.values():
+            if controller.is_active is not True:
+                controller.activate()
 
-    def get_jsstate(self):
-        return self.js_controllers[self.main_controller_name].state
+    def publish_command(self):
+        v, w, lflipper, rflipper = self.get_speed_commands()
+
+        # self._ycommand.header.stamp = rospy.get_time()
+
+        self._ycommand.arm_vel.is_ok = True
+        self._ycommand.arm_vel.top_angle = 0.0
+        self._ycommand.arm_vel.pitch = 0.0
+        self._ycommand.arm_vel.yaw = 0.0
+
+        self._ycommand.base_vel.linear.x = v
+        self._ycommand.base_vel.angular.z = w
+
+        self._ycommand.flipper_left_vel.is_ok = True
+        self._ycommand.flipper_left_vel.angle = lflipper
+        self._ycommand.flipper_right_vel.is_ok = True
+        self._ycommand.flipper_right_vel.angle = rflipper
+
+        self._pub_command.publish(self._ycommand)
+
+    def get_jsstate(self, controller_name=None):
+        if controller_name is not None:
+            self.main_controller_name = controller_name
+        return self.js_controllers[self.main_controller_name].state.data
 
     def get_input(self):
         dpad, lstick, rstick, buttons = self.get_jsstate()
@@ -77,6 +102,8 @@ class CommandGenerator(object):
         self._logger.debug("lx: {lx:9.7}  ly: {ly:9.7}".format(lx=lstick.x, ly=lstick.y))
 
         # Wheels
+        v = lstick.y
+        w = lstick.x
         if abs(lstick.y) == 0:  # Rotate in place
             lwheel = lstick.x
             rwheel = -lstick.x
@@ -105,7 +132,7 @@ class CommandGenerator(object):
         else:
             rflipper = 0
 
-        return lwheel, rwheel, lflipper, rflipper
+        return v, w, lflipper, rflipper
 
 
     def _calc_speed_command_dual_stick_mode(self, direction_flag):
@@ -120,8 +147,8 @@ class CommandGenerator(object):
         self._logger.debug("lx: {lx:9.7}  ly: {ly:9.7}".format(lx=lstick.x, ly=lstick.y))
 
         # Wheels
-        lwheel = rstick.y
-        rwheel = lstick.y
+        v = (rstick.y + lstick.y) / 2.0
+        w = (rstick.y - lstick.y) / 2.0
 
         # Flippers
         if buttons.all_pressed("L1", "L2"):
@@ -142,7 +169,7 @@ class CommandGenerator(object):
         else:
             rflipper = 0
 
-        return lwheel, rwheel, lflipper, rflipper
+        return v, w, lflipper, rflipper
 
 
 # -------------------------------------------------------------------------
@@ -156,6 +183,7 @@ if __name__ == "__main__":
         print(cmd_gen.get_jsstate())
         print(cmd_gen.get_input())
         print(cmd_gen.get_speed_commands())
+        cmd_gen.publish_command()
         rate_mgr.sleep()
 
 

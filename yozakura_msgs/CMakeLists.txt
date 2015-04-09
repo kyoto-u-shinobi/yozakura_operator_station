@@ -57,7 +57,7 @@ add_message_files( FILES
   HeatSensorData.msg
 
   YozakuraState.msg
-  YozakuraInput.msg
+  YozakuraCommand.msg
   YozakuraSensorData.msg
 )
 

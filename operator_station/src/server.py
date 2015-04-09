@@ -103,12 +103,6 @@ class Handler(SocketServer.BaseRequestHandler):
                 self._logger.info("Terminating client session")
                 break
 
-            elif data == "state":
-                reply = pickle.dumps(self.cmd_gen.get_jsstate())
-
-            elif data == "inputs":
-                reply = pickle.dumps(self.cmd_gen.get_input())
-
             elif data == "speeds":
                 reply = pickle.dumps(self.cmd_gen.get_speed_commands())
 
