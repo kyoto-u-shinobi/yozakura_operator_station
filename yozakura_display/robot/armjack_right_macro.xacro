@@ -20,7 +20,7 @@
 			<origin rpy="0 0 0" 
 							xyz="0 ${-armLinear_frame_length/2.0} 0"/>	
 			<geometry>
-				<mesh filename="${robotPackagePath}/${modelDataResourseFolder}/arm_linear_frame.stl"/>
+				<mesh filename="${robotPackagePath}/${modelDataResourseFolder}/arm_frame.dae"/>
 			</geometry>
 		</visual>
 	</link>
@@ -40,7 +40,7 @@
 			<origin rpy="0 0 0" 
 							xyz="0 ${armLinear_frame_length/2.0} 0"/>	
 			<geometry>
-				<mesh filename="${robotPackagePath}/${modelDataResourseFolder}/arm_linear_frame.stl"/>
+				<mesh filename="${robotPackagePath}/${modelDataResourseFolder}/arm_frame.dae"/>
 			</geometry>
 		</visual>
 	</link>

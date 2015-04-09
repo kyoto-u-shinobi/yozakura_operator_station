@@ -14,28 +14,28 @@ class BodyJointStateManager:
     '''
 
     def __init__(self):
-        self.bodyjoint_names = ['joint_body_front_pitch', 'joint_body_front_roll',
-                                'joint_body_back_pitch', 'joint_body_back_roll']
+        bodyjoint_names = ['joint_body_front_pitch', 'joint_body_front_roll',
+                           'joint_body_back_pitch', 'joint_body_back_roll']
 
-        self.flipperjoint_names = ['joint_flipper_left', 'joint_flipper_right']
+        flipperjoint_names = ['joint_flipper_left', 'joint_flipper_right']
 
-        self.wheeljoint_names = ['joint_starwheel_front', 'joint_starwheel_back']
+        wheeljoint_names = ['joint_starwheel_front', 'joint_starwheel_back']
 
         self.base_jointstate = JointState()
-        self.base_jointstate.name = self.bodyjoint_names + self.flipperjoint_names + self.wheeljoint_names
-        self.base_jointstate.position = [np.radians(0.0)] * len(self.base_jointstate.name)
+        self.base_jointstate.name = bodyjoint_names + flipperjoint_names + wheeljoint_names
+        # the return of np.rad2deg is numpy.array. map can convert numpy.array to list
+        self.base_jointstate.position = map(None, np.deg2rad([0.0] * len(self.base_jointstate.name)))
 
     def __base_callback(self, base_state):
         if base_state.is_ok:
-            self.base_jointstate.position = []
-            self.base_jointstate.position.append(np.radians(base_state.body_front.pitch))
-            self.base_jointstate.position.append(np.radians(base_state.body_front.roll))
-            self.base_jointstate.position.append(np.radians(base_state.body_back.pitch))
-            self.base_jointstate.position.append(np.radians(base_state.body_back.roll))
-            self.base_jointstate.position.append(np.radians(base_state.flipper_left))
-            self.base_jointstate.position.append(np.radians(base_state.flipper_right))
-            self.base_jointstate.position.append(np.radians(base_state.wheel_left))
-            self.base_jointstate.position.append(np.radians(base_state.wheel_right))
+            self.base_jointstate.position = map(None, np.deg2rad([base_state.body_front.pitch,
+                                                                  base_state.body_front.roll,
+                                                                  base_state.body_back.pitch - base_state.body_front.pitch,
+                                                                  base_state.body_back.roll - base_state.body_front.roll,
+                                                                  base_state.flipper_left.angle,
+                                                                  base_state.flipper_right.angle,
+                                                                  base_state.wheel_left.rotation_angle,
+                                                                  base_state.wheel_right.rotation_angle]))
 
     def get_jointstate(self):
         return self.base_jointstate

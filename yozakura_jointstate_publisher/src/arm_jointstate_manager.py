@@ -66,11 +66,10 @@ class ArmJointStateManager:
     def __arm_callback(self, arm_state):
         if arm_state.is_ok:
             jack_base_angle = np.deg2rad((360.0 - 2.0 * float(arm_state.top_angle)) / 2.0)
-            self.arm_jointstate.position = []
-            self.arm_jointstate.position.append(np.deg2rad(arm_state.yaw))
-            self.arm_jointstate.position.append(np.deg2rad(arm_state.pitch))
-            self.arm_jointstate.position.extend(self.__get_pos_jacks_arr_left(jack_base_angle))
-            self.arm_jointstate.position.extend(self.__get_pos_jacks_arr_right(jack_base_angle))
+            # np.deg2rad returns np.array. map can convert np.array to list
+            self.arm_jointstate.position = map(None, np.deg2rad([arm_state.yaw, arm_state.pitch])) \
+                                           + self.__get_pos_jacks_arr_left(jack_base_angle) \
+                                           + self.__get_pos_jacks_arr_right(jack_base_angle)
 
     def get_jointstate(self):
         return self.arm_jointstate
