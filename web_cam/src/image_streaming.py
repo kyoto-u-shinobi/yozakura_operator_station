@@ -13,41 +13,49 @@ http://venuschjp.blogspot.jp/2015/02/pythonopencvweb.html
 '''
 
 DEBUG = True
-
-AI_BALL_IP_ADDRESS = '192.168.2.1'
+DEFAULT_IP_ADDRESS = '192.168.2.1'
+DEFAULT_NODE_NAME = 'web_cam'
+DEFAULT_TOPIC_NAME = 'web_cam_img'
 
 
 class WebCamManager:
-    def __init__(self, _ipaddress, _nodename, _topicname):
+    def __init__(self, _ipaddress, _topicname):
         self.cvbridge = CvBridge()
         self.capture = cv2.VideoCapture('http://' + _ipaddress + '/?action=stream.mjpeg')
-        self.nodename = _nodename
         self.topicname = _topicname
 
     def open(self):
         return self.capture.isOpened()
 
-    def run(self):
-        rospy.init_node(self.nodename, anonymous=True)
-        pub_ros_image = rospy.Publisher(self.topicname, Image)
-        ros_looprate_manager = rospy.Rate(30)  # hz
+    def init_publisher(self):
+        self.pub_image = rospy.Publisher(self.topicname, Image)
 
-        while not rospy.is_shutdown():
-            has_image, cv_image = self.capture.read()
-            if has_image == False:
-                continue
-            try:
-                pub_ros_image.publish(self.cvbridge.cv2_to_imgmsg(cv_image, "bgr8"))
-            except CvBridgeError, e:
-                print e
-            ros_looprate_manager.sleep()
+    def publish_img(self):
+        has_image, cv_image = self.capture.read()
+        if has_image == False:
+            print('fail to grub image')
+        try:
+            self.pub_image.publish(self.cvbridge.cv2_to_imgmsg(cv_image, "bgr8"))
+        except CvBridgeError, e:
+            print e
 
-
+# --------------------------------------------
 if __name__ == '__main__':
-    web_cam_back = WebCamManager(AI_BALL_IP_ADDRESS, 'ai_ball', 'ai_ball_img')
-    if DEBUG: print 'initialize!'
-    if web_cam_back.open():
-        if DEBUG: print 'run!'
-        web_cam_back.run()
+    rospy.init_node(DEFAULT_NODE_NAME, anonymous=True)
+    rate_mgr = rospy.Rate(30)  # Hz
+    web_cam_ip = rospy.get_param('~ip_address', DEFAULT_IP_ADDRESS)
+
+    if (DEBUG): print('initializing...')
+    web_cam = WebCamManager(web_cam_ip, DEFAULT_TOPIC_NAME)
+    if (DEBUG): print('initialized!')
+
+    if not web_cam.open():
+        print('fail to open!')
     else:
-        print 'fail to open!'
+        if (DEBUG): print('run!')
+        while not rospy.is_shutdown():
+            web_cam.publish_img()
+            rate_mgr.sleep()
+
+
+

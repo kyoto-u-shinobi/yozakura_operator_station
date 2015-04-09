@@ -213,6 +213,9 @@ class Handler(SocketServer.BaseRequestHandler):
                                                   heat, co2)
                 self._sensor_data_sender.publish_data()
 
+                if rospy.is_shutdown():
+                    break
+
         finally:
             self._sensors_client.close()
 
