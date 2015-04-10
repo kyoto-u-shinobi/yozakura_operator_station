@@ -8,6 +8,6 @@
 	<node name="rviz" pkg="rviz" type="rviz"/>
 	<node name="urg" pkg="urg_node" type="urg_node">
             <param name="ip_address" value="192.168.54.170"/>
-            <param name="frame_id" value="root"/>
+            <param name="frame_id" value="body_front"/>
 	</node>  
 </launch>  
