@@ -1,6 +1,6 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-__author__ = 'matsunolab'
 
 import rospy
 from sensor_msgs.msg import CompressedImage
@@ -19,6 +19,8 @@ class Theta360Server:
     def initialize(self):
         if self.theta.open():
             self.theta.set_init_settings()
+            self.service = rospy.Service('theta_capture', ThetaCaptureService, self.handle_theta_capture)
+            print 'READY...'
             return True
         else:
             return False
@@ -43,16 +45,12 @@ class Theta360Server:
             image = self.theta.grab_currentest_image(self.RESIZED_IMAGE_FLAG)
             return ThetaCaptureServiceResponse(self.generate_imgmsg(image))
 
-    def main(self):
-        rospy.init_node('theta_capture_server')
-        service = rospy.Service('theta_capture', ThetaCaptureService, self.handle_theta_capture)
-        print 'READY...'
-        rospy.spin()
 
 # -------------------------------------------------------------------------
 if __name__ == "__main__":
+    rospy.init_node('theta_capture_server')
     theta_server = Theta360Server()
     if theta_server.initialize():
-        theta_server.main()
+        rospy.spin()
     else:
         print 'fail to initialize theta'

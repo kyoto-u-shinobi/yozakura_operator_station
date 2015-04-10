@@ -7,6 +7,7 @@ from js_state import Buttons
 from operator_station.srv import InputModeSwitchService
 
 # remap-able names
+DEFAULT_SERVER_NODENAME = "service_provider"
 DEFAULT_JOYSTICK_TOPICNAME = 'joy'
 DEFAULT_INPUT_MODE_SWITCH_SERVICENAME = "input_mode_switcher"
 DEFAULT_THETA_SHUTTER_SERVICENAME = "theta_capture"
@@ -65,4 +66,9 @@ class ServiceProvider(object):
         rospy.Subscriber(DEFAULT_JOYSTICK_TOPICNAME, Joy, self._js_callback)
 
 
-
+# -------------------------------------------------------------------------
+if __name__ == "__main__":
+    rospy.init_node(DEFAULT_SERVER_NODENAME)
+    service_provider = ServiceProvider()
+    service_provider.activate()
+    rospy.spin()

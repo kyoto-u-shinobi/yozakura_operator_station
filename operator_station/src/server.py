@@ -18,10 +18,16 @@ import signal
 import socket
 import SocketServer
 import time
+from exceptions import *
 
 import numpy as np
-from command_generator import CommandGenerator
+
+import rospy
+from yozakura_msgs.msg import YozakuraCommand
 from sensor_data_manager import SensorDataManager
+
+# remap-able
+DEFAULT_COMMAND_TOPICNAME = "yozakura_command"
 
 
 class Handler(SocketServer.BaseRequestHandler):
@@ -42,16 +48,57 @@ class Handler(SocketServer.BaseRequestHandler):
 
     """
 
+    class Command:
+        def __init__(self):
+            self.lwheel = 0.0
+            self.rwheel = 0.0
+            self.lflipper = 0.0
+            self.rflipper = 0.0
+            self.arm_linear = 0.0
+            self.arm_pitch = 0.0
+            self.arm_yaw = 0.0
+
+        def set_command(self, yozakura_command):
+            '''
+            command mapping function from YozakuraCommand
+            :param yozakura_command:
+            :return: commands for the RasPi
+            '''
+            if yozakura_command.base_vel_input_mode == 1:
+                self.lwheel = yozakura_command.wheel_left_vel
+                self.rwheel = yozakura_command.wheel_right_vel
+            elif yozakura_command.base_vel_input_mode == 2:
+                self.lwheel = yozakura_command.base_vel.linear.x
+                self.rwheel = yozakura_command.base_vel.angular.z
+            else:
+                self.lwheel = 0.0
+                self.rwheel = 0.0
+
+            self.lflipper = yozakura_command.flipper_left_vel
+            self.rflipper = yozakura_command.flipper_right_vel
+
+            self.arm_linear = yozakura_command.arm_vel.top_angle
+            self.arm_pitch = yozakura_command.arm_vel.pitch
+            self.arm_yaw = yozakura_command.arm_vel.yaw
+
+        def get_command(self):
+            return self.lwheel, self.rwheel, self.lflipper, self.rflipper
+
+
     def __init__(self, request, client_address, server):
-        self._logger = logging.getLogger("{client_ip}_handler".format(
-            client_ip=client_address[0]))
+        self._logger = logging.getLogger("{client_ip}_handler".format(client_ip=client_address[0]))
         self._logger.debug("New handler created")
 
-        self.cmd_gen = CommandGenerator(self._logger, 'joy', 'main')
-        self.cmd_gen.activate()
+        self.command = self.Command()
         self.sensor_mgr = SensorDataManager()
 
+        self.subscriber = rospy.Subscriber(DEFAULT_COMMAND_TOPICNAME, YozakuraCommand, self.command_callback)
+
         SocketServer.BaseRequestHandler.__init__(self, request, client_address, server)
+
+    def command_callback(self, ycommand):
+        self.command.set_command(ycommand)
+
 
     def handle(self):
         """
@@ -80,11 +127,12 @@ class Handler(SocketServer.BaseRequestHandler):
         self._sensors_client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self._sensors_client.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
         self._sensors_client.bind(("", 9999))
-        signal.signal(signal.SIGALRM, _sigalrm_handler)  # Initialize handler.
+        signal.signal(signal.SIGALRM, self._sigalrm_handler)  # Initialize handler.
 
         try:
             self._loop()
         finally:
+            self.subscriber.unregister()
             self._sensors_client.close()
             raise SystemExit
 
@@ -104,7 +152,7 @@ class Handler(SocketServer.BaseRequestHandler):
                 break
 
             elif data == "speeds":
-                reply = pickle.dumps(self.cmd_gen.get_speed_commands())
+                reply = pickle.dumps(self.command.get_command())
 
             elif data.split()[0] == "echo":
                 reply = " ".join(data.split()[1:])
@@ -191,7 +239,7 @@ class Handler(SocketServer.BaseRequestHandler):
 
         try:
             signal.setitimer(signal.ITIMER_REAL, delay, 0)  # Setup interrupt.
-            recv_msg = self._get_latest(size)
+            recv_msg = self._udp_get_latest(size)
         except (BlockingIOError, TimeoutError):
             pass
         finally:

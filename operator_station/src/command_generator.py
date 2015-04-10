@@ -55,7 +55,7 @@ class CommandGenerator(object):
                 controller.activate()
 
     def publish_command(self):
-        v, w, lflipper, rflipper = self.get_speed_commands()
+        base_vel_input_mode, vel1, vel2, lflipper, rflipper = self.get_speed_commands()
 
         # self._ycommand.header.stamp = rospy.get_time()
 
@@ -64,8 +64,22 @@ class CommandGenerator(object):
         self._ycommand.arm_vel.pitch = 0.0
         self._ycommand.arm_vel.yaw = 0.0
 
-        self._ycommand.base_vel.linear.x = v
-        self._ycommand.base_vel.angular.z = w
+        self._ycommand.base_vel_input_mode = base_vel_input_mode
+        if base_vel_input_mode is 1:
+            self._ycommand.wheel_left_vel = vel1
+            self._ycommand.wheel_right_vel = vel2
+            self._ycommand.base_vel.linear.x = 0.0
+            self._ycommand.base_vel.angular.z = 0.0
+        elif base_vel_input_mode is 2:
+            self._ycommand.wheel_left_vel = 0.0
+            self._ycommand.wheel_right_vel = 0.0
+            self._ycommand.base_vel.linear.x = vel1
+            self._ycommand.base_vel.angular.z = vel2
+        else:
+            self._ycommand.wheel_left_vel = 0.0
+            self._ycommand.wheel_right_vel = 0.0
+            self._ycommand.base_vel.linear.x = 0.0
+            self._ycommand.base_vel.angular.z = 0.0
 
         self._ycommand.flipper_left_vel.is_ok = True
         self._ycommand.flipper_left_vel.angle = lflipper
@@ -101,38 +115,34 @@ class CommandGenerator(object):
 
         self._logger.debug("lx: {lx:9.7}  ly: {ly:9.7}".format(lx=lstick.x, ly=lstick.y))
 
+        base_vel_input_mode = 1
+
         # Wheels
-        v = lstick.y
-        w = lstick.x
         if abs(lstick.y) == 0:  # Rotate in place
-            lwheel = lstick.x
-            rwheel = -lstick.x
+            lwheel = -lstick.y
+            rwheel = lstick.y
         else:
-            l_mult = (1 + lstick.x) / (1 + abs(lstick.x))
-            r_mult = (1 - lstick.x) / (1 + abs(lstick.x))
-            lwheel = -lstick.y * l_mult
-            rwheel = -lstick.y * r_mult
+            l_mult = (1 - lstick.y) / (1 + abs(lstick.y))
+            r_mult = (1 + lstick.y) / (1 + abs(lstick.y))
+            lwheel = lstick.x * l_mult
+            rwheel = lstick.x * r_mult
 
         # Flippers
-        if buttons.all_pressed("L1", "L2"):
-            lflipper = 0
-        elif buttons.is_pressed("L1"):
+        if buttons.is_pressed("L1") and (not buttons.is_pressed("L2")):
             lflipper = 1
-        elif buttons.is_pressed("L2"):
+        elif (not buttons.is_pressed("L1")) and buttons.is_pressed("L2"):
             lflipper = -1
         else:
             lflipper = 0
 
-        if buttons.all_pressed("R1", "R2"):
-            rflipper = 0
-        elif buttons.is_pressed("R1"):
+        if buttons.is_pressed("R1") and (not buttons.is_pressed("R2")):
             rflipper = 1
-        elif buttons.is_pressed("R2"):
+        elif (not buttons.is_pressed("R1")) and buttons.is_pressed("R2"):
             rflipper = -1
         else:
             rflipper = 0
 
-        return v, w, lflipper, rflipper
+        return base_vel_input_mode, lwheel, rwheel, lflipper, rflipper
 
 
     def _calc_speed_command_dual_stick_mode(self, direction_flag):
@@ -146,30 +156,28 @@ class CommandGenerator(object):
 
         self._logger.debug("lx: {lx:9.7}  ly: {ly:9.7}".format(lx=lstick.x, ly=lstick.y))
 
+        base_vel_input_mode = 1
+
         # Wheels
-        v = (rstick.y + lstick.y) / 2.0
-        w = (rstick.y - lstick.y) / 2.0
+        lwheel = rstick.X
+        rwheel = lstick.X
 
         # Flippers
-        if buttons.all_pressed("L1", "L2"):
-            lflipper = 0
-        elif buttons.is_pressed("L1"):
+        if buttons.is_pressed("L1") and (not buttons.is_pressed("L2")):
             lflipper = 1
-        elif buttons.is_pressed("L2"):
+        elif (not buttons.is_pressed("L1")) and buttons.is_pressed("L2"):
             lflipper = -1
         else:
             lflipper = 0
 
-        if buttons.all_pressed("R1", "R2"):
-            rflipper = 0
-        elif buttons.is_pressed("R1"):
+        if buttons.is_pressed("R1") and (not buttons.is_pressed("R2")):
             rflipper = 1
-        elif buttons.is_pressed("R2"):
+        elif (not buttons.is_pressed("R1")) and buttons.is_pressed("R2"):
             rflipper = -1
         else:
             rflipper = 0
 
-        return v, w, lflipper, rflipper
+        return base_vel_input_mode, lwheel, rwheel, lflipper, rflipper
 
 
 # -------------------------------------------------------------------------
@@ -180,9 +188,9 @@ if __name__ == "__main__":
 
     rate_mgr = rospy.Rate(10)  # hz
     while not rospy.is_shutdown():
-        print(cmd_gen.get_jsstate())
-        print(cmd_gen.get_input())
-        print(cmd_gen.get_speed_commands())
+        # print(cmd_gen.get_jsstate())
+        # print(cmd_gen.get_input())
+        # print(cmd_gen.get_speed_commands())
         cmd_gen.publish_command()
         rate_mgr.sleep()
 

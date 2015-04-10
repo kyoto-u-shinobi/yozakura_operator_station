@@ -28,6 +28,7 @@ class JoyStickController(object):
             self.name = topic_name
 
     def joy_callback(self, joy_data):
+        # x: vertical, y: horizontal
         self.dpad.set_data(joy_data.axes[5], joy_data.axes[4])
         self.lstick.set_data(joy_data.axes[1], joy_data.axes[0])
         self.rstick.set_data(joy_data.axes[3], joy_data.axes[2])
