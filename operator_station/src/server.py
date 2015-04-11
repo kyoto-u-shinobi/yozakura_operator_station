@@ -50,13 +50,9 @@ class Handler(SocketServer.BaseRequestHandler):
 
     class Command:
         def __init__(self):
-            self.lwheel = 0.0
-            self.rwheel = 0.0
-            self.lflipper = 0.0
-            self.rflipper = 0.0
-            self.arm_linear = 0.0
-            self.arm_pitch = 0.0
-            self.arm_yaw = 0.0
+            self.lwheel, self.rwheel = 0.0, 0.0
+            self.lflipper, self.rflipper = 0.0, 0.0
+            self.arm_linear, self.arm_pitch, self.arm_yaw = 0.0, 0.0, 0.0
 
         def set_command(self, yozakura_command):
             '''
@@ -89,15 +85,16 @@ class Handler(SocketServer.BaseRequestHandler):
         self._logger = logging.getLogger("{client_ip}_handler".format(client_ip=client_address[0]))
         self._logger.debug("New handler created")
 
-        self.command = self.Command()
-        self.sensor_mgr = SensorDataManager()
+        self._command = self.Command()
+        self._sensor_mgr = SensorDataManager()
 
-        self.subscriber = rospy.Subscriber(DEFAULT_COMMAND_TOPICNAME, YozakuraCommand, self.command_callback)
+        self._subscriber = rospy.Subscriber(DEFAULT_COMMAND_TOPICNAME, YozakuraCommand, self._command_callback)
 
         SocketServer.BaseRequestHandler.__init__(self, request, client_address, server)
 
-    def command_callback(self, ycommand):
-        self.command.set_command(ycommand)
+
+    def _command_callback(self, ycommand):
+        self._command.set_command(ycommand)
 
 
     def handle(self):
@@ -112,10 +109,7 @@ class Handler(SocketServer.BaseRequestHandler):
         objects.
 
         Requests handled:
-            - state : Reply with the state of the controller.
-            - inputs : Reply with the raw input data from the state.
-            - speeds : Perform calculations and send the required motor speed
-              data.
+            - speeds : Perform calculations and send the required motor speed data.
             - echo : Reply with what the client has said.
             - print : ``echo``, and print to ``stdout``.
 
@@ -126,13 +120,13 @@ class Handler(SocketServer.BaseRequestHandler):
 
         self._sensors_client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self._sensors_client.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
-        self._sensors_client.bind(("", 9999))
+        self._sensors_client.bind(("", 9998))
         signal.signal(signal.SIGALRM, self._sigalrm_handler)  # Initialize handler.
 
         try:
             self._loop()
         finally:
-            self.subscriber.unregister()
+            self._subscriber.unregister()
             self._sensors_client.close()
             raise SystemExit
 
@@ -141,6 +135,7 @@ class Handler(SocketServer.BaseRequestHandler):
         while True:
             try:
                 data = self.request.recv(64).decode().strip()
+                print data
             except socket.timeout:
                 self._logger.warning("Lost connection to robot")
                 self._logger.info("Robot will shut down motors")
@@ -152,7 +147,7 @@ class Handler(SocketServer.BaseRequestHandler):
                 break
 
             elif data == "speeds":
-                reply = pickle.dumps(self.command.get_command())
+                reply = pickle.dumps(self._command.get_command())
 
             elif data.split()[0] == "echo":
                 reply = " ".join(data.split()[1:])
@@ -172,13 +167,14 @@ class Handler(SocketServer.BaseRequestHandler):
 
             # Receive sensor data
             raw_data, address = self._udp_receive(delay=0.01, size=1024)
+
             try:
                 adc_data, current_data, pose_data = pickle.loads(raw_data)
                 self._log_sensor_data(adc_data, current_data, pose_data)
 
                 # set data and publish
-                self.sensor_mgr.set_data(adc_data[0:2], current_data, pose_data)
-                self.sensor_mgr.publish_data()
+                self._sensor_mgr.set_data(adc_data[0:2], current_data, pose_data)
+                self._sensor_mgr.publish_data()
             except (AttributeError, EOFError, IndexError, TypeError):
                 self._logger.debug("No or bad data received from robot")
 
@@ -206,11 +202,10 @@ class Handler(SocketServer.BaseRequestHandler):
 
         """
         data = []
-        input_ready, o, e = select.select([self._server_client], [], [], 0)  # Check ready.
-
+        input_ready, o, e = select.select([self._sensors_client], [], [], 0)  # Check ready.
         while input_ready:
             data.append(input_ready[0].recv(size))  # Read once.
-            input_ready, o, e = select.select([self._server_client], [], [], 0)  # Check ready.
+            input_ready, o, e = select.select([self._sensors_client], [], [], 0)  # Check ready.
 
         if not data:
             return None
