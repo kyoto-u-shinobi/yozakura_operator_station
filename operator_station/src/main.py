@@ -10,15 +10,20 @@ import rospy
 from common.networking import get_ip_address
 from server import Server, Handler
 
+IS_LOCAL_TEST = True
+
 
 def main():
-    try:
-        ip_address = get_ip_address("eth0")
-    except OSError:
-        # ip_address = get_ip_address("enp2s0")
-        ip_address = get_ip_address("wlan0")
-    # server = Server(("localhost", 9999), Handler)
-    server = Server((ip_address, 9999), Handler)
+    print(IS_LOCAL_TEST)
+    if IS_LOCAL_TEST is True:
+        server = Server(("localhost", 9999), Handler)
+    else:
+        try:
+            ip_address = get_ip_address("eth0")
+        except OSError:
+            # ip_address = get_ip_address("enp2s0")
+            ip_address = get_ip_address("wlan0")
+        server = Server((ip_address, 9999), Handler)
 
     logging.debug("Initializing controllers")
 

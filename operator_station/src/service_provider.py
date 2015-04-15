@@ -11,6 +11,7 @@ DEFAULT_SERVER_NODENAME = "service_provider"
 DEFAULT_JOYSTICK_TOPICNAME = 'joy'
 DEFAULT_INPUT_MODE_SWITCH_SERVICENAME = "input_mode_switcher"
 DEFAULT_THETA_SHUTTER_SERVICENAME = "theta_capture"
+
 # param-able
 DEFAULT_JS_MAKER = "Elecom Wireless Gamepad"
 

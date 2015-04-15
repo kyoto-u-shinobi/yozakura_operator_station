@@ -119,7 +119,6 @@ class Handler(SocketServer.BaseRequestHandler):
         """
         self._logger.info("Connected to client")
         self.request.settimeout(0.5)  # seconds
-        self._sticks_timestamp = self._reverse_timestamp = time.time()
 
         self._sensors_client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self._sensors_client.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
@@ -138,7 +137,6 @@ class Handler(SocketServer.BaseRequestHandler):
         while not rospy.is_shutdown():
             try:
                 data = self.request.recv(64).decode().strip()
-                #print("Received {}".format(data))
             except socket.error:
                 print("Bad data")
                 continue

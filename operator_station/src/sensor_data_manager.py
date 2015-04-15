@@ -8,8 +8,8 @@ from yozakura_msgs.msg import YozakuraSensorData, YozakuraState
 
 
 # remap-able names
-DEFAULT_STATE_TOPIC_NAME = "state"
-DEFAULT_SENSORDATA_TOPIC_NAME = "sensor_data"
+DEFAULT_STATE_TOPIC_NAME = "yozakura_state"
+DEFAULT_SENSORDATA_TOPIC_NAME = "yozakura_sensor_data"
 
 
 class SensorDataManager(object):
