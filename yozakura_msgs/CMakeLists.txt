@@ -57,7 +57,7 @@ add_message_files( FILES
   HeatSensorData.msg
 
   YozakuraState.msg
-  YozakuraInput.msg
+  YozakuraCommand.msg
   YozakuraSensorData.msg
 )
 
@@ -95,7 +95,7 @@ generate_messages(
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES yozakura_msgs
- CATKIN_DEPENDS geometry_msgs sensor_msgs std_msgs
+ CATKIN_DEPENDS geometry_msgs sensor_msgs std_msgs message_runtime
 #  DEPENDS system_lib
 )
 

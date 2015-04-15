@@ -1,6 +1,0 @@
-Header header
-
-ArmState arm_vel
-FlipperState flipper_left_vel
-FlipperState flipper_right_vel
-geometry_msgs/Twist base_vel

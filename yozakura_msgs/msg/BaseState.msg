@@ -1,5 +1,3 @@
-bool is_ok
-
 BodyState body_front
 BodyState body_back
 

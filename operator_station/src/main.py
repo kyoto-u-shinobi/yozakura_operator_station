@@ -5,25 +5,22 @@
 
 
 import logging
+import rospy
 
 from common.networking import get_ip_address
-from controller import Controller
 from server import Server, Handler
 
 
 def main():
     try:
-        # ip_address = get_ip_address("eth0")
-        ip_address = "localhost"
+        ip_address = get_ip_address("eth0")
     except OSError:
         # ip_address = get_ip_address("enp2s0")
         ip_address = get_ip_address("wlan0")
+    # server = Server(("localhost", 9999), Handler)
     server = Server((ip_address, 9999), Handler)
 
     logging.debug("Initializing controllers")
-
-    stick_body = Controller(0, name="main")
-    server.add_controller(stick_body)
 
     try:
         logging.debug("Starting server")
@@ -32,7 +29,6 @@ def main():
         raise
     finally:
         logging.info("Shutting down...")
-        Controller.shutdown_all()
     logging.info("All done")
 
 
