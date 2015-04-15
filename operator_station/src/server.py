@@ -14,7 +14,6 @@ simultaneously.
 import logging
 import pickle
 import select
-import signal
 import socket
 import SocketServer
 import time
@@ -120,8 +119,7 @@ class Handler(SocketServer.BaseRequestHandler):
 
         self._sensors_client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self._sensors_client.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
-        self._sensors_client.bind(("", 9998))
-        signal.signal(signal.SIGALRM, self._sigalrm_handler)  # Initialize handler.
+        self._sensors_client.bind(("", 9999))
 
         try:
             self._loop()
@@ -135,11 +133,13 @@ class Handler(SocketServer.BaseRequestHandler):
         while True:
             try:
                 data = self.request.recv(64).decode().strip()
-                print data
+                print("Received {}".format(data))
             except socket.timeout:
                 self._logger.warning("Lost connection to robot")
                 self._logger.info("Robot will shut down motors")
+                print("Lost connection")
                 continue
+
             self._logger.debug('Received: "{data}"'.format(data=data))
 
             if data == "":  # Client exited safely.
@@ -166,17 +166,19 @@ class Handler(SocketServer.BaseRequestHandler):
                 self.request.sendall(reply)
 
             # Receive sensor data
-            raw_data, address = self._udp_receive(delay=0.01, size=1024)
+            raw_data = self._udp_receive(delay=0.01, size=1024)
 
             try:
                 adc_data, current_data, pose_data = pickle.loads(raw_data)
                 self._log_sensor_data(adc_data, current_data, pose_data)
+                print(adc_data, current_data, pose_data)
 
                 # set data and publish
                 self._sensor_mgr.set_data(adc_data[0:2], current_data, pose_data)
                 self._sensor_mgr.publish_data()
             except (AttributeError, EOFError, IndexError, TypeError):
                 self._logger.debug("No or bad data received from robot")
+                print("No or bad data received from robot")
 
     def _sigalrm_handler(signum, frame):
         """The handler for SIGALRM."""
@@ -233,12 +235,9 @@ class Handler(SocketServer.BaseRequestHandler):
         recv_msg = None
 
         try:
-            signal.setitimer(signal.ITIMER_REAL, delay, 0)  # Setup interrupt.
             recv_msg = self._udp_get_latest(size)
-        except (BlockingIOError, TimeoutError):
+        except BlockingIOError:
             pass
-        finally:
-            signal.alarm(0)  # Cancel interrupt.
 
         return recv_msg
 
@@ -311,6 +310,7 @@ class Server(SocketServer.ForkingMixIn, SocketServer.TCPServer):
         self._logger.debug("Creating server")
 
         self._logger.info("Listening to port {}".format(server_address[1]))
+        print("Listening to port {}".format(server_address[1]))
 
     def serve_forever(self, poll_interval=0.5):
         """

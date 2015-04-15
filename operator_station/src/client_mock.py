@@ -33,7 +33,7 @@ class Client(object):
 
             try:
                 lwheel, rwheel, lflipper, rflipper = pickle.loads(result)
-                print lwheel, rwheel, lflipper, rflipper
+                print( lwheel, rwheel, lflipper, rflipper)
             except EOFError:
                 continue
             adc_data = [1.0, 2.0]
