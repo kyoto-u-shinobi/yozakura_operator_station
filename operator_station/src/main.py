@@ -12,13 +12,13 @@ from server import Server, Handler
 
 
 def main():
-    # try:
-    # ip_address = get_ip_address("eth0")
-    # except OSError:
-    #     # ip_address = get_ip_address("enp2s0")
-    #     ip_address = get_ip_address("wlan0")
-    server = Server(("localhost", 9999), Handler)
-    # server = Server((ip_address, 9999), Handler)
+    try:
+        ip_address = get_ip_address("eth0")
+    except OSError:
+        # ip_address = get_ip_address("enp2s0")
+        ip_address = get_ip_address("wlan0")
+    # server = Server(("localhost", 9999), Handler)
+    server = Server((ip_address, 9999), Handler)
 
     logging.debug("Initializing controllers")
 

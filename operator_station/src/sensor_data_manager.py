@@ -18,6 +18,7 @@ class SensorDataManager(object):
         self._pub_ystate = rospy.Publisher(DEFAULT_STATE_TOPIC_NAME, YozakuraState, queue_size=10)
 
         self._ysensor_data = YozakuraSensorData()
+        #print(self._ystate)
         self._pub_ysensor_data = rospy.Publisher(DEFAULT_SENSORDATA_TOPIC_NAME, YozakuraSensorData, queue_size=10)
 
     def publish_data(self):
@@ -25,6 +26,7 @@ class SensorDataManager(object):
         self._pub_ysensor_data.publish(self._ysensor_data)
 
     def _convert_data(self, new_raw_data, current_data, scale, offset):
+        #print(new_raw_data, current_data)
         if new_raw_data is None:
             return False, current_data
         else:
@@ -65,6 +67,8 @@ class SensorDataManager(object):
 
 
     def set_data(self, flipper_angles, current_sensor_data, imu_sensor_data):
+        #print(flipper_angles, current_sensor_data, imu_sensor_data)
+
         self._set_flipper_angles(self._ystate.base.flipper_left, flipper_angles[0], 1.0, 0.0)
         self._set_flipper_angles(self._ystate.base.flipper_right, flipper_angles[1], 1.0, 0.0)
 
@@ -75,7 +79,10 @@ class SensorDataManager(object):
         self._set_current_sensor_data(self._ysensor_data.flipper_right, rflip, 1.0, 0.0, 1.0, 0.0)
         self._set_current_sensor_data(self._ysensor_data.battery, battery, 1.0, 0.0, 1.0, 0.0)
 
-        front, back = np.rad2deg(imu_sensor_data)
+	try:
+	    front, back = np.rad2deg(imu_sensor_data)
+        except AttributeError:
+            front = back = [None, None, None]
         self._set_pose_sensor(self._ystate.base.body_front, front, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0)
         self._set_pose_sensor(self._ystate.base.body_back, back, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0)
 

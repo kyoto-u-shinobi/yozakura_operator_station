@@ -119,9 +119,9 @@ class CommandGenerator(object):
         base_vel_input_mode = 1
 
         # Wheels
-        if abs(lstick.y) == 0:  # Rotate in place
-            lwheel = -lstick.x
-            rwheel = lstick.x
+        if abs(lstick.x) == 0:  # Rotate in place
+            lwheel = -lstick.y
+            rwheel = lstick.y
         else:
             l_mult = (1 - lstick.y) / (1 + abs(lstick.y))
             r_mult = (1 + lstick.y) / (1 + abs(lstick.y))
