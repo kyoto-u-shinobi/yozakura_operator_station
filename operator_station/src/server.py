@@ -70,8 +70,10 @@ class Handler(SocketServer.BaseRequestHandler):
                 self.lwheel = 0.0
                 self.rwheel = 0.0
 
-            self.lflipper = yozakura_command.flipper_left_vel
-            self.rflipper = yozakura_command.flipper_right_vel
+            print(self.lwheel)
+
+            self.lflipper = yozakura_command.flipper_left_vel.angle
+            self.rflipper = yozakura_command.flipper_right_vel.angle
 
             self.arm_linear = yozakura_command.arm_vel.top_angle
             self.arm_pitch = yozakura_command.arm_vel.pitch
@@ -82,18 +84,19 @@ class Handler(SocketServer.BaseRequestHandler):
 
 
     def __init__(self, request, client_address, server):
+
+        rospy.init_node('operator_station', anonymous=True)
+        self._subscriber = rospy.Subscriber(DEFAULT_COMMAND_TOPICNAME, YozakuraCommand, self._command_callback)
+
         self._logger = logging.getLogger("{client_ip}_handler".format(client_ip=client_address[0]))
         self._logger.debug("New handler created")
 
         self._command = self.Command()
         self._sensor_mgr = SensorDataManager()
-
         SocketServer.BaseRequestHandler.__init__(self, request, client_address, server)
 
 
     def _command_callback(self, ycommand):
-        print('received command')
-        print(ycommand)
         self._command.set_command(ycommand)
 
 
@@ -121,8 +124,6 @@ class Handler(SocketServer.BaseRequestHandler):
         self._sensors_client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self._sensors_client.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
         self._sensors_client.bind(("", 9999))
-
-        self._subscriber = rospy.Subscriber(DEFAULT_COMMAND_TOPICNAME, YozakuraCommand, self._command_callback)
 
         try:
             self._loop()
@@ -175,7 +176,7 @@ class Handler(SocketServer.BaseRequestHandler):
             try:
                 adc_data, current_data, pose_data = pickle.loads(raw_data)
                 self._log_sensor_data(adc_data, current_data, pose_data)
-                print(adc_data, current_data, pose_data)
+                # print(adc_data, current_data, pose_data)
 
                 # set data and publish
                 self._sensor_mgr.set_data(adc_data[0:2], current_data, pose_data)

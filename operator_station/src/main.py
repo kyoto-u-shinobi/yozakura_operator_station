@@ -12,8 +12,6 @@ from server import Server, Handler
 
 
 def main():
-    rospy.init_node('operator_station', anonymous=True)
-
     # try:
     # ip_address = get_ip_address("eth0")
     # except OSError:

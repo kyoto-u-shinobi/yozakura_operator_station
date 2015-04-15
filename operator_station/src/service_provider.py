@@ -41,22 +41,24 @@ class ServiceProvider(object):
 
         self.input_mode = self.InputMode(1, True, "main")
         self.is_active = False
-        self.current_time = rospy.Time.now()
+        self.switched_time = rospy.Time.now()
 
     def _js_callback(self, joy_data):
         buttons = Buttons(rospy.get_param('~js_maker', DEFAULT_JS_MAKER), joy_data.buttons)
 
-        if self.current_time - joy_data.header.stamp >= 1.0:
-            self.current_time = joy_data.header.stamp
+        print(self.switched_time.secs)
+        print(joy_data.header.stamp.secs)
+        if joy_data.header.stamp.secs - self.switched_time.secs >= 1.0:
             # switch js_mapping_mode
             if buttons.is_pressed("L3"):
+                self.switched_time = joy_data.header.stamp
                 self.input_mode_switch_srv(self.input_mode.next_js_mapping_mode,
                                            self.input_mode.direction_flag,
                                            self.input_mode.main_controller_name)
 
             # switch direction_flag
             if buttons.is_pressed("R3"):
-                self.current_time = joy_data.header.stamp
+                self.switched_time = joy_data.header.stamp
                 self.input_mode_switch_srv(self.input_mode.js_mapping_mode,
                                            self.input_mode.next_direction_flag,
                                            self.input_mode.main_controller_name)

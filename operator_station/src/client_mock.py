@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
-import socket, pickle, time
+import socket, pickle, time, math
 
 
 class Client(object):
@@ -42,8 +42,8 @@ class Client(object):
                             [31.0, 32.0, 33.0],  # lflip
                             [41.0, 42.0, 43.0],  # rflip
                             [51.0, 52.0, 53.0]]  # battery
-            imu_data = [[101.0, 102.0, 103.0],  # front
-                        [201.0, 202.0, 203.0]]  # rear
+            imu_data = [[math.radians(101.0), math.radians(102.0), math.radians(103.0)],  # front
+                        [math.radians(201.0), math.radians(202.0), math.radians(203.0)]]  # rear
 
             self._sensors_server.sendto(pickle.dumps((adc_data, current_data, imu_data),
                                                      protocol=2),

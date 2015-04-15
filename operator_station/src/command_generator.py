@@ -42,6 +42,7 @@ class CommandGenerator(object):
         self.main_controller_name = name
 
     def _input_mode_switching_handler(self, req):
+        print(req)
         self.js_mapping_mode = req.js_mapping_mode
         self.direction_flag = req.direction_flag
         self.main_controller_name = req.main_controller_name
@@ -65,12 +66,12 @@ class CommandGenerator(object):
         self._ycommand.arm_vel.yaw = 0.0
 
         self._ycommand.base_vel_input_mode = base_vel_input_mode
-        if base_vel_input_mode is 1:
+        if base_vel_input_mode == 1:
             self._ycommand.wheel_left_vel = vel1
             self._ycommand.wheel_right_vel = vel2
             self._ycommand.base_vel.linear.x = 0.0
             self._ycommand.base_vel.angular.z = 0.0
-        elif base_vel_input_mode is 2:
+        elif base_vel_input_mode == 2:
             self._ycommand.wheel_left_vel = 0.0
             self._ycommand.wheel_right_vel = 0.0
             self._ycommand.base_vel.linear.x = vel1
@@ -119,8 +120,8 @@ class CommandGenerator(object):
 
         # Wheels
         if abs(lstick.y) == 0:  # Rotate in place
-            lwheel = -lstick.y
-            rwheel = lstick.y
+            lwheel = -lstick.x
+            rwheel = lstick.x
         else:
             l_mult = (1 - lstick.y) / (1 + abs(lstick.y))
             r_mult = (1 + lstick.y) / (1 + abs(lstick.y))
@@ -159,8 +160,8 @@ class CommandGenerator(object):
         base_vel_input_mode = 1
 
         # Wheels
-        lwheel = rstick.X
-        rwheel = lstick.X
+        lwheel = lstick.x
+        rwheel = rstick.x
 
         # Flippers
         if buttons.is_pressed("L1") and (not buttons.is_pressed("L2")):
@@ -186,7 +187,7 @@ if __name__ == "__main__":
     cmd_gen = CommandGenerator(logging, 'joy')
     cmd_gen.activate()
 
-    rate_mgr = rospy.Rate(10)  # hz
+    rate_mgr = rospy.Rate(30)  # hz
     while not rospy.is_shutdown():
         # print(cmd_gen.get_jsstate())
         # print(cmd_gen.get_input())
