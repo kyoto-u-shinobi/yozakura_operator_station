@@ -106,7 +106,7 @@ class Buttons(object):
     known_makes : list of str
         A list containing all the makes whose mappings have been registered.
     """
-    _button_list = ("□", "✕", "○", "△",  # 0-3
+    _button_label_list = ("□", "✕", "○", "△",  # 0-3
                     "L1", "R1", "L2", "R2",  # 4-7
                     "select", "start",  # 8-9
                     "L3", "R3", "PS")  # 10-12
@@ -124,13 +124,11 @@ class Buttons(object):
     def __init__(self, maker, buttons):
         self._maker = maker
         self.buttons = buttons
-        self.pressed = [Buttons._button_list[Buttons._mappings[self._maker][i]]
-                        for i, button in enumerate(self.buttons) if button]
 
     def set_data(self, buttons):
         self.buttons = buttons
 
-    def is_pressed(self, button):
+    def is_pressed(self, button_label):
         """
         Whether a given button is pressed.
         Parameters
@@ -142,9 +140,11 @@ class Buttons(object):
         bool
             Whether the button is pressed.
         """
-        return button in self.pressed
+        pressed = [Buttons._button_label_list[Buttons._mappings[self._maker][i]]
+                   for i, button in enumerate(self.buttons) if button]
+        return button_label in pressed
 
-    def all_pressed(self, *buttons):
+    def all_pressed(self, *button_labels):
         """
         Whether all given buttons are pressed.
         Parameters
@@ -156,7 +156,7 @@ class Buttons(object):
         bool
             True if all the buttons are pressed.
         """
-        return all([self.is_pressed(button) for button in buttons])
+        return all([self.is_pressed(button) for button in button_labels])
 
     def __repr__(self):
         return str(self.buttons)

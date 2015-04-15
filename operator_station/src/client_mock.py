@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
-import socket, pickle
+import socket, pickle, time
 
 
 class Client(object):
@@ -48,6 +48,8 @@ class Client(object):
             self._sensors_server.sendto(pickle.dumps((adc_data, current_data, imu_data),
                                                      protocol=2),
                                         self.server_address)
+
+            time.sleep(0.2)  # to control this loop rate
 
     def shutdown(self):
         self.request.close()

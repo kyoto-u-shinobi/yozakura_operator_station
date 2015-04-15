@@ -23,6 +23,7 @@ import numpy as np
 
 import rospy
 from yozakura_msgs.msg import YozakuraCommand
+from std_msgs.msg import String
 from sensor_data_manager import SensorDataManager
 
 # remap-able
@@ -87,12 +88,12 @@ class Handler(SocketServer.BaseRequestHandler):
         self._command = self.Command()
         self._sensor_mgr = SensorDataManager()
 
-        self._subscriber = rospy.Subscriber(DEFAULT_COMMAND_TOPICNAME, YozakuraCommand, self._command_callback)
-
         SocketServer.BaseRequestHandler.__init__(self, request, client_address, server)
 
 
     def _command_callback(self, ycommand):
+        print('received command')
+        print(ycommand)
         self._command.set_command(ycommand)
 
 
@@ -121,6 +122,8 @@ class Handler(SocketServer.BaseRequestHandler):
         self._sensors_client.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
         self._sensors_client.bind(("", 9999))
 
+        self._subscriber = rospy.Subscriber(DEFAULT_COMMAND_TOPICNAME, YozakuraCommand, self._command_callback)
+
         try:
             self._loop()
         finally:
@@ -130,6 +133,7 @@ class Handler(SocketServer.BaseRequestHandler):
 
     def _loop(self):
         """The main handler loop."""
+
         while True:
             try:
                 data = self.request.recv(64).decode().strip()
