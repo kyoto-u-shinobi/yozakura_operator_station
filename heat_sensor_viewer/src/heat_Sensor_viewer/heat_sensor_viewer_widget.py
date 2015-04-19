@@ -6,7 +6,7 @@ import os
 
 from python_qt_binding import loadUi
 from python_qt_binding.QtCore import Qt, QTimer, Signal, Slot
-from python_qt_binding.QtGui import QTreeWidgetItem, QWidget, QPalette
+from python_qt_binding.QtGui import QTreeWidget, QTreeWidgetItem, QWidget, QPalette, QBrush
 import rospkg
 import rospy
 from rospy.exceptions import ROSException
@@ -16,6 +16,8 @@ from yozakura_msgs.msg import HeatSensorData
 
 class HeatSensorViewerWidget(QWidget):
     TOPIC_NAME = 'heat_sensor'
+    DATA_BW_RY = 100
+    DATA_BW_YG = 50
 
     def __init__(self, widget):
         super(HeatSensorViewerWidget, self).__init__()
@@ -75,11 +77,18 @@ class HeatSensorViewerWidget(QWidget):
 
     def _update_display_data(self, is_ok, data_list_left, data_list_right):
         def _set_items(tree_widget, data_list):
-            item = QTreeWidgetItem(tree_widget)
-            for data in data_list:
+            tree_widget.clear()
+            for idx, data in enumerate(data_list):
+                item = QTreeWidgetItem(tree_widget)
                 item.setText(0, str(data))
-                # item.setTextAlignment(0, Qt.AlignCenter)
-                # tree_widget.setCurrentItem(item)
+                item.setTextAlignment(0, Qt.AlignCenter)
+                if data > self.DATA_BW_RY:
+                    item.setBackground(0, self._red_palette.brush(QPalette.Base))
+                elif data < self.DATA_BW_YG:
+                    item.setBackground(0, self._green_palette.brush(QPalette.Base))
+                else:
+                    item.setBackground(0, self._yellow_palette.brush(QPalette.Base))
+                tree_widget.insertTopLevelItem(0, item)
 
         if is_ok is False:
             self.topic_edit.setPalette(self._red_palette)
