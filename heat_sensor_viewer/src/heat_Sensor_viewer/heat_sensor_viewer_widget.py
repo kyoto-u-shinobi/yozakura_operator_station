@@ -39,9 +39,21 @@ class HeatSensorViewerWidget(QWidget):
         self._updateTimer = QTimer(self)
         self._updateTimer.timeout.connect(self.timeout_callback)
 
+        self._update_display_data(None, range(32)[0:16], range(32)[16:32])
+
     def start(self):
+        def _set_items(tree_widget, data_list):
+            tree_widget.clear()
+            for idx, data in enumerate(data_list):
+                item = QTreeWidgetItem(tree_widget)
+                item.setText(0, str(data))
+                item.setTextAlignment(0, Qt.AlignCenter)
+                tree_widget.insertTopLevelItem(0, item)
+
         self._updateTimer.start(1000)
-        self._update_display_data(True, range(32)[0:16], range(32)[16:32])
+        _set_items(self.tree_column_left, [0.0]*16)
+        _set_items(self.tree_column_right, [0.0]*16)
+
 
     def stop(self):
         self._updateTimer.stop()
@@ -77,27 +89,24 @@ class HeatSensorViewerWidget(QWidget):
 
     def _update_display_data(self, is_ok, data_list_left, data_list_right):
         def _set_items(tree_widget, data_list):
-            tree_widget.clear()
             for idx, data in enumerate(data_list):
-                item = QTreeWidgetItem(tree_widget)
+                item = tree_widget.topLevelItem(idx)
                 item.setText(0, str(data))
-                item.setTextAlignment(0, Qt.AlignCenter)
                 if data > self.DATA_BW_RY:
                     item.setBackground(0, self._red_palette.brush(QPalette.Base))
                 elif data < self.DATA_BW_YG:
                     item.setBackground(0, self._green_palette.brush(QPalette.Base))
                 else:
                     item.setBackground(0, self._yellow_palette.brush(QPalette.Base))
-                tree_widget.insertTopLevelItem(0, item)
 
-        if is_ok is False:
+        if is_ok is not True:
             self.topic_edit.setPalette(self._red_palette)
         else:
-            if is_ok is not None:
-                self.topic_edit.setPalette(self._green_palette)
-
+            self.topic_edit.setPalette(self._green_palette)
             _set_items(self.tree_column_left, data_list_left)
             _set_items(self.tree_column_right, data_list_right)
+
+
 
 
 
