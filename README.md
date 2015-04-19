@@ -7,6 +7,15 @@
 $ roslaunch launchers main.launch
 ```
 したらオペステのメインのプログラムが立ち上がる．  
+3. ai-ballがすべてネットワーク上に接続されていれば，  
+```
+$ roslaunch launchers yozakura_cameras_streaming.launch
+```
+して，別端末で，
+```
+$ rqt
+```
+して，メニューperspectiveからimageを選択すればimage viewerが出る．  
 
 ## How to see theta images at local  
 https://github.com/thaga/IOTA
