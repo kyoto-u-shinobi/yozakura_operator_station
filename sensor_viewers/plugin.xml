@@ -1,0 +1,30 @@
+<library path="src">
+    <class name="HeatSensorViewer" type="heat_sensor_viewer.heat_sensor_viewer.HeatSensorViewer"
+           base_class_type="rqt_gui_py::Plugin">
+        <description>
+            A Python GUI plugin to introspect ROS topics.
+        </description>
+        <qtgui>
+            <group>
+                <label>Visualization</label>
+            </group>
+            <label>Themo data Viewer</label>
+            <icon type="theme">system-search</icon>
+            <statustip>A Python GUI plugin for monitoring ROS topics.</statustip>
+        </qtgui>
+    </class>
+    <class name="CO2SensorViewer" type="co2_sensor_viewer.co2_sensor_viewer.CO2SensorViewer"
+           base_class_type="rqt_gui_py::Plugin">
+        <description>
+            A Python GUI plugin to introspect ROS topics.
+        </description>
+        <qtgui>
+            <group>
+                <label>Visualization</label>
+            </group>
+            <label>CO2 data Viewer</label>
+            <icon type="theme">system-search</icon>
+            <statustip>A Python GUI plugin for monitoring ROS topics.</statustip>
+        </qtgui>
+    </class>
+</library>
