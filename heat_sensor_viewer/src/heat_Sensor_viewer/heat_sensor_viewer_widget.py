@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import division
-import os
+import os, time
 
 from python_qt_binding import loadUi
-from python_qt_binding.QtCore import Qt, QTimer, Signal, Slot
-from python_qt_binding.QtGui import QTreeWidget, QTreeWidgetItem, QWidget, QPalette, QBrush
+from python_qt_binding.QtCore import Qt, QTimer, Signal, Slot, QSize
+from python_qt_binding.QtGui import QTableWidget, QTableWidgetItem, QWidget, QPalette, QBrush, QAbstractItemView, QFont
 import rospkg
 import rospy
 from rospy.exceptions import ROSException
@@ -16,6 +16,13 @@ from yozakura_msgs.msg import HeatSensorData
 
 class HeatSensorViewerWidget(QWidget):
     TOPIC_NAME = 'heat_sensor'
+    MAX_COL = 4
+    MAX_ROW = 4
+    FONT = "Helvetica"
+    FONT_SIZE = 15
+    FONT_WEIGHT = 20
+    CELL_HEIGHT = 80
+    CELL_WIDTH = 80
     DATA_BW_RY = 100
     DATA_BW_YG = 50
 
@@ -28,7 +35,10 @@ class HeatSensorViewerWidget(QWidget):
         self._topic_name = self.TOPIC_NAME
         self.topic_edit.setText('/' + self._topic_name)
         self._subscriber = rospy.Subscriber(self._topic_name, HeatSensorData, self._heat_sensor_data_callback)
+        self.data_received_time = None
 
+        self._white_palette = QPalette()
+        self._white_palette.setColor(QPalette.Base, Qt.white)
         self._red_palette = QPalette()
         self._red_palette.setColor(QPalette.Base, Qt.red)
         self._yellow_palette = QPalette()
@@ -40,23 +50,38 @@ class HeatSensorViewerWidget(QWidget):
         self._updateTimer.timeout.connect(self.timeout_callback)
 
     def start(self):
-        def _set_items(tree_widget, data_list):
-            tree_widget.clear()
-            for idx, data in enumerate(data_list):
-                item = QTreeWidgetItem(tree_widget, str(data), QTreeWidgetItem.DontShowIndicator)
-                item.setTextAlignment(0, Qt.AlignCenter)
-                tree_widget.insertTopLevelItem(0, item)
+        self._updateTimer.start(1000)  # loop rate is 1000[ms]
+        self._initialize_table(self.table_left, [0.0] * (self.MAX_COL * self.MAX_ROW))
+        self._initialize_table(self.table_right, [0.0] * (self.MAX_COL * self.MAX_ROW))
 
-        self._updateTimer.start(1000)
-        _set_items(self.tree_column_left, [0.0] * 16)
-        _set_items(self.tree_column_right, [0.0] * 16)
+    def _initialize_table(self, table_widget, init_data_list):
 
+        table_widget.clear()
+        table_widget.setColumnCount(self.MAX_COL)
+        table_widget.setRowCount(self.MAX_ROW)
+        table_widget.setMinimumSize(QSize(self.MAX_COL * self.CELL_WIDTH * 1.2, self.MAX_ROW * self.CELL_HEIGHT * 1.2))
+        table_widget.setSelectionMode(QAbstractItemView.NoSelection)  # セル選択不可
+        table_widget.setEditTriggers(QAbstractItemView.NoEditTriggers)  # 編集不可
+
+        data_mat = [init_data_list[i * self.MAX_COL: (i + 1) * self.MAX_COL] for i in range(self.MAX_COL)]
+        for i in range(self.MAX_ROW):
+            for j in range(self.MAX_COL):
+                item = QTableWidgetItem(str(data_mat[i][j]), Qt.AlignCenter)
+                item.setTextAlignment(Qt.AlignCenter)
+                item.setSizeHint(QSize(self.CELL_WIDTH, self.CELL_HEIGHT))
+                item.setFont(QFont(self.FONT, self.FONT_SIZE, self.FONT_WEIGHT, italic=False))
+                table_widget.setItem(i, j, item)
+
+        table_widget.resizeColumnsToContents()
+        table_widget.resizeRowsToContents()
 
     def stop(self):
         self._updateTimer.stop()
 
     def timeout_callback(self):
-        pass
+        if self.data_received_time != None and time.time() - self.data_received_time > 3.0:
+            self._update_display_data(self.table_left, False, [None] * (self.MAX_COL * self.MAX_ROW))
+            self._update_display_data(self.table_right, False, [None] * (self.MAX_COL * self.MAX_ROW))
 
     # rqt override
     def save_settings(self, plugin_settings, instance_settings):
@@ -80,48 +105,37 @@ class HeatSensorViewerWidget(QWidget):
             self._subscriber = rospy.Subscriber(self._topic_name, HeatSensorData, self._heat_sensor_data_callback)
 
     def _heat_sensor_data_callback(self, heat_sensor_data):
-        self._update_display_data(heat_sensor_data.is_ok,
-                                  heat_sensor_data.data[0:16],
+        self.data_received_time = time.time()
+        self._update_display_data(self.table_left,
+                                  heat_sensor_data.is_ok,
+                                  heat_sensor_data.data[0:16])
+        self._update_display_data(self.table_right,
+                                  heat_sensor_data.is_ok,
                                   heat_sensor_data.data[16:32])
 
-    def _update_display_data(self, is_ok, data_list_left, data_list_right):
-        def _set_items(tree_widget, data_list):
-            for idx, data in enumerate(data_list):
-                item = tree_widget.topLevelItem(idx)
-                item.setText(0, str(data))
-                if data > self.DATA_BW_RY:
-                    item.setBackground(0, self._red_palette.brush(QPalette.Base))
-                elif data < self.DATA_BW_YG:
-                    item.setBackground(0, self._green_palette.brush(QPalette.Base))
-                else:
-                    item.setBackground(0, self._yellow_palette.brush(QPalette.Base))
+
+    def _update_display_data(self, table_widget, is_ok, data_list):
+        def _set_data(_is_ok, _data_mat):
+            for i in range(self.MAX_ROW):
+                for j in range(self.MAX_COL):
+                    item = table_widget.item(i, j)
+                    if not _is_ok:
+                        item.setBackground(self._white_palette.brush(QPalette.Base))
+                    else:
+                        item.setText(str(_data_mat[i][j]))
+                        if data_mat[i][j] < self.DATA_BW_YG:
+                            item.setBackground(self._green_palette.brush(QPalette.Base))
+                        elif self.DATA_BW_YG <= data_mat[i][j] < self.DATA_BW_RY:
+                            item.setBackground(self._yellow_palette.brush(QPalette.Base))
+                        else:
+                            item.setBackground(self._red_palette.brush(QPalette.Base))
 
         if is_ok is not True:
             self.topic_edit.setPalette(self._red_palette)
+            data_mat = [[None] * self.MAX_COL] * self.MAX_ROW
+            _set_data(False, data_mat)
         else:
             self.topic_edit.setPalette(self._green_palette)
-            _set_items(self.tree_column_left, data_list_left)
-            _set_items(self.tree_column_right, data_list_right)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            data_mat = [data_list[i * self.MAX_COL: (i + 1) * self.MAX_COL] for i in range(self.MAX_COL)]
+            _set_data(True, data_mat)
 
