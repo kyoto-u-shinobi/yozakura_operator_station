@@ -39,20 +39,17 @@ class HeatSensorViewerWidget(QWidget):
         self._updateTimer = QTimer(self)
         self._updateTimer.timeout.connect(self.timeout_callback)
 
-        self._update_display_data(None, range(32)[0:16], range(32)[16:32])
-
     def start(self):
         def _set_items(tree_widget, data_list):
             tree_widget.clear()
             for idx, data in enumerate(data_list):
-                item = QTreeWidgetItem(tree_widget)
-                item.setText(0, str(data))
+                item = QTreeWidgetItem(tree_widget, str(data), QTreeWidgetItem.DontShowIndicator)
                 item.setTextAlignment(0, Qt.AlignCenter)
                 tree_widget.insertTopLevelItem(0, item)
 
         self._updateTimer.start(1000)
-        _set_items(self.tree_column_left, [0.0]*16)
-        _set_items(self.tree_column_right, [0.0]*16)
+        _set_items(self.tree_column_left, [0.0] * 16)
+        _set_items(self.tree_column_right, [0.0] * 16)
 
 
     def stop(self):
