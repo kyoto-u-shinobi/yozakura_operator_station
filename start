@@ -1,0 +1,6 @@
+#!/bin/bash
+roslaunch launchers main.launch &
+rosrun rqt_gui rqt_gui --perspective=test1 &
+rosrun rqt_gui rqt_gui --perspective=test2 &
+rosrun rqt_gui rqt_gui --perspective=test3
+

@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<launch>
+    <node name="test3" pkg="rqt_gui" type="rqt_gui" output="screen">
+    </node>
+</launch>

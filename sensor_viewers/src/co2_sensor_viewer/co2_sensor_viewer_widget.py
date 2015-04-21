@@ -6,7 +6,7 @@ import os, time
 
 from python_qt_binding import loadUi
 from python_qt_binding.QtCore import Qt, QTimer, Signal, Slot, QSize
-from python_qt_binding.QtGui import QTableWidget, QTableWidgetItem, QWidget, QPalette, QBrush, QAbstractItemView, QFont
+from python_qt_binding.QtGui import QWidget, QPalette, QFont
 import rospkg
 import rospy
 from rospy.exceptions import ROSException

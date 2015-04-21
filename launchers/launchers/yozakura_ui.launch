@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <launch>
-    <node name="image_viewer" pkg="rqt_gui" type="rqt_gui" output="screen">
-        <param name="perspective" value="images"/>
+    <node name="test1" pkg="rqt_gui" type="rqt_gui" output="screen">
     </node>
 </launch>
