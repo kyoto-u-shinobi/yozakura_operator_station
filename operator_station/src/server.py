@@ -70,7 +70,7 @@ class Handler(SocketServer.BaseRequestHandler):
                 self.lwheel = 0.0
                 self.rwheel = 0.0
 
-            #print(self.lwheel)
+            # print(self.lwheel)
 
             self.lflipper = yozakura_command.flipper_left_vel.angle
             self.rflipper = yozakura_command.flipper_right_vel.angle
@@ -80,7 +80,10 @@ class Handler(SocketServer.BaseRequestHandler):
             self.arm_yaw = yozakura_command.arm_vel.yaw
 
         def get_command(self):
-            return self.lwheel, self.rwheel, self.lflipper, self.rflipper
+            arm_mode = 0
+            speeds = self.lwheel, self.rwheel, self.lflipper, self.rflipper
+            arms = arm_mode, self.arm_linear, self.arm_pitch, self.arm_yaw
+            return speeds, arms
 
 
     def __init__(self, request, client_address, server):
@@ -129,7 +132,7 @@ class Handler(SocketServer.BaseRequestHandler):
         finally:
             self._subscriber.unregister()
             self._sensors_client.close()
-            #raise SystemExit
+            # raise SystemExit
 
     def _loop(self):
         """The main handler loop."""
@@ -178,13 +181,13 @@ class Handler(SocketServer.BaseRequestHandler):
             try:
                 adc_data, current_data, pose_data, arm_data = pickle.loads(raw_data)
                 self._log_sensor_data(adc_data, current_data, pose_data)
-            
+
                 # set data and publish
                 self._sensor_mgr.set_data(adc_data[-2:], current_data, pose_data)
                 self._sensor_mgr.publish_data()
-            
+
             except (AttributeError, EOFError, IndexError, TypeError):
-                #self._logger.debug("No or bad data received from robot")
+                # self._logger.debug("No or bad data received from robot")
                 print("No or bad data received from robot")
 
     def _udp_get_latest(self, size=1, n_bytes=1):
@@ -268,15 +271,15 @@ class Handler(SocketServer.BaseRequestHandler):
         except AttributeError:
             front = rear = [0, 0, 0]
 
-        #print("lflipper: {lf:6.3f}  rflipper: {rf:6.3f}".format(lf=adc_data[0], rf=adc_data[1]))
-        #print("lwheel_current: {i:6.3f} A  {p:6.3f} W  {v:6.3f} V".format(i=lwheel[0], p=lwheel[1], v=lwheel[2]))
-        #print("rwheel_current: {i:6.3f} A  {p:6.3f} W  {v:6.3f} V".format(i=rwheel[0], p=rwheel[1], v=rwheel[2]))
-        #print("lflip_current: {i:6.3f} A  {p:6.3f} W  {v:6.3f} V".format(i=lflip[0], p=lflip[1], v=lflip[2]))
-        #print("rflip_current: {i:6.3f} A  {p:6.3f} W  {v:6.3f} V".format(i=rflip[0], p=rflip[1], v=rflip[2]))
-        #print("batt_current: {i:6.3f} A  {p:6.3f} W  {v:6.3f} V".format(i=battery[0], p=battery[1], v=battery[2]))
-        #print("front r: {r:6.3f}  p: {p:6.3f}  y: {y:6.3f}".format(r=front[0], p=front[1], y=front[2]))
-        #print("rear r: {r:6.3f}  p: {p:6.3f}  y: {y:6.3f}".format(r=rear[0], p=rear[1], y=rear[2]))
-        #print(20 * "=")
+            # print("lflipper: {lf:6.3f}  rflipper: {rf:6.3f}".format(lf=adc_data[0], rf=adc_data[1]))
+            # print("lwheel_current: {i:6.3f} A  {p:6.3f} W  {v:6.3f} V".format(i=lwheel[0], p=lwheel[1], v=lwheel[2]))
+            # print("rwheel_current: {i:6.3f} A  {p:6.3f} W  {v:6.3f} V".format(i=rwheel[0], p=rwheel[1], v=rwheel[2]))
+            # print("lflip_current: {i:6.3f} A  {p:6.3f} W  {v:6.3f} V".format(i=lflip[0], p=lflip[1], v=lflip[2]))
+            #print("rflip_current: {i:6.3f} A  {p:6.3f} W  {v:6.3f} V".format(i=rflip[0], p=rflip[1], v=rflip[2]))
+            #print("batt_current: {i:6.3f} A  {p:6.3f} W  {v:6.3f} V".format(i=battery[0], p=battery[1], v=battery[2]))
+            #print("front r: {r:6.3f}  p: {p:6.3f}  y: {y:6.3f}".format(r=front[0], p=front[1], y=front[2]))
+            #print("rear r: {r:6.3f}  p: {p:6.3f}  y: {y:6.3f}".format(r=rear[0], p=rear[1], y=rear[2]))
+            #print(20 * "=")
 
 
 class Server(SocketServer.ForkingMixIn, SocketServer.TCPServer):
