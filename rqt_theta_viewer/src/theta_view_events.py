@@ -2,11 +2,11 @@
 
 import sys, os
 import rospy
-from theta_service.srv import *
-
+from theta_service.srv import ThetaCaptureService
 from python_qt_binding.QtGui import QFileDialog, QImage
 
 GRAB_CURRENT_IMAGE = 1
+
 
 class ThetaViewEvents:
     def __init__(self, _parent):

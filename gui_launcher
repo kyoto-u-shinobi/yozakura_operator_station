@@ -1,0 +1,5 @@
+#!/bin/bash
+roslaunch launchers 3d_display.launch &
+rosrun rqt_gui rqt_gui --perspective=moving_viewer &
+rosrun rqt_gui rqt_gui --perspective=manipulating_viewer
+

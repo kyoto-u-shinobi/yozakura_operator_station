@@ -1,0 +1,4 @@
+#!/bin/bash
+roslaunch launchers main.launch &
+roslaunch launchers cameras_streaming
+

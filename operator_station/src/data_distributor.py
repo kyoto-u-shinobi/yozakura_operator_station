@@ -7,9 +7,10 @@ import rospy
 from yozakura_msgs.msg import YozakuraSensorData, HeatSensorData, CO2SensorData
 from std_msgs.msg import Float64
 
-# remap-able
 VOLT_DATA_NUM = 5
 DEFAULT_NODE_NAME = 'data_distributor'
+
+# remap-able
 DEFAULT_SUB_TOPIC_NAME = 'yozakura_sensor_data'
 DEFAULT_PUB_HEAT_TOPIC_NAME = 'heat_data'
 DEFAULT_PUB_CO2_TOPIC_NAME = 'co2_data'

@@ -4,17 +4,19 @@
 
 import rospy
 from sensor_msgs.msg import CompressedImage
-from theta_service.srv import *
+from theta_service.srv import ThetaCaptureService, ThetaCaptureServiceResponse
 from theta.theta import Theta
 
 
+RESIZED_IMAGE_FLAG = True
+
+
 class Theta360Server:
-    RESIZED_IMAGE_FLAG = True
     GRAB_CURRENT_IMAGE = 1
-    FRAME_ID = 'theta_camera'  # TODO: make it rosparam
 
     def __init__(self):
         self.theta = Theta()
+        self.resized_image_flag = rospy.get_param('~is_image_resized', RESIZED_IMAGE_FLAG)
 
     def initialize(self):
         if self.theta.open():
@@ -29,7 +31,6 @@ class Theta360Server:
         jpeg_img = CompressedImage()
         # data set
         jpeg_img.header.stamp = rospy.Time.now()
-        jpeg_img.header.frame_id = self.FRAME_ID
         jpeg_img.format = "jpeg"
         jpeg_img.data = image
         return jpeg_img
@@ -37,12 +38,12 @@ class Theta360Server:
     def handle_theta_capture(self, req):
         if req.capture_mode == self.GRAB_CURRENT_IMAGE:
             self.theta.shutter()
-            image = self.theta.grab_currentest_image(self.RESIZED_IMAGE_FLAG)
+            image = self.theta.grab_currentest_image(RESIZED_IMAGE_FLAG)
             print 'grab image!'
             return ThetaCaptureServiceResponse(self.generate_imgmsg(image))
         else:
             print 'grab image!'
-            image = self.theta.grab_currentest_image(self.RESIZED_IMAGE_FLAG)
+            image = self.theta.grab_currentest_image(RESIZED_IMAGE_FLAG)
             return ThetaCaptureServiceResponse(self.generate_imgmsg(image))
 
 
