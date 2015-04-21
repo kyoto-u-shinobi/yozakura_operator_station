@@ -176,7 +176,7 @@ class Handler(SocketServer.BaseRequestHandler):
             raw_data = self._udp_receive(size=1024)
 
             try:
-                adc_data, current_data, pose_data = pickle.loads(raw_data)
+                adc_data, current_data, pose_data, arm_data = pickle.loads(raw_data)
                 self._log_sensor_data(adc_data, current_data, pose_data)
             
                 # set data and publish
