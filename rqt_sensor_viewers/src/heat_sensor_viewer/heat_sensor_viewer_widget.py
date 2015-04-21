@@ -29,7 +29,7 @@ class HeatSensorViewerWidget(QWidget):
     def __init__(self, widget):
         super(HeatSensorViewerWidget, self).__init__()
         rospkg_pack = rospkg.RosPack()
-        ui_file = os.path.join(rospkg_pack.get_path('sensor_viewers'), 'resource', 'HeatSensorViewer.ui')
+        ui_file = os.path.join(rospkg_pack.get_path('rqt_sensor_viewers'), 'resource', 'HeatSensorViewer.ui')
         loadUi(ui_file, self)
 
         self._topic_name = self.TOPIC_NAME

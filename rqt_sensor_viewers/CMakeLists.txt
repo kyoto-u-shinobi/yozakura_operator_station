@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(sensor_viewers)
+project(rqt_sensor_viewers)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -86,7 +86,7 @@ catkin_python_setup()
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES sensor_viewers
+#  LIBRARIES rqt_sensor_viewers
  CATKIN_DEPENDS python_qt_binding rospy rostopic rqt_gui rqt_gui_py sensor_msgs std_msgs yozakura_msgs
 #  DEPENDS system_lib
 )
@@ -103,19 +103,19 @@ include_directories(
 )
 
 ## Declare a cpp library
-# add_library(sensor_viewers
-#   src/${PROJECT_NAME}/sensor_viewers.cpp
+# add_library(rqt_sensor_viewers
+#   src/${PROJECT_NAME}/rqt_sensor_viewers.cpp
 # )
 
 ## Declare a cpp executable
-# add_executable(sensor_viewers_node src/sensor_viewers_node.cpp)
+# add_executable(rqt_sensor_viewers_node src/rqt_sensor_viewers_node.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-# add_dependencies(sensor_viewers_node sensor_viewers_generate_messages_cpp)
+# add_dependencies(rqt_sensor_viewers_node rqt_sensor_viewers_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(sensor_viewers_node
+# target_link_libraries(rqt_sensor_viewers_node
 #   ${catkin_LIBRARIES}
 # )
 
@@ -134,7 +134,7 @@ include_directories(
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS sensor_viewers sensor_viewers_node
+# install(TARGETS rqt_sensor_viewers rqt_sensor_viewers_node
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -159,7 +159,7 @@ include_directories(
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_sensor_viewers.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_rqt_sensor_viewers.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()

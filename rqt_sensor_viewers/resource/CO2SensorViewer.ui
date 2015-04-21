@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>HeatSensorViewerWidget</class>
- <widget class="QWidget" name="HeatSensorViewerWidget">
+ <class>CO2SensorViewerWidget</class>
+ <widget class="QWidget" name="CO2SensorViewerWidget">
   <property name="geometry">
    <rect>
     <x>0</x>

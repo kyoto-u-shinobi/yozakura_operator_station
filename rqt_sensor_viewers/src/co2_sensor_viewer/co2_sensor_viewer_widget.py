@@ -25,7 +25,7 @@ class CO2SensorViewerWidget(QWidget):
     def __init__(self, widget):
         super(CO2SensorViewerWidget, self).__init__()
         rospkg_pack = rospkg.RosPack()
-        ui_file = os.path.join(rospkg_pack.get_path('sensor_viewers'), 'resource', 'CO2SensorViewer.ui')
+        ui_file = os.path.join(rospkg_pack.get_path('rqt_sensor_viewers'), 'resource', 'CO2SensorViewer.ui')
         loadUi(ui_file, self)
 
         self._topic_name = self.TOPIC_NAME

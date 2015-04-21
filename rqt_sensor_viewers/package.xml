@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package>
-    <name>sensor_viewers</name>
+    <name>rqt_sensor_viewers</name>
     <version>0.0.0</version>
     <description>The heat_sensor_viewer package</description>
 
