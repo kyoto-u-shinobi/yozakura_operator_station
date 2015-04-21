@@ -1,21 +1,18 @@
 # yozakura_operator_station
 
 ## How to run operator_station
-1. Joystickのレシーバ挿しておく
-2. ターミナルから  
+0. Joystickのレシーバ挿しておく.  
+1. ターミナルから  
 ```
-$ roslaunch launchers main.launch
+$ cd ~/ros/yozakura_operation/src
+$ ./start_system
 ```
-したらオペステのメインのプログラムが立ち上がる．  
-3. ai-ballがすべてネットワーク上に接続されていれば，  
+したらオペステのシステム類が立ち上がる．  
+2.すべて問題なく立ち上がったら，  
 ```
-$ roslaunch launchers yozakura_cameras_streaming.launch
+$ ./gui_launcher
 ```
-して，別端末で，
-```
-$ rqt
-```
-して，メニューperspectiveからimageを選択すればimage viewerが出る．  
+すると，GUI関連がすべて立ち上がる．  
 
 ## How to see theta images at local  
 https://github.com/thaga/IOTA
