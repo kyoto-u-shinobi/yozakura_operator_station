@@ -111,12 +111,14 @@ class CommandGenerator(object):
                 buttons.buttons)
 
     def get_speed_commands(self):
+        dpad, lstick, rstick, buttons = self.get_jsstate()
         return self._calc_speed_command_funcs[self.js_mapping_mode - 1](self.direction_flag,
-                                                                        self.get_jsstate())
+                                                                        dpad, lstick, rstick, buttons)
 
     def get_arm_commands(self):
+        dpad, lstick, rstick, buttons = self.get_jsstate()
         linear, pitch, yaw = self._calc_arm_command_funcs[self.arm_mode](self.direction_flag,
-                                                                         self.get_jsstate())
+                                                                         dpad, lstick, rstick, buttons)
         return self.arm_mode, linear, pitch, yaw
 
 # -------------------------------------------------------------------------
