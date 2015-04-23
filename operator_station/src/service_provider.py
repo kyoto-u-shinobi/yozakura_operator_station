@@ -17,52 +17,68 @@ DEFAULT_JS_MAKER = "Elecom Wireless Gamepad"
 
 
 class ServiceProvider(object):
-    class InputMode():
-        def __init__(self, js_mapping_mode=1, direction_flag=True, main_controller_name="main"):
-            self.js_mapping_mode = js_mapping_mode
-            self.js_mapping_mode_max = 2  # 1: single-stick mode 2: dual-stick mode
-            self.direction_flag = direction_flag
-            self.main_controller_name = main_controller_name
-
-        @property
-        def next_js_mapping_mode(self):
-            self.js_mapping_mode = (self.js_mapping_mode % self.js_mapping_mode_max) + 1
-            return self.js_mapping_mode
-
-        @property
-        def next_direction_flag(self):
-            self.direction_flag = not self.direction_flag
-            return self.direction_flag
-
+    ARM_MODE_NORMAL = 0
+    ARM_MODE_HOME = 1
+    ARM_MODE_RESET = 2
+    ARM_MODE_SHUTDOWN = 3
 
     def __init__(self):
         rospy.wait_for_service(DEFAULT_INPUT_MODE_SWITCH_SERVICENAME)
         self.input_mode_switch_srv = rospy.ServiceProxy(DEFAULT_INPUT_MODE_SWITCH_SERVICENAME,
                                                         InputModeSwitchService)
 
-        self.input_mode = self.InputMode(1, True, "main")
+        self.input_mode = self.InputMode(1, True, "main", 1)
         self.is_active = False
         self.switched_time = rospy.Time.now()
 
     def _js_callback(self, joy_data):
         buttons = Buttons(rospy.get_param('~js_maker', DEFAULT_JS_MAKER), joy_data.buttons)
 
-        print(self.switched_time.secs)
-        print(joy_data.header.stamp.secs)
         if joy_data.header.stamp.secs - self.switched_time.secs >= 1.0:
             # switch js_mapping_mode
             if buttons.is_pressed("L3"):
                 self.switched_time = joy_data.header.stamp
                 self.input_mode_switch_srv(self.input_mode.next_js_mapping_mode,
                                            self.input_mode.direction_flag,
-                                           self.input_mode.main_controller_name)
-
+                                           self.input_mode.main_controller_name,
+                                           self.input_mode.arm_mode)
             # switch direction_flag
             if buttons.is_pressed("R3"):
                 self.switched_time = joy_data.header.stamp
                 self.input_mode_switch_srv(self.input_mode.js_mapping_mode,
                                            self.input_mode.next_direction_flag,
-                                           self.input_mode.main_controller_name)
+                                           self.input_mode.main_controller_name,
+                                           self.input_mode.arm_mode)
+
+            if buttons.is_pressed("start") and buttons.is_pressed("select"):
+                self.switched_time = joy_data.header.stamp
+                self.input_mode.arm_mode = self.ARM_MODE_SHUTDOWN
+                self.input_mode_switch_srv(self.input_mode.js_mapping_mode,
+                                           self.input_mode.direction_flag,
+                                           self.input_mode.main_controller_name,
+                                           self.input_mode.arm_mode)
+            elif buttons.is_pressed("start"):
+                self.switched_time = joy_data.header.stamp
+                self.input_mode.arm_mode = self.ARM_MODE_HOME
+                self.input_mode_switch_srv(self.input_mode.js_mapping_mode,
+                                           self.input_mode.direction_flag,
+                                           self.input_mode.main_controller_name,
+                                           self.input_mode.arm_mode)
+            elif buttons.is_pressed("select"):
+                self.switched_time = joy_data.header.stamp
+                self.input_mode.arm_mode = self.ARM_MODE_RESET
+                self.input_mode_switch_srv(self.input_mode.js_mapping_mode,
+                                           self.input_mode.direction_flag,
+                                           self.input_mode.main_controller_name,
+                                           self.input_mode.arm_mode)
+            else:
+                self.switched_time = joy_data.header.stamp
+                self.input_mode.arm_mode = self.ARM_MODE_NOMAL
+                self.input_mode_switch_srv(self.input_mode.js_mapping_mode,
+                                           self.input_mode.direction_flag,
+                                           self.input_mode.main_controller_name,
+                                           self.input_mode.arm_mode)
+
 
     def activate(self):
         self.is_active = True
