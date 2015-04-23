@@ -83,7 +83,7 @@ class Handler(SocketServer.BaseRequestHandler):
         def get_command(self):
             speeds = self.lwheel, self.rwheel, self.lflipper, self.rflipper
             arms = self.arm_mode, self.arm_linear, self.arm_pitch, self.arm_yaw
-            return speeds, arms
+            return self.lwheel, self.rwheel, self.lflipper, self.rflipper
 
     def __init__(self, request, client_address, server):
 

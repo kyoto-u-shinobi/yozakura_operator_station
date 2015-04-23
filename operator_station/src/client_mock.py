@@ -32,9 +32,8 @@ class Client(object):
                 continue
 
             try:
-                speeds, arms = pickle.loads(result)
-                lwheel, rwheel, lflipper, rflipper = speeds
-                print(speeds, arms)
+                lwheel, rwheel, lflipper, rflipper = pickle.loads(result)
+                print(lwheel, rwheel, lflipper, rflipper)
             except EOFError:
                 continue
 
