@@ -1,4 +1,6 @@
 #!/bin/bash
 roslaunch launchers main.launch &
-roslaunch launchers cameras_streaming
+roslaunch launchers cameras_streaming.launch &
+roslaunch launchers theta_server.launch
+
 
