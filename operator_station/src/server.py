@@ -154,6 +154,7 @@ class Handler(SocketServer.BaseRequestHandler):
                 break
 
             elif data == "speeds":
+                print(self._command.get_command())
                 reply = pickle.dumps(self._command.get_command())
 
             elif data.split()[0] == "echo":
