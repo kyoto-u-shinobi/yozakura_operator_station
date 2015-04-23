@@ -20,6 +20,12 @@ class SensorDataManager(object):
         self._ysensor_data = YozakuraSensorData()
         self._pub_ysensor_data = rospy.Publisher(DEFAULT_SENSORDATA_TOPIC_NAME, YozakuraSensorData, queue_size=10)
 
+        # ポテンショ生データ→角度[deg]: [0, 1]→[0, 3600]
+        # ギア比　ポテンショ[deg]:フリッパー[deg] = 50:16
+        self.flipper_raw2deg = 3600.0 * (16.0 / 50.0)
+        self._lflipper_center_raw_data = rospy.get_param('~lflipper_center_raw_data', 0.307)
+        self._rflipper_center_raw_data = rospy.get_param('~rflipper_center_raw_data', 0.608)
+
     def publish_data(self):
         self._pub_ystate.publish(self._ystate)
         self._pub_ysensor_data.publish(self._ysensor_data)
@@ -29,15 +35,18 @@ class SensorDataManager(object):
         if new_raw_data is None:
             return False, current_data
         else:
-            return True, scale * new_raw_data + offset
+            return True, scale * (new_raw_data + offset)
 
     def _set_flipper_angles(self, ystate_flipper, flipper_angles, scale, offset):
         ystate_flipper.is_ok, ystate_flipper.angle = self._convert_data(flipper_angles,
                                                                         ystate_flipper.angle,
                                                                         scale, offset)
 
-    def _set_current_sensor_data(self, ysensordata_current, current_data,
-                                 current_scale, current_offset, voltage_scale, voltage_offset):
+    def _set_current_sensor_data(self, ysensordata_current,
+                                 current_data,
+                                 current_scale, current_offset,
+                                 voltage_scale, voltage_offset):
+
         flag_current, ysensordata_current.current = self._convert_data(current_data[0],
                                                                        ysensordata_current.current,
                                                                        current_scale, current_offset)
@@ -49,7 +58,10 @@ class SensorDataManager(object):
         ysensordata_current.is_ok = flag_current and flag_voltage
 
     def _set_pose_sensor(self, ystate_body, pose_data,
-                         roll_scale, roll_offset, pitch_scale, pitch_offset, yaw_scale, yaw_offset):
+                         roll_scale, roll_offset,
+                         pitch_scale, pitch_offset,
+                         yaw_scale, yaw_offset):
+
         flag_roll, ystate_body.roll = self._convert_data(pose_data[0],
                                                          ystate_body.roll,
                                                          roll_scale, roll_offset)
@@ -68,21 +80,49 @@ class SensorDataManager(object):
     def set_data(self, flipper_angles, current_sensor_data, imu_sensor_data):
         # print(flipper_angles, current_sensor_data, imu_sensor_data)
 
-        self._set_flipper_angles(self._ystate.base.flipper_left, flipper_angles[0], 1.0, 0.0)
-        self._set_flipper_angles(self._ystate.base.flipper_right, flipper_angles[1], 1.0, 0.0)
+        self._set_flipper_angles(self._ystate.base.flipper_left,
+                                 flipper_angles[0],
+                                 self.flipper_raw2deg, -self._lflipper_center_raw_data)
+        self._set_flipper_angles(self._ystate.base.flipper_right,
+                                 flipper_angles[1],
+                                 -self.flipper_raw2deg, -self._rflipper_center_raw_data)
 
         lwheel, rwheel, lflip, rflip, battery = current_sensor_data
-        self._set_current_sensor_data(self._ysensor_data.wheel_left, lwheel, 1.0, 0.0, 1.0, 0.0)
-        self._set_current_sensor_data(self._ysensor_data.wheel_right, rwheel, 1.0, 0.0, 1.0, 0.0)
-        self._set_current_sensor_data(self._ysensor_data.flipper_left, lflip, 1.0, 0.0, 1.0, 0.0)
-        self._set_current_sensor_data(self._ysensor_data.flipper_right, rflip, 1.0, 0.0, 1.0, 0.0)
-        self._set_current_sensor_data(self._ysensor_data.battery, battery, 1.0, 0.0, 1.0, 0.0)
+        self._set_current_sensor_data(self._ysensor_data.wheel_left,
+                                      lwheel,
+                                      1.0, 0.0,
+                                      1.0, 0.0)
+        self._set_current_sensor_data(self._ysensor_data.wheel_right,
+                                      rwheel,
+                                      1.0, 0.0,
+                                      1.0, 0.0)
+        self._set_current_sensor_data(self._ysensor_data.flipper_left,
+                                      lflip,
+                                      1.0, 0.0,
+                                      1.0, 0.0)
+        self._set_current_sensor_data(self._ysensor_data.flipper_right,
+                                      rflip,
+                                      1.0, 0.0,
+                                      1.0, 0.0)
+        self._set_current_sensor_data(self._ysensor_data.battery,
+                                      battery,
+                                      1.0, 0.0,
+                                      1.0, 0.0)
 
         front, back = imu_sensor_data
-        front = [np.rad2deg(data) if data is not None else None for data in front]  # もしNoneじゃなかったらdegにする．そうじゃないならNone
+        # もしNoneじゃなかったらdegにする．そうじゃないならNone
+        front = [np.rad2deg(data) if data is not None else None for data in front]
         back = [np.rad2deg(data) if data is not None else None for data in back]
-        self._set_pose_sensor(self._ystate.base.body_front, front, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0)
-        self._set_pose_sensor(self._ystate.base.body_back, back, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0)
+        self._set_pose_sensor(self._ystate.base.body_front,
+                              front,
+                              1.0, 0.0,
+                              1.0, 0.0,
+                              1.0, 0.0)
+        self._set_pose_sensor(self._ystate.base.body_back,
+                              back,
+                              1.0, 0.0,
+                              1.0, 0.0,
+                              1.0, 0.0)
 
 
 if __name__ == "__main__":

@@ -7,6 +7,8 @@ from js_controller import JoyStickController
 from yozakura_msgs.msg import YozakuraCommand
 from operator_station.srv import InputModeSwitchService
 
+import command_gen_methods as methods
+
 # remap-able names
 DEFAULT_INPUT_MODE_SWITCH_SERVICENAME = "input_mode_switcher"
 DEFAULT_PUB_COMMAND_TOPICNAME = "yozakura_command"
@@ -25,11 +27,15 @@ class CommandGenerator(object):
         # see: srv/InputModeSwitchService.srv
         self.js_mapping_mode = 1
         self.direction_flag = True
-        self._culc_speed_command_funcs = [
-            self._calc_speed_command_single_stick_mode,
-            self._calc_speed_command_dual_stick_mode
-        ]
+        self.arm_mode = 0
 
+        self._calc_speed_command_funcs = [
+            methods.calc_speed_command_single_stick_mode,
+            methods.calc_speed_command_dual_stick_mode
+        ]
+        self._calc_arm_command_funcs = [
+            methods.calc_arm_command_default_mode
+        ]
 
     def add_controller(self, topic_name, controller_name=None):
         controller = JoyStickController(topic_name, controller_name)
@@ -50,6 +56,7 @@ class CommandGenerator(object):
     def activate(self):
         # build server
         rospy.Service(DEFAULT_INPUT_MODE_SWITCH_SERVICENAME, InputModeSwitchService, self._input_mode_switching_handler)
+
         # run publishers for getting joystick data
         for controller in self.js_controllers.values():
             if controller.is_active is not True:
@@ -58,12 +65,15 @@ class CommandGenerator(object):
     def publish_command(self):
         base_vel_input_mode, vel1, vel2, lflipper, rflipper = self.get_speed_commands()
 
+        arm_mode, linear, pitch, yaw = self.get_arm_commands()
+
         # self._ycommand.header.stamp = rospy.get_time()
 
         self._ycommand.arm_vel.is_ok = True
-        self._ycommand.arm_vel.top_angle = 0.0
-        self._ycommand.arm_vel.pitch = 0.0
-        self._ycommand.arm_vel.yaw = 0.0
+        self._ycommand.arm_vel.mode = arm_mode
+        self._ycommand.arm_vel.top_angle = linear
+        self._ycommand.arm_vel.pitch = pitch
+        self._ycommand.arm_vel.yaw = yaw
 
         self._ycommand.base_vel_input_mode = base_vel_input_mode
         if base_vel_input_mode == 1:
@@ -102,84 +112,14 @@ class CommandGenerator(object):
                 buttons.buttons)
 
     def get_speed_commands(self):
-        return self._culc_speed_command_funcs[self.js_mapping_mode - 1](self.direction_flag)
+        dpad, lstick, rstick, buttons = self.get_jsstate()
+        return self._calc_speed_command_funcs[self.js_mapping_mode - 1](self.direction_flag,
+                                                                        dpad, lstick, rstick, buttons)
 
-
-    def _calc_speed_command_single_stick_mode(self, direction_flag):
-        _dpad, _lstick, _rstick, buttons = self.get_jsstate()
-
-        # convert direction
-        if direction_flag:
-            dpad, lstick, rstick = _dpad, _lstick, _rstick
-        else:
-            dpad, lstick, rstick = _dpad.reversed, _lstick.reversed, _rstick.reversed
-
-        self._logger.debug("lx: {lx:9.7}  ly: {ly:9.7}".format(lx=lstick.x, ly=lstick.y))
-
-        base_vel_input_mode = 1
-
-        # Wheels
-        if abs(lstick.x) == 0:  # Rotate in place
-            lwheel = -lstick.y
-            rwheel = lstick.y
-        else:
-            l_mult = (1 - lstick.y) / (1 + abs(lstick.y))
-            r_mult = (1 + lstick.y) / (1 + abs(lstick.y))
-            lwheel = lstick.x * l_mult
-            rwheel = lstick.x * r_mult
-
-        # Flippers
-        if buttons.is_pressed("L1") and (not buttons.is_pressed("L2")):
-            lflipper = 1
-        elif (not buttons.is_pressed("L1")) and buttons.is_pressed("L2"):
-            lflipper = -1
-        else:
-            lflipper = 0
-
-        if buttons.is_pressed("R1") and (not buttons.is_pressed("R2")):
-            rflipper = 1
-        elif (not buttons.is_pressed("R1")) and buttons.is_pressed("R2"):
-            rflipper = -1
-        else:
-            rflipper = 0
-
-        return base_vel_input_mode, lwheel, rwheel, lflipper, rflipper
-
-
-    def _calc_speed_command_dual_stick_mode(self, direction_flag):
-        _dpad, _lstick, _rstick, buttons = self.get_jsstate()
-
-        # convert direction
-        if direction_flag:
-            dpad, lstick, rstick = _dpad, _lstick, _rstick
-        else:
-            dpad, lstick, rstick = _dpad.reversed, _lstick.reversed, _rstick.reversed
-
-        self._logger.debug("lx: {lx:9.7}  ly: {ly:9.7}".format(lx=lstick.x, ly=lstick.y))
-
-        base_vel_input_mode = 1
-
-        # Wheels
-        lwheel = lstick.x
-        rwheel = rstick.x
-
-        # Flippers
-        if buttons.is_pressed("L1") and (not buttons.is_pressed("L2")):
-            lflipper = 1
-        elif (not buttons.is_pressed("L1")) and buttons.is_pressed("L2"):
-            lflipper = -1
-        else:
-            lflipper = 0
-
-        if buttons.is_pressed("R1") and (not buttons.is_pressed("R2")):
-            rflipper = 1
-        elif (not buttons.is_pressed("R1")) and buttons.is_pressed("R2"):
-            rflipper = -1
-        else:
-            rflipper = 0
-
-        return base_vel_input_mode, lwheel, rwheel, lflipper, rflipper
-
+    def get_arm_commands(self):
+        dpad, lstick, rstick, buttons = self.get_jsstate()
+        return self._calc_arm_command_funcs[0](self.direction_flag,
+                                               dpad, lstick, rstick, buttons)
 
 # -------------------------------------------------------------------------
 if __name__ == "__main__":

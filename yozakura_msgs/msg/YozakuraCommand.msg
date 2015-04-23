@@ -4,6 +4,7 @@ ArmState arm_vel
 FlipperState flipper_left_vel
 FlipperState flipper_right_vel
 
+# for future
 # 1: wheel_velocity_mode(lwheel, rwheel)
 # 2: body_velocity_mode(v, w)
 int64 base_vel_input_mode

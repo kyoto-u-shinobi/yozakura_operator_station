@@ -5,6 +5,8 @@
         <remap from="yozakura_command" to="yozakura_command"/>
         <remap from="yozakura_state" to="yozakura_state"/>
         <remap from="yozakura_sensor_data" to="yozakura_sensor_data"/>
+        <param name="lflipper_center_raw_data" value="0.307"/>
+        <param name="rflipper_center_raw_data" value="0.608"/>
     </node>
     <node name="joystick" pkg="joy" type="joy_node">
         <remap from="joy" to="joy"/>
@@ -21,10 +23,6 @@
         <remap from="theta_capture" to="theta_capture"/>
         <param name="js_maker" value="Elecom Wireless Gamepad"/>
         <!--Logitech Logitech RumblePad 2 USB-->
-    </node>
-    <node name="theta_capture_server" pkg="theta_service" type="theta_capture_server.py">
-        <remap from="theta_capture" to="theta_capture"/>
-        <param name="is_image_resized" value="True"/>
     </node>
     <node name="data_distributor" pkg="operator_station" type="data_distributor.py">
         <remap from="yozakura_sensor_data" to="yozakura_sensor_data"/>

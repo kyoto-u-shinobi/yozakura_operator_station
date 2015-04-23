@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<launch>
+    <node name="theta_capture_server" pkg="theta_service" type="theta_capture_server.py">
+        <remap from="theta_capture" to="theta_capture"/>
+        <param name="is_image_resized" value="True"/>
+    </node>
+</launch>

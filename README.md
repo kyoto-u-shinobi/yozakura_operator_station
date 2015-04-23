@@ -1,18 +1,51 @@
 # yozakura_operator_station
 
 ## How to run operator_station
-0. Joystickのレシーバ挿しておく.  
-1. ターミナルから  
+1. Joystickのレシーバ・thetaへの接続・ai-ball起動を確認
+2. ターミナルから  
 ```
 $ cd ~/ros/yozakura_operation/src
 $ ./start_system
 ```
 したらオペステのシステム類が立ち上がる．  
-2.すべて問題なく立ち上がったら，  
+3.すべて問題なく立ち上がったら，  
 ```
+$ cd ~/ros/yozakura_operation/src
 $ ./gui_launcher
 ```
 すると，GUI関連がすべて立ち上がる．  
+
+## １つずつ立ち上げる方法  
+### オペステ側システム関連  
+```
+$ roslaunch launchers main.launch
+```
+
+### ai-ball関連  
+```
+$ roslaunch launchers cameras_streaming.launch
+```
+ターミナルに接続したか失敗したか表示されてから，
+```
+$ rqt -p=moving_viewer
+```
+
+### theta関連
+```
+$ roslaunch launchers theta_server.launch
+```
+READY...とターミナルに表示されてから
+```
+$ rqt --standalone=theta_viewer
+```
+
+### 3Dビューア関連
+オペステ側システム関連が立ち上がっていれば，
+```
+$ roslaunch launchers 3d_display.launch
+```
+
+
 
 ## How to see theta images at local  
 https://github.com/thaga/IOTA

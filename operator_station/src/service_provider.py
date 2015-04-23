@@ -24,6 +24,7 @@ class ServiceProvider(object):
             self.direction_flag = direction_flag
             self.main_controller_name = main_controller_name
 
+
         @property
         def next_js_mapping_mode(self):
             self.js_mapping_mode = (self.js_mapping_mode % self.js_mapping_mode_max) + 1
@@ -42,27 +43,28 @@ class ServiceProvider(object):
 
         self.input_mode = self.InputMode(1, True, "main")
         self.is_active = False
-        self.switched_time = rospy.Time.now()
+        self._base_mode_switch_time = rospy.Time.now()
+
+    def _switch_base_control_modes(self, time_stamp, buttons):
+        # switch js_mapping_mode
+        if buttons.is_pressed("L3"):
+            self._base_mode_switch_time = time_stamp
+            self.input_mode_switch_srv(self.input_mode.next_js_mapping_mode,
+                                       self.input_mode.direction_flag,
+                                       self.input_mode.main_controller_name)
+        # switch direction_flag
+        if buttons.is_pressed("R3"):
+            self._base_mode_switch_time = time_stamp
+            self.input_mode_switch_srv(self.input_mode.js_mapping_mode,
+                                       self.input_mode.next_direction_flag,
+                                       self.input_mode.main_controller_name)
 
     def _js_callback(self, joy_data):
         buttons = Buttons(rospy.get_param('~js_maker', DEFAULT_JS_MAKER), joy_data.buttons)
 
-        print(self.switched_time.secs)
-        print(joy_data.header.stamp.secs)
-        if joy_data.header.stamp.secs - self.switched_time.secs >= 1.0:
-            # switch js_mapping_mode
-            if buttons.is_pressed("L3"):
-                self.switched_time = joy_data.header.stamp
-                self.input_mode_switch_srv(self.input_mode.next_js_mapping_mode,
-                                           self.input_mode.direction_flag,
-                                           self.input_mode.main_controller_name)
+        if joy_data.header.stamp.secs - self._base_mode_switch_time.secs >= 1.0:
+            self._switch_base_control_modes(joy_data.header.stamp, buttons)
 
-            # switch direction_flag
-            if buttons.is_pressed("R3"):
-                self.switched_time = joy_data.header.stamp
-                self.input_mode_switch_srv(self.input_mode.js_mapping_mode,
-                                           self.input_mode.next_direction_flag,
-                                           self.input_mode.main_controller_name)
 
     def activate(self):
         self.is_active = True
