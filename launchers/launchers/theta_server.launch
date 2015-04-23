@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<launch>
+	<node name="theta_server" pkg="theta_service" type="theta_capture_server.py" />
+</launch>
