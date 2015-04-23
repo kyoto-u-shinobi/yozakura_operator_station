@@ -52,7 +52,6 @@ class CommandGenerator(object):
         self.js_mapping_mode = req.js_mapping_mode
         self.direction_flag = req.direction_flag
         self.main_controller_name = req.main_controller_name
-        self.arm_mode = req.arm_mode
 
     def activate(self):
         # build server
@@ -119,9 +118,8 @@ class CommandGenerator(object):
 
     def get_arm_commands(self):
         dpad, lstick, rstick, buttons = self.get_jsstate()
-        linear, pitch, yaw = self._calc_arm_command_funcs[self.arm_mode](self.direction_flag,
-                                                                         dpad, lstick, rstick, buttons)
-        return self.arm_mode, linear, pitch, yaw
+        return self._calc_arm_command_funcs[0](self.direction_flag,
+                                               dpad, lstick, rstick, buttons)
 
 # -------------------------------------------------------------------------
 if __name__ == "__main__":

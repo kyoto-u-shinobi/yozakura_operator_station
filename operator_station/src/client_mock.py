@@ -25,17 +25,19 @@ class Client(object):
             print('client running')
             try:
                 self.request.send(str.encode("speeds"))  # Request speeds.
-                result = self.request.recv(64)  # Receive speed data.
+                result = self.request.recv(128)  # Receive speed data.
                 if not result:
                     continue
             except socket.timeout:
                 continue
 
             try:
-                lwheel, rwheel, lflipper, rflipper = pickle.loads(result)
-                print( lwheel, rwheel, lflipper, rflipper)
+                speeds, arms = pickle.loads(result)
+                lwheel, rwheel, lflipper, rflipper = speeds
+                print(speeds, arms)
             except EOFError:
                 continue
+
             adc_data = [1.0, 2.0]
             current_data = [[11.0, 12.0, 13.0],  # lwheel
                             [21.0, 22.0, 23.0],  # rwheel
@@ -45,17 +47,18 @@ class Client(object):
             imu_data = [[math.radians(101.0), math.radians(102.0), math.radians(103.0)],  # front
                         [math.radians(201.0), math.radians(202.0), math.radians(203.0)]]  # rear
 
-            self._sensors_server.sendto(pickle.dumps((adc_data, current_data, imu_data),
+            arm_data = [1.0, 2.0]
+            self._sensors_server.sendto(pickle.dumps((adc_data, current_data, imu_data, arm_data),
                                                      protocol=2),
                                         self.server_address)
 
             time.sleep(0.2)  # to control this loop rate
 
+
     def shutdown(self):
-        self.request.close()
+        self.request.close()  # -------------------------------------------------------------------------
 
 
-# -------------------------------------------------------------------------
 if __name__ == "__main__":
     client_address = "localhost"
     opstn_address = "localhost"

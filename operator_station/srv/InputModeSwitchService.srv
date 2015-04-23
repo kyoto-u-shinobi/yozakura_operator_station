@@ -13,12 +13,6 @@ bool direction_flag
 # for switching joystick (for future)
 string main_controller_name
 
-# 1: normal (nothing special)
-# 2: home
-# 3: reset
-# 4: shutdown
-int64 arm_mode
-
 ---
 
 
