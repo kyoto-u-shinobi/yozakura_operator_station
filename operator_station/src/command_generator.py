@@ -52,6 +52,7 @@ class CommandGenerator(object):
         self.js_mapping_mode = req.js_mapping_mode
         self.direction_flag = req.direction_flag
         self.main_controller_name = req.main_controller_name
+        self.arm_mode = req.arm_mode
 
     def activate(self):
         # build server
@@ -70,6 +71,7 @@ class CommandGenerator(object):
         # self._ycommand.header.stamp = rospy.get_time()
 
         self._ycommand.arm_vel.is_ok = True
+        self._ycommand.arm_vel.mode = arm_mode
         self._ycommand.arm_vel.top_angle = linear
         self._ycommand.arm_vel.pitch = pitch
         self._ycommand.arm_vel.yaw = yaw
