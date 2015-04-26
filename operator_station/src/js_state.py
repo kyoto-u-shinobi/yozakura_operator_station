@@ -78,7 +78,7 @@ class Axis(object):
 
     @property
     def reversed(self):
-        return Axis(-self.x, -self.y)
+        return Axis(-self.x, self.y)
 
 
     def __repr__(self):
