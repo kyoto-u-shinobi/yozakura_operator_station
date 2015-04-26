@@ -13,41 +13,70 @@ http://venuschjp.blogspot.jp/2015/02/pythonopencvweb.html
 '''
 
 DEBUG = True
-
-AI_BALL_IP_ADDRESS = '192.168.2.1'
+DEFAULT_IP_ADDRESS = '192.168.2.1'
+DEFAULT_NODE_NAME = 'web_cam'
+DEFAULT_TOPIC_NAME = 'web_cam_img'
 
 
 class WebCamManager:
-    def __init__(self, _ipaddress, _nodename, _topicname):
+    def __init__(self, ip_address, topic_name, overlayed_text=None):
         self.cvbridge = CvBridge()
-        self.capture = cv2.VideoCapture('http://' + _ipaddress + '/?action=stream.mjpeg')
-        self.nodename = _nodename
-        self.topicname = _topicname
+        self.capture = cv2.VideoCapture('http://' + ip_address + '/?action=stream.mjpeg')
+        self.topic_name = topic_name
+        self.overlayed_text = overlayed_text
+        print self.overlayed_text
+        self.is_active = False
 
     def open(self):
         return self.capture.isOpened()
 
-    def run(self):
-        rospy.init_node(self.nodename, anonymous=True)
-        pub_ros_image = rospy.Publisher(self.topicname, Image)
-        ros_looprate_manager = rospy.Rate(30)  # hz
+    def activate(self):
+        self.is_active = True
+        self.pub_image = rospy.Publisher(self.topic_name, Image, queue_size=1)
 
-        while not rospy.is_shutdown():
-            has_image, cv_image = self.capture.read()
-            if has_image == False:
-                continue
-            try:
-                pub_ros_image.publish(self.cvbridge.cv2_to_imgmsg(cv_image, "bgr8"))
-            except CvBridgeError, e:
-                print e
-            ros_looprate_manager.sleep()
+    def publish_img(self):
+        if not self.is_active:
+            self.activate()
 
+        has_image, cv_image = self.capture.read()
+        h, w = cv_image.shape[0], cv_image.shape[1]
 
+        if has_image is False:
+            print('fail to grub image')
+            text = '!! FAIL TO GRUB !!'
+            text_pxlength = 13.0 * len(text)
+            cv2.putText(cv_image, text,
+                        (int(w / 2.0 - text_pxlength / 2.0), int(h / 2.0)),
+                        cv2.FONT_HERSHEY_SIMPLEX, fontScale=30, color=(255, 0, 0), thickness=20)
+
+        if self.overlayed_text is not None:
+            text_pxlength = 13.0 * len(self.overlayed_text)
+            cv2.putText(cv_image, self.overlayed_text,
+                        (int(w / 2.0 - text_pxlength / 2.0), int(h / 16.0)),
+                        cv2.FONT_HERSHEY_SIMPLEX, fontScale=1, color=(255, 0, 255), thickness=2)
+
+        try:
+            self.pub_image.publish(self.cvbridge.cv2_to_imgmsg(cv_image, "bgr8"))
+        except CvBridgeError, e:
+            print e
+
+# --------------------------------------------
 if __name__ == '__main__':
-    web_cam_back = WebCamManager(AI_BALL_IP_ADDRESS, 'ai_ball', 'ai_ball_img')
-    if DEBUG: print 'initialize!'
-    if web_cam_back.open():
-        if DEBUG: print 'run!'
-        web_cam_back.run()
+    rospy.init_node(DEFAULT_NODE_NAME, anonymous=True)
+    rate_mgr = rospy.Rate(30)  # Hz
+    web_cam_ip = rospy.get_param('~ip_address', DEFAULT_IP_ADDRESS)
+    overlay_text = rospy.get_param('~overlay_text', DEFAULT_IP_ADDRESS)
+
+    web_cam = WebCamManager(web_cam_ip, DEFAULT_TOPIC_NAME, overlay_text)
+
+    if not web_cam.open():
+        print('fail to open!')
     else:
-        print 'fail to open!'
+        if (DEBUG): print('run!')
+        web_cam.activate()
+        while not rospy.is_shutdown():
+            web_cam.publish_img()
+            rate_mgr.sleep()
+
+
+

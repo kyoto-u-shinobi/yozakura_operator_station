@@ -1,15 +1,14 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(operator_station)
+project(yozakura_jointstate_publisher)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  diagnostic_msgs
   rospy
-  sensor_msgs
   std_msgs
-  message_generation
+  sensor_msgs
+  yozakura_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -53,11 +52,11 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate services in the 'srv' folder
-add_service_files(FILES
-  InputModeSwitchService.srv
+# add_service_files(
+#   FILES
 #   Service1.srv
 #   Service2.srv
-)
+# )
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -67,12 +66,10 @@ add_service_files(FILES
 # )
 
 ## Generate added messages and services with any dependencies listed here
-generate_messages(
-  DEPENDENCIES
-  diagnostic_msgs
-  sensor_msgs
-  std_msgs
-)
+# generate_messages(
+#   DEPENDENCIES
+#   sensor_msgs
+# )
 
 ###################################
 ## catkin specific configuration ##
@@ -85,8 +82,8 @@ generate_messages(
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES operator_station
- CATKIN_DEPENDS diagnostic_msgs rospy sensor_msgs std_msgs message_runtime
+#  LIBRARIES my_joint_state_publisher
+#  CATKIN_DEPENDS rospy sensor_msgs wxpython
 #  DEPENDS system_lib
 )
 
@@ -102,19 +99,19 @@ include_directories(
 )
 
 ## Declare a cpp library
-# add_library(operator_station
-#   src/${PROJECT_NAME}/operator_station.cpp
+# add_library(my_joint_state_publisher
+#   src/${PROJECT_NAME}/my_joint_state_publisher.cpp
 # )
 
 ## Declare a cpp executable
-# add_executable(operator_station_node src/operator_station_node.cpp)
+# add_executable(my_joint_state_publisher_node src/my_joint_state_publisher_node.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-# add_dependencies(operator_station_node operator_station_generate_messages_cpp)
+# add_dependencies(my_joint_state_publisher_node my_joint_state_publisher_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(operator_station_node
+# target_link_libraries(my_joint_state_publisher_node
 #   ${catkin_LIBRARIES}
 # )
 
@@ -127,13 +124,13 @@ include_directories(
 
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
-# install(PROGRAMS
-#   scripts/my_python_script
-#   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
+install(PROGRAMS
+  src/my_joint_state_publisher
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS operator_station operator_station_node
+# install(TARGETS my_joint_state_publisher my_joint_state_publisher_node
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -158,7 +155,7 @@ include_directories(
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_operator_station.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_my_joint_state_publisher.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
