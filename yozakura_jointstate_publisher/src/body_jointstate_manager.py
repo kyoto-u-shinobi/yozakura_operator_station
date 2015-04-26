@@ -27,8 +27,7 @@ class BodyJointStateManager:
         self.base_jointstate.position = map(None, np.deg2rad([0.0] * len(self.base_jointstate.name)))
 
     def __base_callback(self, base_state):
-        if base_state.is_ok:
-            self.base_jointstate.position = map(None, np.deg2rad([base_state.body_front.pitch,
+        self.base_jointstate.position = map(None, np.deg2rad([base_state.body_front.pitch,
                                                                   base_state.body_front.roll,
                                                                   base_state.body_back.pitch - base_state.body_front.pitch,
                                                                   base_state.body_back.roll - base_state.body_front.roll,

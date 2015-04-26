@@ -83,7 +83,7 @@ class Handler(SocketServer.BaseRequestHandler):
         def get_command(self):
             speeds = self.lwheel, self.rwheel, self.lflipper, self.rflipper
             arms = self.arm_mode, self.arm_linear, self.arm_pitch, self.arm_yaw
-            return self.lwheel, self.rwheel, self.lflipper, self.rflipper
+            return speeds, arms
 
     def __init__(self, request, client_address, server):
 
@@ -156,7 +156,7 @@ class Handler(SocketServer.BaseRequestHandler):
                 break
 
             elif data == "speeds":
-                print(self._command.get_command())
+                #print(self._command.get_command())
                 reply = pickle.dumps(self._command.get_command())
 
             elif data.split()[0] == "echo":
@@ -177,9 +177,10 @@ class Handler(SocketServer.BaseRequestHandler):
 
             # Receive sensor data
             raw_data = self._udp_receive(size=1024)
-
+            
             try:
                 flipper_data, current_data, pose_data, arm_data = pickle.loads(raw_data)
+                #print(flipper_data, current_data, pose_data, arm_data)
                 # self._log_sensor_data(flipper_data, current_data, pose_data, arm_data)
 
                 # set data and publish

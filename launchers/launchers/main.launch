@@ -5,8 +5,8 @@
         <remap from="yozakura_command" to="yozakura_command"/>
         <remap from="yozakura_state" to="yozakura_state"/>
         <remap from="yozakura_sensor_data" to="yozakura_sensor_data"/>
-        <param name="lflipper_center_raw_data" value="0.307"/>
-        <param name="rflipper_center_raw_data" value="0.608"/>
+        <param name="lflipper_center_raw_data" value="0.37780"/>
+        <param name="rflipper_center_raw_data" value="0.61080"/>
     </node>
     <node name="joystick" pkg="joy" type="joy_node">
         <remap from="joy" to="joy"/>
@@ -32,6 +32,5 @@
         <remap from="volt_wheel_right" to="volt_wheel_right"/>
         <remap from="volt_flipper_left" to="volt_flipper_left"/>
         <remap from="volt_flipper_right" to="volt_flipper_right"/>
-        <remap from="volt_battery" to="volt_battery"/>
     </node>
 </launch>

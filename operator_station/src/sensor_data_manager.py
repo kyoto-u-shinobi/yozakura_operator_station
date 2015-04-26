@@ -19,12 +19,12 @@ class SensorDataManager(object):
 
         self._ysensor_data = YozakuraSensorData()
         self._pub_ysensor_data = rospy.Publisher(DEFAULT_SENSORDATA_TOPIC_NAME, YozakuraSensorData, queue_size=10)
-
+        self._ysensor_data.heat.data = [0.0]*32
         # ポテンショ生データ→角度[deg]: [0, 1]→[0, 3600]
         # ギア比　ポテンショ[deg]:フリッパー[deg] = 50:16
         self._flipper_raw2deg = 3600.0 * (16.0 / 50.0)
-        self._lflipper_center_raw_data = rospy.get_param('~lflipper_center_raw_data', 0.307)
-        self._rflipper_center_raw_data = rospy.get_param('~rflipper_center_raw_data', 0.608)
+        self._lflipper_center_raw_data = rospy.get_param('~lflipper_center_raw_data', 0.33780)
+        self._rflipper_center_raw_data = rospy.get_param('~rflipper_center_raw_data', 0.61080)
 
         # DXの角度を実際の角度に変換する
         # linearはDXの角度からじゃばらアームリンクの作る菱型の広い方の角度に変換しないといけない
@@ -42,8 +42,6 @@ class SensorDataManager(object):
 
     @staticmethod
     def _convert_data(new_raw_data, current_data, scale, offset):
-        # print(new_raw_data, current_data)
-
         if isinstance(new_raw_data, list):
             if new_raw_data.count(None) is len(new_raw_data):
                 return False, current_data
@@ -165,7 +163,7 @@ class SensorDataManager(object):
                             self._arm_pitch_dxdeg2armdeg, self._arm_pitch_center_dxdeg,
                             self._arm_yaw_dxdeg2armdeg, self._arm_yaw_center_dxdeg)
         self._set_current_sensor_data(self._ysensor_data.arm_linear,
-                                      [-1.0, servo_iv[0]],
+                                      [0.0, servo_iv[0]],
                                       1.0, 0.0,
                                       1.0, 0.0)
         self._set_current_sensor_data(self._ysensor_data.arm_pitch,
