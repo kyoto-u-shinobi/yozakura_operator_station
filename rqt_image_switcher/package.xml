@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package>
-  <name>image_switcher</name>
+  <name>rqt_image_switcher</name>
   <version>0.0.0</version>
   <description>The image_switcher package</description>
 

@@ -178,11 +178,11 @@ class Handler(SocketServer.BaseRequestHandler):
             raw_data = self._udp_receive(size=1024)
 
             try:
-                adc_data, current_data, pose_data, arm_data = pickle.loads(raw_data)
-                self._log_sensor_data(adc_data, current_data, pose_data)
+                flipper_data, current_data, pose_data, arm_data = pickle.loads(raw_data)
+                # self._log_sensor_data(flipper_data, current_data, pose_data, arm_data)
 
                 # set data and publish
-                self._sensor_mgr.set_data(adc_data[-2:], current_data, pose_data)
+                self._sensor_mgr.set_data(flipper_data, current_data, pose_data, arm_data)
                 self._sensor_mgr.publish_data()
 
             except (AttributeError, EOFError, IndexError, TypeError):
@@ -244,7 +244,7 @@ class Handler(SocketServer.BaseRequestHandler):
 
         return recv_msg
 
-    def _log_sensor_data(self, adc_data, current_data, pose_data):
+    def _log_sensor_data(self, adc_data, current_data, pose_data, arm_data):
         """
         Log sensor data to debug.
         Parameters
@@ -257,13 +257,12 @@ class Handler(SocketServer.BaseRequestHandler):
             Pose data containing yaw, pitch, and roll values.
         """
 
-        lwheel, rwheel, lflip, rflip, battery = current_data
+        lwheel, rwheel, lflip, rflip = current_data
         adc_data = [i if i is not None else 0 for i in adc_data]
         lwheel = [i if i is not None else 0 for i in lwheel]
         rwheel = [i if i is not None else 0 for i in rwheel]
         lflip = [i if i is not None else 0 for i in lflip]
         rflip = [i if i is not None else 0 for i in rflip]
-        battery = [i if i is not None else 0 for i in battery]
 
         try:
             front, rear = np.rad2deg(pose_data)
