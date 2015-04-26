@@ -4,7 +4,7 @@ __author__ = 'matsunolab'
 
 import rospy
 import time
-from theta_service.srv import *
+from theta_service.srv import ThetaCaptureService
 
 GRAB_CURRENT_IMAGE = 1
 FILENAME = 'test.jpg'

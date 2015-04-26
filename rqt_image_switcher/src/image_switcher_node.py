@@ -2,7 +2,7 @@
 
 import rospy
 from sensor_msgs.msg import Image
-from image_switcher.srv import *
+from image_switcher.srv import ImageSwitcherService
 
 DEBUG = True
 
