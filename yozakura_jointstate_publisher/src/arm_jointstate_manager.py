@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import rospy
-import numpy as np
+import math
 from sensor_msgs.msg import JointState
 from yozakura_msgs.msg import ArmState
 
@@ -30,7 +30,7 @@ class ArmJointStateManager:
 
         self.arm_jointstate = JointState()
         self.arm_jointstate.name = self.basejoint_names + self.jackjoint_names_left + self.jackjoint_names_right
-        self.arm_jointstate.position = [np.deg2rad(0.0)] * len(self.arm_jointstate.name)
+        self.arm_jointstate.position = [math.radians(0.0)] * len(self.arm_jointstate.name)
 
     def __get_pos_jacks_arr(self, jackjoint_names, jack_base_angle, is_left):
         '''
@@ -65,11 +65,13 @@ class ArmJointStateManager:
 
     def __arm_callback(self, arm_state):
         if arm_state.is_ok:
-            jack_base_angle = np.deg2rad((360.0 - 2.0 * float(arm_state.top_angle)) / 2.0)
-            # np.deg2rad returns np.array. map can convert np.array to list
-            self.arm_jointstate.position = map(None, np.deg2rad([arm_state.yaw, arm_state.pitch])) \
-                                           + self.__get_pos_jacks_arr_left(jack_base_angle) \
-                                           + self.__get_pos_jacks_arr_right(jack_base_angle)
+            jack_base_angle = math.radians((360.0 - 2.0 * float(arm_state.top_angle)) / 2.0)
+
+            # rvizの表示に使っているdaeファイルの座標系的にpitchの向きが逆
+            _positions = [math.radians(data) for data in [arm_state.yaw, -arm_state.pitch]] \
+                         + self.__get_pos_jacks_arr_left(jack_base_angle) \
+                         + self.__get_pos_jacks_arr_right(jack_base_angle)
+            self.arm_jointstate.position = _positions
 
     def get_jointstate(self):
         return self.arm_jointstate

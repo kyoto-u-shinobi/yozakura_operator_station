@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import rospy
-import numpy as np
+import math
 from sensor_msgs.msg import JointState
 from yozakura_msgs.msg import BaseState
 
@@ -24,17 +24,20 @@ class BodyJointStateManager:
         self.base_jointstate = JointState()
         self.base_jointstate.name = bodyjoint_names + flipperjoint_names + wheeljoint_names
         # the return of np.rad2deg is numpy.array. map can convert numpy.array to list
-        self.base_jointstate.position = map(None, np.deg2rad([0.0] * len(self.base_jointstate.name)))
+        self.base_jointstate.position = [math.radians(0.0)] * len(self.base_jointstate.name)
 
     def __base_callback(self, base_state):
-        self.base_jointstate.position = map(None, np.deg2rad([base_state.body_front.pitch,
-                                                                  base_state.body_front.roll,
-                                                                  base_state.body_back.pitch - base_state.body_front.pitch,
-                                                                  base_state.body_back.roll - base_state.body_front.roll,
-                                                                  base_state.flipper_left.angle,
-                                                                  base_state.flipper_right.angle,
-                                                                  base_state.wheel_left.rotation_angle,
-                                                                  base_state.wheel_right.rotation_angle]))
+        # rvizの表示に使っているdaeファイルの座標系的にbodyのpitchとflipperの向きが逆
+        _positions = [-base_state.body_front.pitch,
+                      base_state.body_front.roll,
+                      -(base_state.body_back.pitch - base_state.body_front.pitch),
+                      base_state.body_back.roll - base_state.body_front.roll,
+                      base_state.flipper_left.angle,
+                      base_state.flipper_right.angle,
+                      -base_state.wheel_left.rotation_angle,
+                      -base_state.wheel_right.rotation_angle]
+
+        self.base_jointstate.position = [math.radians(pos) for pos in _positions]
 
     def get_jointstate(self):
         return self.base_jointstate

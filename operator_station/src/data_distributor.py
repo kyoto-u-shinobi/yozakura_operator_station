@@ -50,10 +50,10 @@ class DataDistributor(object):
         rospy.Subscriber(DEFAULT_SUB_STATE_TOPIC_NAME, YozakuraState, self.ystate_callback)
 
         self.is_active = True
-    
+
     def ystate_callback(self, ystate):
-        self._base_state=ystate.base
-        self._arm_state=ystate.arm
+        self._base_state = ystate.base
+        self._arm_state = ystate.arm
 
     def ysensor_data_callback(self, ysensor_data):
         self.heat_data = ysensor_data.heat
