@@ -6,7 +6,8 @@ import os, time
 
 from python_qt_binding import loadUi
 from python_qt_binding.QtCore import Qt, QTimer, Signal, Slot, QSize
-from python_qt_binding.QtGui import QTableWidget, QTableWidgetItem, QWidget, QPalette, QBrush, QAbstractItemView, QFont
+from python_qt_binding.QtGui import QTableWidget, QTableWidgetItem, QWidget, QPalette, QBrush, QAbstractItemView, QFont, \
+    QHeaderView
 import rospkg
 import rospy
 from rospy.exceptions import ROSException
@@ -21,8 +22,6 @@ class HeatSensorViewerWidget(QWidget):
     FONT = "Helvetica"
     FONT_SIZE = 15
     FONT_WEIGHT = 20
-    CELL_HEIGHT = 80
-    CELL_WIDTH = 80
     DATA_BW_RY = 100
     DATA_BW_YG = 50
 
@@ -59,16 +58,16 @@ class HeatSensorViewerWidget(QWidget):
         table_widget.clear()
         table_widget.setColumnCount(self.MAX_COL)
         table_widget.setRowCount(self.MAX_ROW)
-        table_widget.setMinimumSize(QSize(self.MAX_COL * self.CELL_WIDTH * 1.2, self.MAX_ROW * self.CELL_HEIGHT * 1.2))
         table_widget.setSelectionMode(QAbstractItemView.NoSelection)  # セル選択不可
         table_widget.setEditTriggers(QAbstractItemView.NoEditTriggers)  # 編集不可
+        table_widget.horizontalHeader().setResizeMode(QHeaderView.Stretch)
+        table_widget.verticalHeader().setResizeMode(QHeaderView.Stretch)
 
         data_mat = [init_data_list[i * self.MAX_COL: (i + 1) * self.MAX_COL] for i in range(self.MAX_COL)]
         for i in range(self.MAX_ROW):
             for j in range(self.MAX_COL):
                 item = QTableWidgetItem(str(data_mat[i][j]), Qt.AlignCenter)
                 item.setTextAlignment(Qt.AlignCenter)
-                item.setSizeHint(QSize(self.CELL_WIDTH, self.CELL_HEIGHT))
                 item.setFont(QFont(self.FONT, self.FONT_SIZE, self.FONT_WEIGHT, italic=False))
                 table_widget.setItem(i, j, item)
 

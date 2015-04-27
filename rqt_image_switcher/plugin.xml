@@ -1,0 +1,16 @@
+<library path="src">
+    <class name="ImageSwitch" type="image_switch.image_switch.ImageSwitch"
+           base_class_type="rqt_gui_py::Plugin">
+        <description>
+            A Python GUI plugin to introspect ROS topics.
+        </description>
+        <qtgui>
+            <group>
+                <label>Visualization</label>
+            </group>
+            <label>Image Switches</label>
+            <icon type="theme">system-search</icon>
+            <statustip>A Python GUI plugin for monitoring ROS topics.</statustip>
+        </qtgui>
+    </class>
+</library>

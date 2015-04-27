@@ -12,12 +12,18 @@ class ImageListener:
         self._node_name = node_name
         self._topic_name = listening_topic_name
         self._image_msg = received_image
+        self.is_activate = False
 
     def img_callback(self, _img_msg):
         self._image_msg = _img_msg
 
     def activate(self):
-        rospy.Subscriber(self._topic_name, Image, self.img_callback)
+        self.is_activate = True
+        self._sub = rospy.Subscriber(self._topic_name, Image, self.img_callback)
+
+    def deactivate(self):
+        if self.is_activate:
+            self._sub.unregister()
 
 
 class ImageSwitcher:
@@ -60,6 +66,10 @@ class ImageSwitcher:
     def pub_images(self):
         for idx, image_pub in enumerate(self._image_publishers):
             image_pub.publish(self._pub_img_msgs[idx])
+
+    def deactivate(self):
+        for image_listener in self._image_listeners:
+            image_listener.deactivate()
 
 
 if __name__ == '__main__':
