@@ -23,13 +23,13 @@ class ImageSwitchWidget(QWidget):
         loadUi(ui_file, self)
 
         self._image_switcher_server = ImageSwitcher()
-        self._service_proxy = rospy.ServiceProxy('image_switching', ImageSwitcherService)
+        self._service_proxy = rospy.ServiceProxy('image_switcher', ImageSwitcherService)
 
         self._updateTimer = QTimer(self)
         self._updateTimer.timeout.connect(self.timeout_callback)
 
     def start(self):
-        self._updateTimer.start(1000)  # loop rate is 1000[ms]
+        self._updateTimer.start(0.1)  # loop rate is 1000[ms]
         self._image_switcher_server.activate()
 
     def stop(self):
@@ -50,7 +50,7 @@ class ImageSwitchWidget(QWidget):
         # try:
         # self._topic_name = eval(topic_name)
         # except Exception:
-        #     self._topic_name = self.TOPIC_NAME
+        # self._topic_name = self.TOPIC_NAME
 
     def shutdown_plugin(self):
         self.stop()
