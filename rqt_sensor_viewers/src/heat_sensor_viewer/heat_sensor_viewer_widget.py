@@ -98,10 +98,13 @@ class HeatSensorViewerWidget(QWidget):
 
     @Slot()
     def on_subscribe_topic_button_clicked(self):
-        if str(self.topic_edit.text()) is not self._topic_name:
+        new_topic_name = str(self.topic_edit.text())
+        if new_topic_name.find('/'):
+            new_topic_name = new_topic_name[new_topic_name.find('/') + 1:]
+
+        if new_topic_name is not self._topic_name:
             self._subscriber.unregister()
-            if str(self.topic_edit.text()).find('/'):
-                self._topic_name = str(self.topic_edit.text())[str(self.topic_edit.text()).find('/') + 1:]
+            self._topic_name = new_topic_name
             self._subscriber = rospy.Subscriber(self._topic_name, HeatSensorData, self._heat_sensor_data_callback)
 
     def _heat_sensor_data_callback(self, heat_sensor_data):

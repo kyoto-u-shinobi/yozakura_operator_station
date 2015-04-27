@@ -6,7 +6,7 @@
         </description>
         <qtgui>
             <group>
-                <label>Visualization</label>
+                <label>Yozakura GUI</label>
             </group>
             <label>Image Switches</label>
             <icon type="theme">system-search</icon>

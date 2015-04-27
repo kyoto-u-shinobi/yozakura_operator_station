@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>CO2SensorViewerWidget</class>
- <widget class="QWidget" name="CO2SensorViewerWidget">
+ <class>ImageSwitchWidget</class>
+ <widget class="QWidget" name="ImageSwitchWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>179</width>
-    <height>316</height>
+    <width>306</width>
+    <height>445</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -23,19 +23,6 @@
    <string>HeatSensorViewer</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
-   <item>
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>40</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
@@ -130,19 +117,6 @@
       </spacer>
      </item>
     </layout>
-   </item>
-   <item>
-    <spacer name="horizontalSpacer_2">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>40</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
    </item>
   </layout>
  </widget>
