@@ -59,17 +59,17 @@ class HeatSensorViewerWidget(QWidget):
         table_widget.setColumnCount(self.MAX_COL)
         table_widget.setRowCount(self.MAX_ROW)
         table_widget.setSelectionMode(QAbstractItemView.NoSelection)  # セル選択不可
-        table_widget.setEditTriggers(QAbstractItemView.NoEditTriggers)  # 編集不可
+        table_widget.setEditTriggers(QAbstractItemView.NoEditTriggers)  # セル編集不可
         table_widget.horizontalHeader().setResizeMode(QHeaderView.Stretch)
         table_widget.verticalHeader().setResizeMode(QHeaderView.Stretch)
 
+        # 配列を２次元配列にして行列的に扱う
         data_mat = [init_data_list[i * self.MAX_COL: (i + 1) * self.MAX_COL] for i in range(self.MAX_COL)]
-        for i in range(self.MAX_ROW):
-            for j in range(self.MAX_COL):
-                item = QTableWidgetItem(str(data_mat[i][j]), Qt.AlignCenter)
-                item.setTextAlignment(Qt.AlignCenter)
-                item.setFont(QFont(self.FONT, self.FONT_SIZE, self.FONT_WEIGHT, italic=False))
-                table_widget.setItem(i, j, item)
+        for i, j in [(i, j) for i in range(self.MAX_ROW) for j in range(self.MAX_COL)]:
+            item = QTableWidgetItem(str(data_mat[i][j]), Qt.AlignCenter)
+            item.setTextAlignment(Qt.AlignCenter)
+            item.setFont(QFont(self.FONT, self.FONT_SIZE, self.FONT_WEIGHT, italic=False))
+            table_widget.setItem(i, j, item)
 
         table_widget.resizeColumnsToContents()
         table_widget.resizeRowsToContents()

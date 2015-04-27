@@ -19,7 +19,7 @@ class SensorDataManager(object):
 
         self._ysensor_data = YozakuraSensorData()
         self._pub_ysensor_data = rospy.Publisher(DEFAULT_SENSORDATA_TOPIC_NAME, YozakuraSensorData, queue_size=10)
-        self._ysensor_data.heat.data = [0.0]*32
+        self._ysensor_data.heat.data = [0.0] * 32
         # ポテンショ生データ→角度[deg]: [0, 1]→[0, 3600]
         # ギア比　ポテンショ[deg]:フリッパー[deg] = 50:16
         self._flipper_raw2deg = 3600.0 * (16.0 / 50.0)
@@ -119,28 +119,28 @@ class SensorDataManager(object):
 
         self._set_flipper_angles(self._ystate.base.flipper_left,
                                  flipper_angles[0],
-                                 self._flipper_raw2deg, -self._lflipper_center_raw_data)
+                                 scale=self._flipper_raw2deg, offset=-self._lflipper_center_raw_data)
         self._set_flipper_angles(self._ystate.base.flipper_right,
                                  flipper_angles[1],
-                                 -self._flipper_raw2deg, -self._rflipper_center_raw_data)
+                                 scale=-self._flipper_raw2deg, offset=-self._rflipper_center_raw_data)
 
         lwheel, rwheel, lflip, rflip = current_sensor_data
         self._set_current_sensor_data(self._ysensor_data.wheel_left,
                                       lwheel,
-                                      1.0, 0.0,
-                                      1.0, 0.0)
+                                      current_scale=1.0, current_offset=0.0,
+                                      voltage_scale=1.0, voltage_offset=0.0)
         self._set_current_sensor_data(self._ysensor_data.wheel_right,
                                       rwheel,
-                                      1.0, 0.0,
-                                      1.0, 0.0)
+                                      current_scale=1.0, current_offset=0.0,
+                                      voltage_scale=1.0, voltage_offset=0.0)
         self._set_current_sensor_data(self._ysensor_data.flipper_left,
                                       lflip,
-                                      1.0, 0.0,
-                                      1.0, 0.0)
+                                      current_scale=1.0, current_offset=0.0,
+                                      voltage_scale=1.0, voltage_offset=0.0)
         self._set_current_sensor_data(self._ysensor_data.flipper_right,
                                       rflip,
-                                      1.0, 0.0,
-                                      1.0, 0.0)
+                                      current_scale=1.0, current_offset=0.0,
+                                      voltage_scale=1.0, voltage_offset=0.0)
 
         front, back = imu_sensor_data
         # もしNoneじゃなかったらdegにする．そうじゃないならNone
@@ -148,36 +148,39 @@ class SensorDataManager(object):
         back = [np.rad2deg(data) if data is not None else None for data in back]
         self._set_pose_sensor(self._ystate.base.body_front,
                               front,
-                              1.0, 0.0,
-                              1.0, 0.0,
-                              1.0, 0.0)
+                              roll_scale=1.0, roll_offset=0.0,
+                              pitch_scale=1.0, pitch_offset=0.0,
+                              yaw_scale=1.0, yaw_offset=0.0)
+
         self._set_pose_sensor(self._ystate.base.body_back,
                               back,
-                              1.0, 0.0,
-                              1.0, 0.0,
-                              1.0, 0.0)
+                              roll_scale=1.0, roll_offset=0.0,
+                              pitch_scale=1.0, pitch_offset=0.0,
+                              yaw_scale=1.0, yaw_offset=0.0)
 
         arm_state_data, servo_iv, thermo_sensor_data, co2_sensor_data = arm_data
         self._set_arm_state(self._ystate.arm, arm_state_data,
-                            self._arm_linear_dxdeg2armdeg, self._arm_linear_center_dxdeg,
-                            self._arm_pitch_dxdeg2armdeg, self._arm_pitch_center_dxdeg,
-                            self._arm_yaw_dxdeg2armdeg, self._arm_yaw_center_dxdeg)
+                            linear_scale=self._arm_linear_dxdeg2armdeg, linear_offset=self._arm_linear_center_dxdeg,
+                            pitch_scale=self._arm_pitch_dxdeg2armdeg, pitch_offset=self._arm_pitch_center_dxdeg,
+                            yaw_scale=self._arm_yaw_dxdeg2armdeg, yaw_offset=self._arm_yaw_center_dxdeg)
+
         self._set_current_sensor_data(self._ysensor_data.arm_linear,
                                       [0.0, servo_iv[0]],
-                                      1.0, 0.0,
-                                      1.0, 0.0)
+                                      current_scale=1.0, current_offset=0.0,
+                                      voltage_scale=1.0, voltage_offset=0.0)
+
         self._set_current_sensor_data(self._ysensor_data.arm_pitch,
                                       [servo_iv[1], servo_iv[0]],
-                                      1.0, 0.0,
-                                      1.0, 0.0)
+                                      current_scale=1.0, current_offset=0.0,
+                                      voltage_scale=1.0, voltage_offset=0.0)
         self._set_current_sensor_data(self._ysensor_data.arm_yaw,
                                       [servo_iv[2], servo_iv[0]],
-                                      1.0, 0.0,
-                                      1.0, 0.0)
+                                      current_scale=1.0, current_offset=0.0,
+                                      voltage_scale=1.0, voltage_offset=0.0)
         self._set_heat_sensor(self._ysensor_data.heat, thermo_sensor_data[0] + thermo_sensor_data[1],
-                              1.0, 0.0)
+                              scale=1.0, offset=0.0)
         self._set_co2_sensor(self._ysensor_data.co2, co2_sensor_data,
-                             1.0, 0.0)
+                             scale=1.0, offset=0.0)
 
 
 if __name__ == "__main__":
