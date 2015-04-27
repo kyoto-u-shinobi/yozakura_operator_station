@@ -115,19 +115,18 @@ class HeatSensorViewerWidget(QWidget):
 
     def _update_display_data(self, table_widget, is_ok, data_list):
         def _set_data(_is_ok, _data_mat):
-            for i in range(self.MAX_ROW):
-                for j in range(self.MAX_COL):
-                    item = table_widget.item(i, j)
-                    if not _is_ok:
-                        item.setBackground(self._white_palette.brush(QPalette.Base))
+            for i, j in [(i, j) for i in range(self.MAX_ROW) for j in range(self.MAX_COL)]:
+                item = table_widget.item(i, j)
+                if not _is_ok:
+                    item.setBackground(self._white_palette.brush(QPalette.Base))
+                else:
+                    item.setText(str(_data_mat[i][j]))
+                    if data_mat[i][j] < self.DATA_BW_YG:
+                        item.setBackground(self._green_palette.brush(QPalette.Base))
+                    elif self.DATA_BW_YG <= data_mat[i][j] < self.DATA_BW_RY:
+                        item.setBackground(self._yellow_palette.brush(QPalette.Base))
                     else:
-                        item.setText(str(_data_mat[i][j]))
-                        if data_mat[i][j] < self.DATA_BW_YG:
-                            item.setBackground(self._green_palette.brush(QPalette.Base))
-                        elif self.DATA_BW_YG <= data_mat[i][j] < self.DATA_BW_RY:
-                            item.setBackground(self._yellow_palette.brush(QPalette.Base))
-                        else:
-                            item.setBackground(self._red_palette.brush(QPalette.Base))
+                        item.setBackground(self._red_palette.brush(QPalette.Base))
 
         if is_ok is not True:
             self.topic_edit.setPalette(self._red_palette)
