@@ -48,7 +48,8 @@ class WebCamManager(object):
 
     def __init__(self, ip_address, topic_name, overlayed_text=None):
         self._cvbridge = CvBridge()
-        self._capture = cv2.VideoCapture('http://' + ip_address + '/?action=stream.mjpeg')
+        # self._capture = cv2.VideoCapture('http://' + ip_address + '/?action=stream.mjpeg')
+        self._capture = cv2.VideoCapture('http://' + ip_address + '/?action=snapshot.jpeg')
         self._cmd_uri = 'http://' + ip_address + '/?action=command&command='
         self._topic_name = topic_name
         self._overlayed_text = overlayed_text

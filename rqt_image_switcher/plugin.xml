@@ -13,4 +13,18 @@
             <statustip>A Python GUI plugin for monitoring ROS topics.</statustip>
         </qtgui>
     </class>
+    <class name="ImageSettings" type="image_settings.image_settings.ImageSettings"
+           base_class_type="rqt_gui_py::Plugin">
+        <description>
+            A Python GUI plugin to introspect ROS topics.
+        </description>
+        <qtgui>
+            <group>
+                <label>Yozakura GUI</label>
+            </group>
+            <label>Image Settings</label>
+            <icon type="theme">system-search</icon>
+            <statustip>A Python GUI plugin for monitoring ROS topics.</statustip>
+        </qtgui>
+    </class>
 </library>

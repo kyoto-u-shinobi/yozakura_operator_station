@@ -20,7 +20,7 @@
    <bool>true</bool>
   </property>
   <property name="windowTitle">
-   <string>HeatSensorViewer</string>
+   <string>CO2SensorViewer</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">

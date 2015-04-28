@@ -20,7 +20,7 @@
    <bool>true</bool>
   </property>
   <property name="windowTitle">
-   <string>HeatSensorViewer</string>
+   <string>ImageSwitcher</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>

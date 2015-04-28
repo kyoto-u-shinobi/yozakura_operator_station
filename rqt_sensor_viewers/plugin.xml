@@ -6,7 +6,7 @@
         </description>
         <qtgui>
             <group>
-                <label>Visualization</label>
+                <label>Yozakura GUI</label>
             </group>
             <label>Themo data Viewer</label>
             <icon type="theme">system-search</icon>
@@ -20,7 +20,7 @@
         </description>
         <qtgui>
             <group>
-                <label>Visualization</label>
+                <label>Yozakura GUI</label>
             </group>
             <label>CO2 data Viewer</label>
             <icon type="theme">system-search</icon>
