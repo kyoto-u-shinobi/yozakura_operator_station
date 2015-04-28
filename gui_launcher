@@ -3,5 +3,5 @@ roslaunch launchers 3d_display.launch &
 roslaunch launchers cameras_streaming.launch &
 rosrun rqt_gui rqt_gui --perspective=moving_viewer &
 rosrun rqt_gui rqt_gui --perspective=manipulating_viewer &
-rosrun rqt_gui rqt_gui --perspective=system
+rosrun rqt_gui rqt_gui --perspective=for_debug
 

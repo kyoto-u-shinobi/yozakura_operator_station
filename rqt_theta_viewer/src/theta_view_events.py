@@ -12,7 +12,7 @@ class ThetaViewEvents:
     def __init__(self, _parent):
         self.parent = _parent
 
-        rospy.wait_for_service('theta_capture')
+        # rospy.wait_for_service('theta_capture')
 
 
     # http://retrofocus28.blogspot.jp/2013/09/pyqt9.html

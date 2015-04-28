@@ -53,7 +53,6 @@ class Client(object):
 
             time.sleep(0.2)  # to control this loop rate
 
-
     def shutdown(self):
         self.request.close()  # -------------------------------------------------------------------------
 

@@ -3,6 +3,7 @@
 
 import rospy
 import math
+import numpy as np
 from sensor_msgs.msg import JointState
 from yozakura_msgs.msg import ArmState
 

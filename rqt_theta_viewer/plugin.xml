@@ -4,7 +4,7 @@
     </description>
     <qtgui>
       <group>
-        <label>Visualization</label>
+        <label>Yozakura GUI</label>
         <icon type="theme">folder</icon>
       </group>
       <label>Theta Viewer</label>

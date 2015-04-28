@@ -3,6 +3,7 @@
 
 import rospy
 import math
+import numpy as np
 from sensor_msgs.msg import JointState
 from yozakura_msgs.msg import BaseState
 
@@ -32,8 +33,8 @@ class BodyJointStateManager:
                       base_state.body_front.roll,
                       -(base_state.body_back.pitch - base_state.body_front.pitch),
                       base_state.body_back.roll - base_state.body_front.roll,
-                      base_state.flipper_left.angle,
-                      base_state.flipper_right.angle,
+                      -base_state.flipper_left.angle,
+                      -base_state.flipper_right.angle,
                       -base_state.wheel_left.rotation_angle,
                       -base_state.wheel_right.rotation_angle]
 

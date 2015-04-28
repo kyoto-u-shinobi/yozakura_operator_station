@@ -7,6 +7,7 @@
         <qtgui>
             <group>
                 <label>Yozakura GUI</label>
+                <icon type="theme">folder</icon>
             </group>
             <label>Themo data Viewer</label>
             <icon type="theme">system-search</icon>
@@ -21,6 +22,7 @@
         <qtgui>
             <group>
                 <label>Yozakura GUI</label>
+                <icon type="theme">folder</icon>
             </group>
             <label>CO2 data Viewer</label>
             <icon type="theme">system-search</icon>
