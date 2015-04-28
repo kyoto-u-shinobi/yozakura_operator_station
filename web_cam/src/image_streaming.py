@@ -48,12 +48,16 @@ class WebCamManager(object):
 
     def __init__(self, ip_address, topic_name, overlayed_text=None):
         self._cvbridge = CvBridge()
-        # self._capture = cv2.VideoCapture('http://' + ip_address + '/?action=stream.mjpeg')
-        self._capture = cv2.VideoCapture('http://' + ip_address + '/?action=snapshot.jpeg')
+        self._capture = cv2.VideoCapture('http://' + ip_address + '/?action=stream.mjpeg')
+        # self._capture = cv2.VideoCapture('http://' + ip_address + '/?action=snapshot.jpeg')
         self._cmd_uri = 'http://' + ip_address + '/?action=command&command='
         self._topic_name = topic_name
         self._overlayed_text = overlayed_text
+
         self._aiball_setting = self.AIballSettings('QVGA', 0)
+        self._send_command(self._aiball_setting.get_resolution_cmd())
+        self._send_command(self._aiball_setting.get_compress_mode_cmd())
+
         self.is_active = False
 
     def open(self):
@@ -89,6 +93,7 @@ class WebCamManager(object):
         has_image, cv_image = self._capture.read()
         h, w = cv_image.shape[0], cv_image.shape[1]
 
+        # cv2.putTextのテキスト位置とかは適当に決めた
         if has_image is False:
             print('fail to grub image')
             text = '!! FAIL TO GRUB !!'
@@ -100,7 +105,7 @@ class WebCamManager(object):
         if self._overlayed_text is not None:
             text_pxlength = 13.0 * len(self._overlayed_text)
             cv2.putText(cv_image, self._overlayed_text,
-                        (int(w / 2.0 - text_pxlength / 2.0), int(h / 16.0)),
+                        (int(w / 2.0 - text_pxlength / 2.0), int(h / 8.0)),
                         cv2.FONT_HERSHEY_SIMPLEX, fontScale=1, color=(255, 0, 255), thickness=2)
 
         try:
