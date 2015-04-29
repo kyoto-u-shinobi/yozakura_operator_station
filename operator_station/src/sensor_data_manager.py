@@ -198,7 +198,7 @@ if __name__ == "__main__":
         back_pose = [0.0, 0.0, 0.0]
         arm_state = [0.0, 0.0, 0.0]  # linear, pitch, yaw
         arm_iv = [0.0, 0.0, 0.0]  # voltage, pithc_current, yaw_current
-        heat = [[0.0] * 16, [0.0] * 16]
+        heat = [0.0] * 16 + [0.0] * 16
         co2 = 0.0
 
         # set data
