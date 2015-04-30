@@ -59,6 +59,8 @@ add_message_files( FILES
   YozakuraState.msg
   YozakuraCommand.msg
   YozakuraSensorData.msg
+
+  InputMode.msg
 )
 
 ## Generate services in the 'srv' folder

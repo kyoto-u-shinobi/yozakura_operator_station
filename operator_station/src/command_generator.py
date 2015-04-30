@@ -5,7 +5,7 @@ import logging
 import rospy
 from js_controller import JoyStickController
 from yozakura_msgs.msg import YozakuraCommand
-from operator_station.srv import InputModeSwitchService
+from operator_station.srv import InputModeSwitchService, InputModeSwitchServiceResponse
 
 import command_gen_methods as methods
 
@@ -52,6 +52,7 @@ class CommandGenerator(object):
         self.js_mapping_mode = req.js_mapping_mode
         self.direction_flag = req.direction_flag
         self.main_controller_name = req.main_controller_name
+        return InputModeSwitchServiceResponse()
 
     def activate(self):
         # build server

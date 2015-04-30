@@ -32,21 +32,23 @@ class Client(object):
                 continue
 
             try:
-                lwheel, rwheel, lflipper, rflipper = pickle.loads(result)
-                print(lwheel, rwheel, lflipper, rflipper)
+                speeds, arms = pickle.loads(result)
+                print(speeds, arms)
             except EOFError:
                 continue
 
             adc_data = [1.0, 2.0]
-            current_data = [[11.0, 12.0, 13.0],  # lwheel
-                            [21.0, 22.0, 23.0],  # rwheel
-                            [31.0, 32.0, 33.0],  # lflip
-                            [41.0, 42.0, 43.0],  # rflip
-                            [51.0, 52.0, 53.0]]  # battery
+            current_data = [[11.0, 12.0],  # lwheel
+                            [21.0, 22.0],  # rwheel
+                            [31.0, 32.0],  # lflip
+                            [41.0, 42.0]]  # rflip
             imu_data = [[math.radians(101.0), math.radians(102.0), math.radians(103.0)],  # front
                         [math.radians(201.0), math.radians(202.0), math.radians(203.0)]]  # rear
 
-            arm_data = [1.0, 2.0]
+            arm_data = [[1.0, 2.0, 3.0],
+                        [11.0, 12.0, 13.0],
+                        [range(16), range(16)],
+                        110.0]
             self._sensors_server.sendto(pickle.dumps((adc_data, current_data, imu_data, arm_data),
                                                      protocol=2),
                                         self.server_address)
