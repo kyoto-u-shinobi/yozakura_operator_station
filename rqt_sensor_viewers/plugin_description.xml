@@ -1,0 +1,8 @@
+<library path="./librqt_sensor_viewers">
+     <class name="IMUDataSwitch" type="IMUDataSwitch"
+           base_class_type="rviz::Panel">
+        <description>
+            A panel widget
+        </description>
+    </class>
+</library>
