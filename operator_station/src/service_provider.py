@@ -5,7 +5,7 @@ import rospy
 from sensor_msgs.msg import Joy
 from js_state import Buttons
 from yozakura_msgs.msg import InputMode
-from operator_station.srv import InputModeSwitchService
+from yozakura_msgs.srv import InputModeSwitchService
 
 # remap-able names
 DEFAULT_SERVER_NODENAME = "service_provider"

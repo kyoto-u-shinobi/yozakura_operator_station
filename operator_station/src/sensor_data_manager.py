@@ -5,11 +5,13 @@ import numpy as np
 
 import rospy
 from yozakura_msgs.msg import YozakuraSensorData, YozakuraState
+from yozakura_msgs.srv import IMUDataSwitch, IMUDataSwitchResponse
 
 
 # remap-able names
 DEFAULT_STATE_TOPIC_NAME = "yozakura_state"
 DEFAULT_SENSORDATA_TOPIC_NAME = "yozakura_sensor_data"
+DEFAULT_SERVICE_NAME = "imu_switch"
 
 
 class SensorDataManager(object):
@@ -20,11 +22,17 @@ class SensorDataManager(object):
         self._ysensor_data = YozakuraSensorData()
         self._pub_ysensor_data = rospy.Publisher(DEFAULT_SENSORDATA_TOPIC_NAME, YozakuraSensorData, queue_size=10)
         self._ysensor_data.heat.data = [0.0] * 32
+
         # ポテンショ生データ→角度[deg]: [0, 1]→[0, 3600]
         # ギア比　ポテンショ[deg]:フリッパー[deg] = 50:16
         self._flipper_raw2deg = 3600.0 * (16.0 / 50.0)
         self._lflipper_center_raw_data = rospy.get_param('~lflipper_center_raw_data', 0.33780)
         self._rflipper_center_raw_data = rospy.get_param('~rflipper_center_raw_data', 0.61080)
+
+        # これをFalseにするとbodyの姿勢データがGUIに反映されなくなる
+        # 姿勢データバグってるけど，urgだけは見たいというときのため
+        self._body_pose_switch = True
+        self.service = rospy.Service(DEFAULT_SERVICE_NAME, IMUDataSwitch, self._handle_imu_switch)
 
         # DXの角度を実際の角度に変換する
         # linearはDXの角度からじゃばらアームリンクの作る菱型の広い方の角度に変換しないといけない
@@ -39,6 +47,10 @@ class SensorDataManager(object):
     def publish_data(self):
         self._pub_ystate.publish(self._ystate)
         self._pub_ysensor_data.publish(self._ysensor_data)
+
+    def _handle_imu_switch(self, req):
+        self._body_pose_switch = req.imu_data_switch
+        return IMUDataSwitchResponse()
 
     @staticmethod
     def _convert_data(new_raw_data, current_data, scale, offset):
@@ -146,17 +158,16 @@ class SensorDataManager(object):
         # もしNoneじゃなかったらdegにする．そうじゃないならNone
         front = [np.rad2deg(data) if data is not None else None for data in front]
         back = [np.rad2deg(data) if data is not None else None for data in back]
-        self._set_pose_sensor(self._ystate.base.body_front,
-                              front,
-                              roll_scale=1.0, roll_offset=0.0,
-                              pitch_scale=1.0, pitch_offset=0.0,
-                              yaw_scale=1.0, yaw_offset=0.0)
+        switch = 1.0 if self._body_pose_switch else 0.0
+        self._set_pose_sensor(self._ystate.base.body_front, front,
+                              roll_scale=switch * 1.0, roll_offset=0.0,
+                              pitch_scale=switch * 1.0, pitch_offset=0.0,
+                              yaw_scale=switch * 1.0, yaw_offset=0.0)
 
-        self._set_pose_sensor(self._ystate.base.body_back,
-                              back,
-                              roll_scale=1.0, roll_offset=0.0,
-                              pitch_scale=1.0, pitch_offset=0.0,
-                              yaw_scale=1.0, yaw_offset=0.0)
+        self._set_pose_sensor(self._ystate.base.body_back, back,
+                              roll_scale=switch * 1.0, roll_offset=0.0,
+                              pitch_scale=switch * 1.0, pitch_offset=0.0,
+                              yaw_scale=switch * 1.0, yaw_offset=0.0)
 
         arm_state_data, servo_iv, thermo_sensor_data, co2_sensor_data = arm_data
         self._set_arm_state(self._ystate.arm, arm_state_data,

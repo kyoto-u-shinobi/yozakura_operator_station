@@ -42,17 +42,21 @@
     <buildtool_depend>catkin</buildtool_depend>
     <build_depend>python_qt_binding</build_depend>
     <build_depend>rospy</build_depend>
+    <build_depend>roscpp</build_depend>
     <build_depend>rostopic</build_depend>
     <build_depend>rqt_gui</build_depend>
     <build_depend>rqt_gui_py</build_depend>
+    <build_depend>rviz</build_depend>
     <build_depend>sensor_msgs</build_depend>
     <build_depend>std_msgs</build_depend>
     <build_depend>yozakura_msgs</build_depend>
     <run_depend>python_qt_binding</run_depend>
     <run_depend>rospy</run_depend>
+    <run_depend>roscpp</run_depend>
     <run_depend>rostopic</run_depend>
     <run_depend>rqt_gui</run_depend>
     <run_depend>rqt_gui_py</run_depend>
+    <run_depend>rviz</run_depend>
     <run_depend>sensor_msgs</run_depend>
     <run_depend>std_msgs</run_depend>
     <run_depend>yozakura_msgs</run_depend>
@@ -62,5 +66,6 @@
     <export>
         <!-- Other tools can request additional information be placed here -->
         <rqt_gui plugin="${prefix}/plugin.xml"/>
+        <rviz plugin="${prefix}/plugin_description.xml"/>
     </export>
 </package>

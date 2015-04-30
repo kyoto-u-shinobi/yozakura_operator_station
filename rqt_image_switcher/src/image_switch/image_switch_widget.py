@@ -12,7 +12,7 @@ import rospy
 from rospy.exceptions import ROSException
 
 from image_switcher_node import ImageSwitcher
-from rqt_image_switcher.srv import ImageSwitcherService
+from yozakura_msgs.srv import ImageSwitcherService
 
 
 class ImageSwitchWidget(QWidget):

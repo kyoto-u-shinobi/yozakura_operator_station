@@ -5,7 +5,7 @@ import logging
 import rospy
 from js_controller import JoyStickController
 from yozakura_msgs.msg import YozakuraCommand
-from operator_station.srv import InputModeSwitchService, InputModeSwitchServiceResponse
+from yozakura_msgs.srv import InputModeSwitchService, InputModeSwitchServiceResponse
 
 import command_gen_methods as methods
 

@@ -87,6 +87,8 @@ class WebCamManager(object):
         if abs(req.brightness) is 1:
             self._send_command(self._aiball_setting.get_brightness_cmd(req.brightness))
 
+        return AIballSettingsResponse()
+
     def publish_img(self):
         if not self.is_active:
             self.activate()

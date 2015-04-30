@@ -23,7 +23,6 @@ import numpy as np
 
 import rospy
 from yozakura_msgs.msg import YozakuraCommand
-from std_msgs.msg import String
 from sensor_data_manager import SensorDataManager
 
 # remap-able

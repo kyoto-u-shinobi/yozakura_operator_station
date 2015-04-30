@@ -6,23 +6,34 @@ project(rqt_sensor_viewers)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   python_qt_binding
+  roscpp
   rospy
   rostopic
   rqt_gui
   rqt_gui_py
+  rviz
   sensor_msgs
   std_msgs
   yozakura_msgs
 )
 
-## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
-
+find_package(Qt4 COMPONENTS QtCore QtGui REQUIRED)
+include(${QT_USE_FILE})
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
 ## See http://ros.org/doc/api/catkin/html/user_guide/setup_dot_py.html
 catkin_python_setup()
+
+
+set(ROS_BUILD_TYPE Release)
+find_package(Qt4 COMPONENTS QtCore QtGui REQUIRED)
+include(${QT_USE_FILE})
+add_definitions(-DQT_NO_KEYWORDS -g)
+
+qt4_wrap_cpp(MOC_FILES
+    src/imu_data_switch/imu_data_switch.h
+)
 
 ################################################
 ## Declare ROS messages, services and actions ##
@@ -87,8 +98,8 @@ catkin_python_setup()
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES rqt_sensor_viewers
- CATKIN_DEPENDS python_qt_binding rospy rostopic rqt_gui rqt_gui_py sensor_msgs std_msgs yozakura_msgs
-#  DEPENDS system_lib
+ CATKIN_DEPENDS python_qt_binding rospy roscpp rostopic rqt_gui rqt_gui_py sensor_msgs std_msgs yozakura_msgs
+ DEPENDS rviz
 )
 
 ###########
@@ -103,21 +114,22 @@ include_directories(
 )
 
 ## Declare a cpp library
-# add_library(rqt_sensor_viewers
-#   src/${PROJECT_NAME}/rqt_sensor_viewers.cpp
-# )
+add_library(rqt_sensor_viewers
+  src/imu_data_switch/imu_data_switch.cpp
+  ${MOC_FILES}
+)
 
 ## Declare a cpp executable
-# add_executable(rqt_sensor_viewers_node src/rqt_sensor_viewers_node.cpp)
+add_executable(rqt_sensor_viewers_node src/imu_data_switch/imu_data_switch.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-# add_dependencies(rqt_sensor_viewers_node rqt_sensor_viewers_generate_messages_cpp)
+# add_dependencies(rqt_sensor_viewers_node src/imu_data_switch/imu_data_switch.h)
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(rqt_sensor_viewers_node
-#   ${catkin_LIBRARIES}
-# )
+target_link_libraries(rqt_sensor_viewers_node
+  ${catkin_LIBRARIES} ${QT_LIBRARIES}
+)
 
 #############
 ## Install ##
