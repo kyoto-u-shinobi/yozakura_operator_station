@@ -9,7 +9,7 @@
         <param name="rflipper_center_raw_data" value="0.61080"/>
         <param name="arm_linear_center_dxdeg" value="570.0"/>
         <param name="arm_yaw_center_dxdeg" value="0.0"/>
-        <param name="arm_pitch_center_dxdeg" value="334.0"/>
+        <param name="arm_pitch_center_dxdeg" value="160.0"/>
     </node>
     <node name="joystick" pkg="joy" type="joy_node">
         <remap from="joy" to="joy"/>

@@ -42,7 +42,7 @@ class SensorDataManager(object):
         # DXの初期姿勢のときのDXの角度
         self._arm_linear_center_dxdeg = rospy.get_param('~arm_linear_center_dxdeg', 570.0)
         self._arm_yaw_center_dxdeg = rospy.get_param('~arm_yaw_center_dxdeg', 0.0)
-        self._arm_pitch_center_dxdeg = rospy.get_param('~arm_pitch_center_dxdeg', 334.0)
+        self._arm_pitch_center_dxdeg = -rospy.get_param('~arm_pitch_center_dxdeg', 334.0)
 
     def publish_data(self):
         self._pub_ystate.publish(self._ystate)
@@ -171,9 +171,9 @@ class SensorDataManager(object):
 
         arm_state_data, servo_iv, thermo_sensor_data, co2_sensor_data = arm_data
         self._set_arm_state(self._ystate.arm, arm_state_data,
-                            linear_scale=self._arm_linear_dxdeg2armdeg, linear_offset=-self._arm_linear_center_dxdeg,
-                            pitch_scale=self._arm_pitch_dxdeg2armdeg, pitch_offset=-self._arm_pitch_center_dxdeg,
-                            yaw_scale=self._arm_yaw_dxdeg2armdeg, yaw_offset=-self._arm_yaw_center_dxdeg)
+                            linear_scale=self._arm_linear_dxdeg2armdeg, linear_offset=self._arm_linear_center_dxdeg,
+                            pitch_scale=self._arm_pitch_dxdeg2armdeg, pitch_offset=self._arm_pitch_center_dxdeg,
+                            yaw_scale=self._arm_yaw_dxdeg2armdeg, yaw_offset=self._arm_yaw_center_dxdeg)
 
         self._set_current_sensor_data(self._ysensor_data.arm_linear,
                                       [0.0, servo_iv[0]],

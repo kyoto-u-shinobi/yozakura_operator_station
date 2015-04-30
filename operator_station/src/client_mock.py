@@ -37,7 +37,7 @@ class Client(object):
             except EOFError:
                 continue
 
-            adc_data = [1.0, 2.0]
+            adc_data = [0.33780, 0.61080]
             current_data = [[11.0, 12.0],  # lwheel
                             [21.0, 22.0],  # rwheel
                             [31.0, 32.0],  # lflip
@@ -45,7 +45,7 @@ class Client(object):
             imu_data = [[math.radians(101.0), math.radians(102.0), math.radians(103.0)],  # front
                         [math.radians(201.0), math.radians(202.0), math.radians(203.0)]]  # rear
 
-            arm_data = [[1.0, 2.0, 3.0],
+            arm_data = [[287.0, 160.0, 0.0],
                         [11.0, 12.0, 13.0],
                         [range(16), range(16)],
                         110.0]
