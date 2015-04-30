@@ -69,7 +69,8 @@ class WebCamManager(object):
         self.pub_image = rospy.Publisher(self._topic_name, Image, queue_size=1)
 
     def _send_command(self, cmd):
-        urllib2.urlopen(urllib2.Request(self._cmd_uri + cmd))
+        res = urllib2.urlopen(urllib2.Request(self._cmd_uri + cmd))
+        return res
 
     def _handle_aiball_settings(self, req):
         if req.resolution is not self._aiball_setting.resolution:

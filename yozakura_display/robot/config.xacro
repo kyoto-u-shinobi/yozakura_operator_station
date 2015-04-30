@@ -4,6 +4,9 @@
     <property name="robotPackagePath" value="package://yozakura_display/robot"/>
     <property name="modelDataResourseFolder" value="daes"/>
 
+    <property name="urg_base_x" value="0.015"/>
+    <property name="urg_base_y" value="0.015"/>
+
     <property name="bodyFront_depth" value="0.262"/>
     <property name="bodyFront_height" value="0.072"/>
     <property name="bodyFront_width" value="0.262"/>
@@ -57,17 +60,6 @@
     <property name="armLinear_frame_length" value="0.200"/>
 
 
-    <property name="arm_linear_frame_left_A" value="arm_linear_frame_left_A"/>
-    <property name="arm_linear_frame_left_B" value="arm_linear_frame_left_B"/>
-    <property name="joint_armLinear_left_A" value="joint_armLinear_left_A"/>
-    <property name="joint_armLinear_left_B" value="joint_armLinear_left_B"/>
-    <property name="joint_armLinear_left_C" value="joint_armLinear_left_C"/>
-
-    <property name="arm_linear_frame_right_A" value="arm_linear_frame_right_A"/>
-    <property name="arm_linear_frame_right_B" value="arm_linear_frame_right_B"/>
-    <property name="joint_armLinear_right_A" value="joint_armLinear_right_A"/>
-    <property name="joint_armLinear_right_B" value="joint_armLinear_right_B"/>
-    <property name="joint_armLinear_right_C" value="joint_armLinear_right_C"/>
 
 </robot>
 

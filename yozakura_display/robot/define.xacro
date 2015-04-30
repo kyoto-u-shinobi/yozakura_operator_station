@@ -5,4 +5,17 @@
 	<property name="DEG2RAD" 	value= "0.017453293" />
 	<property name="RAD2DEG" 	value="57.295779513" />
 
+
+    <property name="arm_linear_frame_left_A" value="arm_linear_frame_left_A"/>
+    <property name="arm_linear_frame_left_B" value="arm_linear_frame_left_B"/>
+    <property name="joint_armLinear_left_A" value="joint_armLinear_left_A"/>
+    <property name="joint_armLinear_left_B" value="joint_armLinear_left_B"/>
+    <property name="joint_armLinear_left_C" value="joint_armLinear_left_C"/>
+
+    <property name="arm_linear_frame_right_A" value="arm_linear_frame_right_A"/>
+    <property name="arm_linear_frame_right_B" value="arm_linear_frame_right_B"/>
+    <property name="joint_armLinear_right_A" value="joint_armLinear_right_A"/>
+    <property name="joint_armLinear_right_B" value="joint_armLinear_right_B"/>
+    <property name="joint_armLinear_right_C" value="joint_armLinear_right_C"/>
+
 </robot>

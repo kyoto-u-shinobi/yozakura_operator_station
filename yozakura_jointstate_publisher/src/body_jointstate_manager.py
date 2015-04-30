@@ -11,7 +11,7 @@ from yozakura_msgs.msg import BaseState
 class BodyJointStateManager:
     '''
     urdfの表示のためのJointStateを生成してpublishするクラス
-    self.bodyjoint_names, self.flipperjoint_names, self.wheeljoint_namesはurdfに依存
+    self.bodyjoint_names, self.flipperjoint_names, self.wheeljoint_namesはurdfで定義
     '''
 
     def __init__(self):

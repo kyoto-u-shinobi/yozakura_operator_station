@@ -12,6 +12,18 @@
 
     <xacro:yozakura_body parent_link="root"/>
 
+    <!--URG-->
+    <joint name="virtualjoint_urg" type="fixed">
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <parent link="body_front"/>
+        <child link="urg_base"/>
+    </joint>
+
+    <link name="urg_base">
+        <origin rpy="0 0 0"
+                xyz="${urg_base_x} ${urg_base_y} 0"/>
+    </link>
+
 
     <!-- ARM -->
 

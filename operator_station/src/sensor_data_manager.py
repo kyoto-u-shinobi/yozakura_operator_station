@@ -31,10 +31,10 @@ class SensorDataManager(object):
         self._arm_linear_dxdeg2armdeg = (20.0 / 100.0)  # (実験的に作る)
         self._arm_yaw_dxdeg2armdeg = -(1.0 / 5.0)
         self._arm_pitch_dxdeg2armdeg = -(24.0 / 50.0)
-        # DXの初期姿勢のときの角度
-        self._arm_linear_center_dxdeg = 570.0
-        self._arm_yaw_center_dxdeg = 0.0
-        self._arm_pitch_center_dxdeg = 334.0
+        # DXの初期姿勢のときのDXの角度
+        self._arm_linear_center_dxdeg = rospy.get_param('~arm_linear_center_dxdeg', 570.0)
+        self._arm_yaw_center_dxdeg = rospy.get_param('~arm_yaw_center_dxdeg', 0.0)
+        self._arm_pitch_center_dxdeg = rospy.get_param('~arm_pitch_center_dxdeg', 334.0)
 
     def publish_data(self):
         self._pub_ystate.publish(self._ystate)
