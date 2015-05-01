@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<launch>
+    <node name="overview_cam" pkg="web_cam" type="image_streaming.py" output="screen">
+        <remap from="web_cam_img" to="overview_cam_img" />
+        <remap from="web_cam_settings_service" to="overview_cam_settings"/>
+        <param name="ip_address" value="192.168.54.160"/>
+        <param name="overlay_text" value="Overview"/>
+    </node>
+</launch>
