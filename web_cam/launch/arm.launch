@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-<launch>
-    <node name="arm_cam" pkg="web_cam" type="image_streaming.py" output="screen">
-        <remap from="web_cam_img" to="arm_cam_img" />
-        <remap from="web_cam_settings_service" to="arm_cam_settings"/>
-        <param name="ip_address" value="192.168.54.163"/>
-        <param name="overlay_text" value="Arm"/>
-    </node>
-</launch>

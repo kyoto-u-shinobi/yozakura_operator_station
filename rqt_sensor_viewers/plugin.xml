@@ -44,4 +44,19 @@
             <statustip>A Python GUI plugin for monitoring ROS topics.</statustip>
         </qtgui>
     </class>
+  <class name="Plot" type="rqt_plot.plot.Plot" base_class_type="rqt_gui_py::Plugin">
+    <description>
+      A plugin visualizing numeric values in a 2D plot using different plotting backends.
+    </description>
+    <qtgui>
+      <group>
+        <label>Yozakura GUI</label>
+        <icon type="theme">folder</icon>
+        <statustip>Plugins related to visualization.</statustip>
+      </group>
+      <label>Plot</label>
+      <icon type="theme">utilities-system-monitor</icon>
+      <statustip>A plugin for visualizing numeric values in a 2D plot using different plotting backends.</statustip>
+    </qtgui>
+  </class>
 </library>

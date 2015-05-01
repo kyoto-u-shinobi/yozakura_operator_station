@@ -17,8 +17,6 @@ find_package(catkin REQUIRED COMPONENTS
   yozakura_msgs
 )
 
-find_package(Qt4 COMPONENTS QtCore QtGui REQUIRED)
-include(${QT_USE_FILE})
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
