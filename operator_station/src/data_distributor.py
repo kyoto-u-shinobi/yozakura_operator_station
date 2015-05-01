@@ -7,9 +7,9 @@ import rospy
 from yozakura_msgs.msg import YozakuraState, BaseState, ArmState, YozakuraSensorData, HeatSensorData, CO2SensorData
 from std_msgs.msg import Float32
 
-DEFAULT_NODE_NAME = 'data_distributor'
 
 # remap-able
+DEFAULT_NODE_NAME = 'data_distributor'
 DEFAULT_SUB_SENSOR_TOPIC_NAME = 'yozakura_sensor_data'
 DEFAULT_PUB_HEAT_TOPIC_NAME = 'heat_data'
 DEFAULT_PUB_CO2_TOPIC_NAME = 'co2_data'
@@ -30,6 +30,8 @@ class DataDistributor(object):
 
         self._pub_co2_data = rospy.Publisher(DEFAULT_PUB_CO2_TOPIC_NAME, CO2SensorData, queue_size=1)
         self._co2_data = CO2SensorData()
+        # キャリブレーションで値変わるので，ここに初期値入れて，その値を今後の値から引く
+        self._co2_offset = -1.0
 
         self._pub_i_data_arr = [rospy.Publisher(DEFAULT_PUB_I_WL_TOPIC_NAME, Float32, queue_size=1),
                                 rospy.Publisher(DEFAULT_PUB_I_WR_TOPIC_NAME, Float32, queue_size=1),
@@ -61,6 +63,9 @@ class DataDistributor(object):
 
     def ysensor_data_callback(self, ysensor_data):
         self._heat_data = ysensor_data.heat
+        if self._co2_offset is -1.0:
+            self._co2_offset = ysensor_data.co2
+        ysensor_data.co2.data -= self._co2_offset
         self._co2_data = ysensor_data.co2
         self._i_data_arr = [ysensor_data.wheel_left.current if ysensor_data.wheel_left.is_ok else -1.0,
                             ysensor_data.wheel_right.current if ysensor_data.wheel_right.is_ok else -1.0,
