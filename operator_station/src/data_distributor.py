@@ -5,7 +5,7 @@ import time
 
 import rospy
 from yozakura_msgs.msg import YozakuraState, BaseState, ArmState, YozakuraSensorData, HeatSensorData, CO2SensorData
-from std_msgs.msg import Float64
+from std_msgs.msg import Float32
 
 DEFAULT_NODE_NAME = 'data_distributor'
 
@@ -31,15 +31,15 @@ class DataDistributor(object):
         self._pub_co2_data = rospy.Publisher(DEFAULT_PUB_CO2_TOPIC_NAME, CO2SensorData, queue_size=1)
         self._co2_data = CO2SensorData()
 
-        self._pub_i_data_arr = [rospy.Publisher(DEFAULT_PUB_I_WL_TOPIC_NAME, Float64, queue_size=1),
-                                rospy.Publisher(DEFAULT_PUB_I_WR_TOPIC_NAME, Float64, queue_size=1),
-                                rospy.Publisher(DEFAULT_PUB_I_FL_TOPIC_NAME, Float64, queue_size=1),
-                                rospy.Publisher(DEFAULT_PUB_I_FR_TOPIC_NAME, Float64, queue_size=1)]
+        self._pub_i_data_arr = [rospy.Publisher(DEFAULT_PUB_I_WL_TOPIC_NAME, Float32, queue_size=1),
+                                rospy.Publisher(DEFAULT_PUB_I_WR_TOPIC_NAME, Float32, queue_size=1),
+                                rospy.Publisher(DEFAULT_PUB_I_FL_TOPIC_NAME, Float32, queue_size=1),
+                                rospy.Publisher(DEFAULT_PUB_I_FR_TOPIC_NAME, Float32, queue_size=1)]
         # wheel_left, wheel_right, flipper_left, flipper_right
-        self._i_data_arr = [Float64()] * len(self._pub_i_data_arr)
+        self._i_data_arr = [Float32()] * len(self._pub_i_data_arr)
 
-        self._pub_v_data = rospy.Publisher(DEFAULT_PUB_V_FR_TOPIC_NAME, Float64, queue_size=1)
-        self._v_data = Float64()
+        self._pub_v_data = rospy.Publisher(DEFAULT_PUB_V_FR_TOPIC_NAME, Float32, queue_size=1)
+        self._v_data = Float32()
 
         self._pub_base_state = rospy.Publisher(DEFAULT_PUB_BODY_STATE_TOPIC_NAME, BaseState, queue_size=1)
         self._base_state = BaseState()
