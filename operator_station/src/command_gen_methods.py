@@ -46,7 +46,7 @@ def calc_speed_command_dual_stick_mode(direction_flag, _dpad, _lstick, _rstick, 
         dpad, lstick, rstick = _dpad, _lstick, _rstick
         lu_button, ld_button, ru_button, rd_button = 'L1', 'L2', 'R1', 'R2'
     else:
-        dpad, lstick, rstick = _dpad.reversed, _lstick.reversed, _rstick.reversed
+        dpad, lstick, rstick = _dpad.reversed, _rstick.reversed, _lstick.reversed
         lu_button, ld_button, ru_button, rd_button = 'R1', 'R2', 'L1', 'L2'
 
     base_vel_input_mode = 1

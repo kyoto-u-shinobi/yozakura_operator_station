@@ -5,7 +5,7 @@
         <remap from="yozakura_command" to="yozakura_command"/>
         <remap from="yozakura_state" to="yozakura_state"/>
         <remap from="yozakura_sensor_data" to="yozakura_sensor_data"/>
-        <param name="lflipper_center_raw_data" value="0.33780"/>
+        <param name="lflipper_center_raw_data" value="0.31502"/>
         <param name="rflipper_center_raw_data" value="0.61080"/>
         <param name="arm_linear_center_dxdeg" value="570.0"/>
         <param name="arm_yaw_center_dxdeg" value="0.0"/>
@@ -29,11 +29,12 @@
     </node>
     <node name="data_distributor" pkg="operator_station" type="data_distributor.py">
         <remap from="yozakura_sensor_data" to="yozakura_sensor_data"/>
-        <remap from="heat_data" to="heat_data"/>
-        <remap from="co2_data" to="co2_data"/>
-        <remap from="volt_wheel_left" to="volt_wheel_left"/>
-        <remap from="volt_wheel_right" to="volt_wheel_right"/>
-        <remap from="volt_flipper_left" to="volt_flipper_left"/>
-        <remap from="volt_flipper_right" to="volt_flipper_right"/>
+        <remap from="heat_data" to="heat_sensor"/>
+        <remap from="co2_data" to="co2_sensor"/>
+        <remap from="current_wheel_left" to="current_wheel_left"/>
+        <remap from="current_wheel_right" to="current_wheel_right"/>
+        <remap from="current_flipper_left" to="current_flipper_left"/>
+        <remap from="current_flipper_right" to="current_flipper_right"/>
+        <remap from="voltage_base" to="voltage_base"/>
     </node>
 </launch>

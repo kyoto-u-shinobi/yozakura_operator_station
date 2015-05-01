@@ -65,7 +65,7 @@ class WebCamManager(object):
 
     def activate(self):
         self.is_active = True
-        self.service = rospy.Service(DEFAULT_SERVICE_NAME, AIballSettings, self._handle_aiball_settings)
+        # self.service = rospy.Service(DEFAULT_SERVICE_NAME, AIballSettings, self._handle_aiball_settings)
         self.pub_image = rospy.Publisher(self._topic_name, Image, queue_size=1)
 
     def _send_command(self, cmd):
