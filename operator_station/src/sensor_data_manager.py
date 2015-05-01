@@ -42,7 +42,7 @@ class SensorDataManager(object):
         # DXの初期姿勢のときのDXの角度
         self._arm_linear_center_dxdeg = rospy.get_param('~arm_linear_center_dxdeg', 570.0)
         self._arm_yaw_center_dxdeg = rospy.get_param('~arm_yaw_center_dxdeg', 0.0)
-        self._arm_pitch_center_dxdeg = -rospy.get_param('~arm_pitch_center_dxdeg', 334.0)
+        self._arm_pitch_center_dxdeg = -rospy.get_param('~arm_pitch_center_dxdeg', 290.0)
 
     def publish_data(self):
         self._pub_ystate.publish(self._ystate)
