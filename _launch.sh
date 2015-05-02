@@ -7,7 +7,7 @@ pkill rosout
 
 roscore &
 sleep 5
-
+cd /home/shinobi-tele
 gnome-terminal \
   $tab ./1_main.bash -t "ROS Main"\
   $tab ./2_theta.bash -t "Theta Server"\
