@@ -5,11 +5,7 @@
     <property name="modelDataResourseFolder" value="daes"/>
 
     <property name="urg_base_x" value="0.100"/>
-<<<<<<< HEAD
     <property name="urg_base_y" value="-0.050"/>
-=======
-    <property name="urg_base_y" value="0.050"/>
->>>>>>> 07bff457badd713d87cc645c0e6fd73a427a071f
 
     <property name="bodyFront_depth" value="0.262"/>
     <property name="bodyFront_height" value="0.072"/>

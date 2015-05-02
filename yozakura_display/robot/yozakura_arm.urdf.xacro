@@ -90,11 +90,11 @@
         <!--linear-->
         <xacro:armjack_left parent="virtualLink_armLinear_base_left" suffix="1"/>
         <xacro:armjack_left parent="${arm_linear_frame_left_B}_1" suffix="2"/>
-        <!--<xacro:armjack_left parent="${arm_linear_frame_left_B}_2" suffix="3"/>-->
+        <xacro:armjack_left parent="${arm_linear_frame_left_B}_2" suffix="3"/>
 
         <xacro:armjack_right parent="virtualLink_armLinear_base_right" suffix="1"/>
         <xacro:armjack_right parent="${arm_linear_frame_right_B}_1" suffix="2"/>
-        <!--<xacro:armjack_right parent="${arm_linear_frame_right_B}_2" suffix="3"/>-->
+        <xacro:armjack_right parent="${arm_linear_frame_right_B}_2" suffix="3"/>
 
 
     </xacro:macro>
