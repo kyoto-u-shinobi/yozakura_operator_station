@@ -66,6 +66,7 @@ class WebCamManager(object):
             except urllib2.URLError:
                 rospy.loginfo('not connected to ' + self._overlayed_text + ' camera')
                 rospy.loginfo('try again...')
+                rospy.sleep(3.0)
             else:
                 rospy.sleep(3.0)
                 break
