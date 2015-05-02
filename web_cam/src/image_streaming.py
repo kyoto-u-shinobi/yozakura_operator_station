@@ -68,7 +68,7 @@ class WebCamManager(object):
                 rospy.loginfo('try again...')
                 rospy.sleep(3.0)
             else:
-                rospy.sleep(3.0)
+                rospy.sleep(5.0)
                 break
 
     def open(self):
@@ -139,14 +139,19 @@ if __name__ == '__main__':
     web_cam = WebCamManager(web_cam_ip, DEFAULT_TOPIC_NAME, overlay_text)
     print(overlay_text)
 
-    if not web_cam.open():
+    while not web_cam.open():
         print('fail to open!')
-    else:
-        if (DEBUG): print('run!')
-        web_cam.activate()
-        while not rospy.is_shutdown():
-            web_cam.publish_img()
-            rate_mgr.sleep()
+        del web_cam
+        web_cam = WebCamManager(web_cam_ip, DEFAULT_TOPIC_NAME, overlay_text)
+        rospy.sleep(5.0)
+
+
+    if (DEBUG): print('run!')
+    web_cam.activate()
+
+    while not rospy.is_shutdown():
+        web_cam.publish_img()
+        rate_mgr.sleep()
 
 
 
