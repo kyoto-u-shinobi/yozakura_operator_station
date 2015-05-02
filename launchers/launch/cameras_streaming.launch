@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
-    <include file="$(find launchers)/launchers/yozakura_cameras/arm.launch"/>
-    <include file="$(find launchers)/launchers/yozakura_cameras/front.launch"/>
-    <include file="$(find launchers)/launchers/yozakura_cameras/back.launch"/>
-    <include file="$(find launchers)/launchers/yozakura_cameras/overview.launch"/>
+    <include file="$(find launchers)/launch/yozakura_cameras/arm.launch"/>
+    <include file="$(find launchers)/launch/yozakura_cameras/front.launch"/>
+    <include file="$(find launchers)/launch/yozakura_cameras/back.launch"/>
+    <include file="$(find launchers)/launch/yozakura_cameras/overview.launch"/>
 </launch>

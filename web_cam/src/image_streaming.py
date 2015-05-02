@@ -53,20 +53,21 @@ class WebCamManager(object):
         self._cmd_uri = 'http://' + ip_address + '/?action=command&command='
         self._topic_name = topic_name
         self._overlayed_text = overlayed_text
+        self._aiball_setting = self.AIballSettings('QVGA', 0)
         self.is_active = False
 
         self._initialize_camera()
 
     def _initialize_camera(self):
-        self._aiball_setting = self.AIballSettings('QVGA', 0)
         while not rospy.is_shutdown():
             try:
                 self._send_command(self._aiball_setting.get_resolution_cmd())
                 self._send_command(self._aiball_setting.get_compress_mode_cmd())
             except urllib2.URLError:
-                rospy.loginfo('not connected to camera')
+                rospy.loginfo('not connected to ' + self._overlayed_text + ' camera')
                 rospy.loginfo('try again...')
             else:
+                rospy.sleep(3.0)
                 break
 
     def open(self):
