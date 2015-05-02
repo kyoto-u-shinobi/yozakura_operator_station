@@ -55,12 +55,15 @@ class DataDistributor(object):
     def ysensor_data_callback(self, ysensor_data):
         self._heat_data = ysensor_data.heat
         self._co2_data = ysensor_data.co2
-        self._v_data = ysensor_data.wheel_left.voltage if ysensor_data.wheel_left.is_ok else -1.0
-        self._i_data = ysensor_data.wheel_left.current + \
-                       ysensor_data.wheel_right.current + \
-                       ysensor_data.flipper_left.current + \
-                       ysensor_data.flipper_right.current
+        self._v_data = max(ysensor_data.wheel_left.voltage,
+                           ysensor_data.wheel_right.voltage,
+                           ysensor_data.flipper_left.voltage,
+                           ysensor_data.flipper_right.voltage)
 
+        self._i_data = abs(ysensor_data.wheel_left.current) + \
+                       abs(ysensor_data.wheel_right.current) + \
+                       abs(ysensor_data.flipper_left.current) + \
+                       abs(ysensor_data.flipper_right.current)
 
 
     def publish_data(self):
