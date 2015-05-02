@@ -4,8 +4,8 @@
     <property name="robotPackagePath" value="package://yozakura_display/robot"/>
     <property name="modelDataResourseFolder" value="daes"/>
 
-    <property name="urg_base_x" value="0.015"/>
-    <property name="urg_base_y" value="0.015"/>
+    <property name="urg_base_x" value="0.100"/>
+    <property name="urg_base_y" value="-0.050"/>
 
     <property name="bodyFront_depth" value="0.262"/>
     <property name="bodyFront_height" value="0.072"/>
