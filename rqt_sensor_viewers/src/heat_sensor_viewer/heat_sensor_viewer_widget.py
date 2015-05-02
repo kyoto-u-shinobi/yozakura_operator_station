@@ -14,6 +14,9 @@ from rospy.exceptions import ROSException
 
 from yozakura_msgs.msg import HeatSensorData
 
+# エラーとか起こってもとりあえずデータは表示するためのフラグ
+DEBUG = False
+
 
 class HeatSensorViewerWidget(QWidget):
     TOPIC_NAME = 'heat_sensor'
@@ -78,9 +81,10 @@ class HeatSensorViewerWidget(QWidget):
         self._updateTimer.stop()
 
     def timeout_callback(self):
-        if self.data_received_time != None and time.time() - self.data_received_time > 3.0:
-            self._update_display_data(self.table_left, False, [None] * (self.MAX_COL * self.MAX_ROW))
-            self._update_display_data(self.table_right, False, [None] * (self.MAX_COL * self.MAX_ROW))
+        if DEBUG:
+            if self.data_received_time != None and time.time() - self.data_received_time > 3.0:
+                self._update_display_data(self.table_left, False, [None] * (self.MAX_COL * self.MAX_ROW))
+                self._update_display_data(self.table_right, False, [None] * (self.MAX_COL * self.MAX_ROW))
 
     # rqt override
     def save_settings(self, plugin_settings, instance_settings):
@@ -130,6 +134,10 @@ class HeatSensorViewerWidget(QWidget):
                         item.setBackground(self._yellow_palette.brush(QPalette.Base))
                     else:
                         item.setBackground(self._red_palette.brush(QPalette.Base))
+
+        # debugでなければ常にデータ表示する
+        if not DEBUG:
+            is_ok = True
 
         if is_ok is not True:
             self.topic_edit.setPalette(self._red_palette)

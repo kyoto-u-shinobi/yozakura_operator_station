@@ -14,6 +14,10 @@ from rospy.exceptions import ROSException
 from yozakura_msgs.msg import CO2SensorData
 
 
+# エラーとか起こってもとりあえずデータは表示するためのフラグ
+DEBUG = False
+
+
 class CO2SensorViewerWidget(QWidget):
     TOPIC_NAME = 'co2_sensor'
     FONT = "Helvetica"
@@ -32,6 +36,9 @@ class CO2SensorViewerWidget(QWidget):
         self.topic_edit.setText('/' + self._topic_name)
         self._subscriber = rospy.Subscriber(self._topic_name, CO2SensorData, self._co2_sensor_data_callback)
         self.data_received_time = None
+
+        # キャリブレーションで値変わるので，ここに初期値入れて，その値を今後の値から引く
+        self._co2_offset = None
 
         self._white_palette = QPalette()
         self._white_palette.setColor(QPalette.Base, Qt.white)
@@ -63,8 +70,10 @@ class CO2SensorViewerWidget(QWidget):
         self._updateTimer.stop()
 
     def timeout_callback(self):
-        if self.data_received_time != None and time.time() - self.data_received_time > 3.0:
-            self._update_display_data(self.data_edit, False, None)
+        if DEBUG:
+            # 3[s]以内にデータ来なければすべて0.0を表示
+            if self.data_received_time != None and time.time() - self.data_received_time > 3.0:
+                self._update_display_data(self.data_edit, False, None)
 
     # rqt override
     def save_settings(self, plugin_settings, instance_settings):
@@ -89,15 +98,23 @@ class CO2SensorViewerWidget(QWidget):
         if new_topic_name is not self._topic_name:
             self._subscriber.unregister()
             self._topic_name = new_topic_name
+            self._co2_offset = None
             self._subscriber = rospy.Subscriber(self._topic_name, CO2SensorData, self._co2_sensor_data_callback)
 
     def _co2_sensor_data_callback(self, co2_sensor_data):
+        if self._co2_offset is None:
+            self._co2_offset = co2_sensor_data.data
+
         self.data_received_time = time.time()
         self._update_display_data(self.data_edit,
                                   co2_sensor_data.is_ok,
-                                  co2_sensor_data.data)
+                                  co2_sensor_data.data - self._co2_offset)
 
     def _update_display_data(self, line_edit, is_ok, data):
+        # debugでなければ常にデータ表示する
+        if not DEBUG:
+            is_ok = True
+
         if is_ok is not True:
             self.topic_edit.setPalette(self._red_palette)
             line_edit.setPalette(self._white_palette)

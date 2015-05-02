@@ -27,8 +27,6 @@ class DataDistributor(object):
 
         self._pub_co2_data = rospy.Publisher(DEFAULT_PUB_CO2_TOPIC_NAME, CO2SensorData, queue_size=1)
         self._co2_data = CO2SensorData()
-        # キャリブレーションで値変わるので，ここに初期値入れて，その値を今後の値から引く
-        self._co2_offset = None
 
         self._pub_i_data = rospy.Publisher(DEFAULT_PUB_I_TOPIC_NAME, Float32, queue_size=1)
         self._i_data = Float32()
@@ -56,9 +54,6 @@ class DataDistributor(object):
 
     def ysensor_data_callback(self, ysensor_data):
         self._heat_data = ysensor_data.heat
-        if self._co2_offset is None:
-            self._co2_offset = ysensor_data.co2.data
-        ysensor_data.co2.data -= self._co2_offset
         self._co2_data = ysensor_data.co2
         self._v_data = ysensor_data.wheel_left.voltage if ysensor_data.wheel_left.is_ok else -1.0
         self._i_data = ysensor_data.wheel_left.current + \
