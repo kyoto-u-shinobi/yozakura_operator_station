@@ -57,7 +57,7 @@ class DataDistributor(object):
     def ysensor_data_callback(self, ysensor_data):
         self._heat_data = ysensor_data.heat
         if self._co2_offset is None:
-            self._co2_offset = ysensor_data.co2
+            self._co2_offset = ysensor_data.co2.data
         ysensor_data.co2.data -= self._co2_offset
         self._co2_data = ysensor_data.co2
         self._v_data = ysensor_data.wheel_left.voltage if ysensor_data.wheel_left.is_ok else -1.0
