@@ -13,11 +13,8 @@ DEFAULT_NODE_NAME = 'data_distributor'
 DEFAULT_SUB_SENSOR_TOPIC_NAME = 'yozakura_sensor_data'
 DEFAULT_PUB_HEAT_TOPIC_NAME = 'heat_data'
 DEFAULT_PUB_CO2_TOPIC_NAME = 'co2_data'
-DEFAULT_PUB_I_WL_TOPIC_NAME = 'current_wheel_left'
-DEFAULT_PUB_I_WR_TOPIC_NAME = 'current_wheel_right'
-DEFAULT_PUB_I_FL_TOPIC_NAME = 'current_flipper_left'
-DEFAULT_PUB_I_FR_TOPIC_NAME = 'current_flipper_right'
-DEFAULT_PUB_V_FR_TOPIC_NAME = 'voltage_base'
+DEFAULT_PUB_I_TOPIC_NAME = 'current_data'
+DEFAULT_PUB_V_TOPIC_NAME = 'voltage_data'
 DEFAULT_SUB_STATE_TOPIC_NAME = 'yozakura_state'
 DEFAULT_PUB_BODY_STATE_TOPIC_NAME = 'body_state'
 DEFAULT_PUB_ARM_STATE_TOPIC_NAME = 'arm_state'
@@ -31,16 +28,12 @@ class DataDistributor(object):
         self._pub_co2_data = rospy.Publisher(DEFAULT_PUB_CO2_TOPIC_NAME, CO2SensorData, queue_size=1)
         self._co2_data = CO2SensorData()
         # キャリブレーションで値変わるので，ここに初期値入れて，その値を今後の値から引く
-        self._co2_offset = -1.0
+        self._co2_offset = None
 
-        self._pub_i_data_arr = [rospy.Publisher(DEFAULT_PUB_I_WL_TOPIC_NAME, Float32, queue_size=1),
-                                rospy.Publisher(DEFAULT_PUB_I_WR_TOPIC_NAME, Float32, queue_size=1),
-                                rospy.Publisher(DEFAULT_PUB_I_FL_TOPIC_NAME, Float32, queue_size=1),
-                                rospy.Publisher(DEFAULT_PUB_I_FR_TOPIC_NAME, Float32, queue_size=1)]
-        # wheel_left, wheel_right, flipper_left, flipper_right
-        self._i_data_arr = [Float32()] * len(self._pub_i_data_arr)
+        self._pub_i_data = rospy.Publisher(DEFAULT_PUB_I_TOPIC_NAME, Float32, queue_size=1)
+        self._i_data = Float32()
 
-        self._pub_v_data = rospy.Publisher(DEFAULT_PUB_V_FR_TOPIC_NAME, Float32, queue_size=1)
+        self._pub_v_data = rospy.Publisher(DEFAULT_PUB_V_TOPIC_NAME, Float32, queue_size=1)
         self._v_data = Float32()
 
         self._pub_base_state = rospy.Publisher(DEFAULT_PUB_BODY_STATE_TOPIC_NAME, BaseState, queue_size=1)
@@ -63,15 +56,17 @@ class DataDistributor(object):
 
     def ysensor_data_callback(self, ysensor_data):
         self._heat_data = ysensor_data.heat
-        if self._co2_offset is -1.0:
+        if self._co2_offset is None:
             self._co2_offset = ysensor_data.co2
         ysensor_data.co2.data -= self._co2_offset
         self._co2_data = ysensor_data.co2
-        self._i_data_arr = [ysensor_data.wheel_left.current if ysensor_data.wheel_left.is_ok else -1.0,
-                            ysensor_data.wheel_right.current if ysensor_data.wheel_right.is_ok else -1.0,
-                            ysensor_data.flipper_left.current if ysensor_data.flipper_left.is_ok else -1.0,
-                            ysensor_data.flipper_right.current if ysensor_data.flipper_right.is_ok else -1.0]
         self._v_data = ysensor_data.wheel_left.voltage if ysensor_data.wheel_left.is_ok else -1.0
+        self._i_data = ysensor_data.wheel_left.current + \
+                       ysensor_data.wheel_right.current + \
+                       ysensor_data.flipper_left.current + \
+                       ysensor_data.flipper_right.current
+
+
 
     def publish_data(self):
         if not self.is_active:
@@ -80,9 +75,8 @@ class DataDistributor(object):
         self._pub_arm_state.publish(self._arm_state)
         self._pub_heat_data.publish(self._heat_data)
         self._pub_co2_data.publish(self._co2_data)
-        for pub_i_data, i_data in zip(self._pub_i_data_arr, self._i_data_arr):
-            pub_i_data.publish(i_data)
         self._pub_v_data.publish(self._v_data)
+        self._pub_i_data.publish(self._i_data)
 
 
 # --------------------------------------------
