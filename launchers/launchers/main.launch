@@ -31,10 +31,7 @@
         <remap from="yozakura_sensor_data" to="yozakura_sensor_data"/>
         <remap from="heat_data" to="heat_sensor"/>
         <remap from="co2_data" to="co2_sensor"/>
-        <remap from="current_wheel_left" to="current_wheel_left"/>
-        <remap from="current_wheel_right" to="current_wheel_right"/>
-        <remap from="current_flipper_left" to="current_flipper_left"/>
-        <remap from="current_flipper_right" to="current_flipper_right"/>
-        <remap from="voltage_base" to="voltage_base"/>
+        <remap from="voltage_data" to="voltage_data"/>
+        <remap from="current_data" to="current_data"/>
     </node>
 </launch>

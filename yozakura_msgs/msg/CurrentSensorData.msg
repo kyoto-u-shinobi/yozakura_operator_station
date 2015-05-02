@@ -1,5 +1,5 @@
 bool is_ok
 # [A]
-float64 current
+float32 current
 # [V]
-float64 voltage
+float32 voltage
