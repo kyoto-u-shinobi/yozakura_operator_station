@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<launch>
+    <!--main system-->
+    <include file="$(find launchers)/launchers/main.launch"/>
+
+    <!--cameras-->
+    <include file="$(find launchers)/launchers/yozakura_cameras/overview.launch"/>
+    <include file="$(find launchers)/launchers/yozakura_cameras/front.launch"/>
+    <include file="$(find launchers)/launchers/yozakura_cameras/back.launch"/>
+    <include file="$(find launchers)/launchers/yozakura_cameras/arm.launch"/>
+
+    <!--theta-->
+    <include file="$(find launchers)/launchers/theta_server.launch"/>
+
+    <!--3d viewer-->
+    <include file="$(find launchers)/launchers/yozakura_cameras/overview.launch"/>
+</launch>

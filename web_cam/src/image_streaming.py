@@ -53,12 +53,20 @@ class WebCamManager(object):
         self._cmd_uri = 'http://' + ip_address + '/?action=command&command='
         self._topic_name = topic_name
         self._overlayed_text = overlayed_text
-
-        self._aiball_setting = self.AIballSettings('QVGA', 0)
-        self._send_command(self._aiball_setting.get_resolution_cmd())
-        self._send_command(self._aiball_setting.get_compress_mode_cmd())
-
         self.is_active = False
+
+        self._initialize_camera()
+
+    def _initialize_camera(self):
+        self._aiball_setting = self.AIballSettings('QVGA', 0)
+        while not rospy.is_shutdown():
+            try:
+                self._send_command(self._aiball_setting.get_resolution_cmd())
+                self._send_command(self._aiball_setting.get_compress_mode_cmd())
+            except urllib2.URLError:
+                rospy.loginfo('not connected')
+            else:
+                break
 
     def open(self):
         return self._capture.isOpened()
@@ -70,6 +78,8 @@ class WebCamManager(object):
 
     def _send_command(self, cmd):
         res = urllib2.urlopen(urllib2.Request(self._cmd_uri + cmd))
+        print('test')
+        print(res.read())
         return res
 
     def _handle_aiball_settings(self, req):
