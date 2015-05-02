@@ -64,7 +64,8 @@ class WebCamManager(object):
                 self._send_command(self._aiball_setting.get_resolution_cmd())
                 self._send_command(self._aiball_setting.get_compress_mode_cmd())
             except urllib2.URLError:
-                rospy.loginfo('not connected')
+                rospy.loginfo('not connected to camera')
+                rospy.loginfo('try again...')
             else:
                 break
 
