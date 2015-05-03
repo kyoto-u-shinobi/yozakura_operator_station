@@ -1,6 +1,7 @@
 # 1: front
 # 2: back
 # 3: overview
+# 4: arm
 int64 main_camera_id
 ---
 

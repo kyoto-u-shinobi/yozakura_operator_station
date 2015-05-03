@@ -34,9 +34,10 @@ class ImageListener:
 class ImageSwitcher:
     def __init__(self):
         # remap-able
-        _camera_names = ['front_cam', 'overview_cam', 'back_cam']  # these will be node_name
-        _sub_topic_names = ['front_img', 'overview_img', 'back_img']  # these will be sub_topic_name
-        _pub_topic_names = ['display_main', 'display_sub1', 'display_sub2']  # these will be pub_topic_name
+        # see ImageSwitcherService.srv for the order of the list
+        _camera_names = ['front_cam', 'back_cam', 'overview_cam', 'arm_cam']
+        _sub_topic_names = ['front_img', 'back_img', 'overview_img', 'arm_img']
+        _pub_topic_names = ['display_main', 'display_sub1', 'display_sub2', 'display_sub3']
 
         self.main_camera = 1
         self._image_listeners = []

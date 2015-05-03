@@ -67,3 +67,7 @@ class ImageSwitchWidget(QWidget):
     def on_overview_cam_btn_clicked(self):
         self._service_proxy(3)
 
+    @Slot()
+    def on_arm_cam_btn_clicked(self):
+        self._service_proxy(4)
+
