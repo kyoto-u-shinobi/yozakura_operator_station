@@ -7,7 +7,7 @@ from sensor_msgs.msg import CompressedImage
 from theta_service.srv import ThetaCaptureService, ThetaCaptureServiceResponse
 from theta.theta import Theta
 
-
+DEBUG = True
 RESIZED_IMAGE_FLAG = True
 
 
@@ -51,7 +51,7 @@ class Theta360Server:
 if __name__ == "__main__":
     rospy.init_node('theta_capture_server')
     theta_server = Theta360Server()
-    if theta_server.initialize():
+    if theta_server.initialize() or DEBUG:
         rospy.spin()
     else:
         print 'fail to initialize theta'

@@ -1,10 +1,28 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+"""
+Define speed commands calculation functions(this is not class. just a set of functions )
+returns:
+ - base_vel_input_mode: when this is 1, lwheel and rwheel ∈ [-1, 1].
+                        when this is 2, lwheel and rwheel are [m/sec] (this is just for future)
+ - lwheel: raw input data for left wheel speed ∈ [-1, 1]
+ - rwheel: raw input data for right wheel speed ∈ [-1, 1]
+ - lflipper: raw input data for left flipper speed ∈ [-1, 1]
+ - rflipper: raw input data for right flipper speed ∈ [-1, 1]
+
+ - arm_mode: 0 is normal, 1 is
+ - linear: ∈ [-1, 1]
+ - pitch: ∈ [-1, 1]
+ - yaw: ∈ [-1, 1]
+"""
+
+
 def calc_speed_command_single_stick_mode(direction_flag, _dpad, _lstick, _rstick, _buttons):
     # convert direction
     if direction_flag:
         dpad, lstick, rstick = _dpad, _lstick, _rstick
+        # left upper = lu, right down = rd
         lu_button, ld_button, ru_button, rd_button = 'L1', 'L2', 'R1', 'R2'
     else:
         dpad, lstick, rstick = _dpad.reversed, _lstick.reversed, _rstick.reversed
@@ -44,6 +62,7 @@ def calc_speed_command_dual_stick_mode(direction_flag, _dpad, _lstick, _rstick, 
     # convert direction
     if direction_flag:
         dpad, lstick, rstick = _dpad, _lstick, _rstick
+        # left upper = lu, right down = rd
         lu_button, ld_button, ru_button, rd_button = 'L1', 'L2', 'R1', 'R2'
     else:
         dpad, lstick, rstick = _dpad.reversed, _rstick.reversed, _lstick.reversed

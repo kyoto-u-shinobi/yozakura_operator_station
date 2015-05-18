@@ -6,6 +6,10 @@ import socket, pickle, time, math
 
 
 class Client(object):
+    """
+    A client mock for the test. See main to know how to use
+    """
+
     def __init__(self, client_address, server_address):
         self.request = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.request.connect(server_address)
@@ -21,19 +25,23 @@ class Client(object):
 
 
     def run(self):
+        """
+        Send request 'speeds' and receive speed commands(base_vels, arm_vels)
+        And send dummy sensor data
+        """
         while True:
             print('client running')
             try:
                 self.request.send(str.encode("speeds"))  # Request speeds.
-                result = self.request.recv(128)  # Receive speed data.
-                if not result:
+                speed_commands = self.request.recv(128)  # Receive speed data.
+                if not speed_commands:
                     continue
             except socket.timeout:
                 continue
 
             try:
-                speeds, arms = pickle.loads(result)
-                print(speeds, arms)
+                base_vels, arm_vels = pickle.loads(speed_commands)
+                print(base_vels, arm_vels)
             except EOFError:
                 continue
 
@@ -56,9 +64,9 @@ class Client(object):
             time.sleep(0.2)  # to control this loop rate
 
     def shutdown(self):
-        self.request.close()  # -------------------------------------------------------------------------
+        self.request.close()
 
-
+# --------------------------------------------------------------
 if __name__ == "__main__":
     client_address = "localhost"
     opstn_address = "localhost"

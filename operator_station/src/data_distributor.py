@@ -21,6 +21,12 @@ DEFAULT_PUB_ARM_STATE_TOPIC_NAME = 'arm_state'
 
 
 class DataDistributor(object):
+    """
+    Distribute data for UI
+    Subscribe: YozakuraSensorData, YozakuraState
+    Publish: HeatSensorData, CO2SensorData, current data(Float32), voltage data(Float32), BaseState, ArmState
+    """
+
     def __init__(self):
         self._pub_heat_data = rospy.Publisher(DEFAULT_PUB_HEAT_TOPIC_NAME, HeatSensorData, queue_size=1)
         self._heat_data = HeatSensorData()
@@ -45,7 +51,6 @@ class DataDistributor(object):
     def activate(self):
         rospy.Subscriber(DEFAULT_SUB_SENSOR_TOPIC_NAME, YozakuraSensorData, self.ysensor_data_callback)
         rospy.Subscriber(DEFAULT_SUB_STATE_TOPIC_NAME, YozakuraState, self.ystate_callback)
-
         self.is_active = True
 
     def ystate_callback(self, ystate):
