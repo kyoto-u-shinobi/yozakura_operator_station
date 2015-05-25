@@ -24,6 +24,7 @@ class JoyStickController(object):
     rstick: Axis class. 右スティック (x: vertical, y: horizontal)
     buttons: Buttons class.
     """
+
     def __init__(self, topic_name):
         self.dpad = Axis(0.0, 0.0)
         self.lstick = Axis(0.0, 0.0)
@@ -62,6 +63,10 @@ if __name__ == '__main__':
     r = rospy.Rate(10)  # hz
     while not rospy.is_shutdown():
         print(js_controller.state)
+        for label in js_controller.buttons._button_label_list:
+            if js_controller.buttons.is_pressed(label):
+                print(label + " is pressed!")
+
         r.sleep()
 
 

@@ -66,38 +66,7 @@ class CommandGenerator(object):
         """
         Publish YozakuraCommand
         """
-        base_vel_input_mode, vel1, vel2, lflipper, rflipper = self.get_speed_commands()
-        arm_mode, linear, pitch, yaw = self.get_arm_commands()
-
-        self._ycommand.header.stamp = rospy.Time.now()
-
-        self._ycommand.arm_vel.is_ok = True
-        self._ycommand.arm_vel.mode = arm_mode
-        self._ycommand.arm_vel.top_angle = linear
-        self._ycommand.arm_vel.pitch = pitch
-        self._ycommand.arm_vel.yaw = yaw
-
-        self._ycommand.base_vel_input_mode = base_vel_input_mode
-        if base_vel_input_mode == 1:
-            self._ycommand.wheel_left_vel = vel1
-            self._ycommand.wheel_right_vel = vel2
-            self._ycommand.base_vel.linear.x = 0.0
-            self._ycommand.base_vel.angular.z = 0.0
-        elif base_vel_input_mode == 2:
-            self._ycommand.wheel_left_vel = 0.0
-            self._ycommand.wheel_right_vel = 0.0
-            self._ycommand.base_vel.linear.x = vel1
-            self._ycommand.base_vel.angular.z = vel2
-        else:
-            self._ycommand.wheel_left_vel = 0.0
-            self._ycommand.wheel_right_vel = 0.0
-            self._ycommand.base_vel.linear.x = 0.0
-            self._ycommand.base_vel.angular.z = 0.0
-
-        self._ycommand.flipper_left_vel.is_ok = True
-        self._ycommand.flipper_left_vel.angle = lflipper
-        self._ycommand.flipper_right_vel.is_ok = True
-        self._ycommand.flipper_right_vel.angle = rflipper
+        self._update_yozakura_command(self._ycommand)
 
         self._pub_command.publish(self._ycommand)
 
@@ -138,6 +107,42 @@ class CommandGenerator(object):
         dpad, lstick, rstick, buttons = self.get_jsstate()
         return self._calc_arm_command_funcs[self.arm_mode](self.direction_flag,
                                                dpad, lstick, rstick, buttons)
+
+    def _update_yozakura_command(self, yozakura_command):
+        base_vel_input_mode, vel1, vel2, lflipper, rflipper = self.get_speed_commands()
+        arm_mode, linear, pitch, yaw = self.get_arm_commands()
+
+        yozakura_command.header.stamp = rospy.Time.now()
+
+        yozakura_command.arm_vel.is_ok = True
+        yozakura_command.arm_vel.mode = arm_mode
+        yozakura_command.arm_vel.top_angle = linear
+        yozakura_command.arm_vel.pitch = pitch
+        yozakura_command.arm_vel.yaw = yaw
+
+        yozakura_command.base_vel_input_mode = base_vel_input_mode
+        if base_vel_input_mode == 1:
+            yozakura_command.wheel_left_vel = vel1
+            yozakura_command.wheel_right_vel = vel2
+            yozakura_command.base_vel.linear.x = 0.0
+            yozakura_command.base_vel.angular.z = 0.0
+        elif base_vel_input_mode == 2:
+            yozakura_command.wheel_left_vel = 0.0
+            yozakura_command.wheel_right_vel = 0.0
+            yozakura_command.base_vel.linear.x = vel1
+            yozakura_command.base_vel.angular.z = vel2
+        else:
+            yozakura_command.wheel_left_vel = 0.0
+            yozakura_command.wheel_right_vel = 0.0
+            yozakura_command.base_vel.linear.x = 0.0
+            yozakura_command.base_vel.angular.z = 0.0
+
+        yozakura_command.flipper_left_vel.is_ok = True
+        yozakura_command.flipper_left_vel.angle = lflipper
+        yozakura_command.flipper_right_vel.is_ok = True
+        yozakura_command.flipper_right_vel.angle = rflipper
+
+        return yozakura_command
 
 # -------------------------------------------------------------------------
 if __name__ == "__main__":
