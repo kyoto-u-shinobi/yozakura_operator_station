@@ -17,6 +17,7 @@ DEFAULT_SERVICE_NAME = "imu_switch"
 class SensorDataManager(object):
     """
     Set raw sensor data, convert them and publish YozakuraState and YozakuraSensorData
+    このクラス全体的にクオリティ低いのでごめんなさい
     Subscribe: None
     Publish: YozakuraState, YozakuraSensorData
     Service Server: IMUDataSwitch
@@ -65,6 +66,7 @@ class SensorDataManager(object):
         データアップデート用のマクロ的な関数
         new_raw_dataがNoneじゃなかったら，new_raw_dataにscaleとoffsetをのせて返す
         Noneだったらcurrent_dataをそのまま返す
+        （ロボット側で取得センサデータにエラーとかあったらNoneが入るというお約束がある）
         :param new_raw_data: 新しいセンサデータ(float)
         :param current_data: 今のセンサデータ(float)
         :param scale: float
@@ -145,6 +147,11 @@ class SensorDataManager(object):
                                                                          scale, offset)
 
     def set_data(self, flipper_angles, current_sensor_data, imu_sensor_data, arm_data):
+        """
+        上の各センサデータ用更新関数のまとめ
+        :param flipper_angles, current_sensor_data, imu_sensor_data, arm_data: ロボット側から来るデータそのまま
+        :return:
+        """
         self._set_flipper_angles(self._ystate.base.flipper_left,
                                  flipper_angles[0],
                                  scale=self._flipper_raw2deg, offset=-self._lflipper_center_raw_data)
@@ -220,6 +227,7 @@ if __name__ == "__main__":
 
     rate_mgr = rospy.Rate(1)  # Hz
     while not rospy.is_shutdown():
+        # このデータ形式で送ってくることがロボット側とのお約束
         dummy_flipper_angle = [0.0, 0.0]  # left, right
         dummy_lwheel_current = [0.0, 0.0]  # current, voltage
         dummy_rwheel_current = [0.0, 0.0]
@@ -232,12 +240,20 @@ if __name__ == "__main__":
         dummy_heat = [0.0] * 16 + [0.0] * 16
         dummy_co2 = 0.0
 
+        dummy_current_sensor_data = (dummy_lwheel_current,
+                                     dummy_rwheel_current,
+                                     dummy_lflipper_current,
+                                     dummy_rflipper_current)
+
+        dummy_imu_sensor_data = (dummy_front_pose, dummy_back_pose)
+
+        dummy_arm_data = (dummy_arm_state, dummy_arm_iv, dummy_heat, dummy_co2)
+
         # set data
         sensor_data_mgr.set_data(dummy_flipper_angle,
-                                 (dummy_lwheel_current, dummy_rwheel_current, dummy_lflipper_current,
-                                  dummy_rflipper_current),
-                                 (dummy_front_pose, dummy_back_pose),
-                                 (dummy_arm_state, dummy_arm_iv, dummy_heat, dummy_co2))
+                                 dummy_current_sensor_data,
+                                 dummy_imu_sensor_data,
+                                 dummy_arm_data)
 
         # this publishes data that is aligned and converted to ros-style data
         sensor_data_mgr.publish_data()

@@ -26,6 +26,10 @@ DEFAULT_COMPRESS_MODE = 0
 
 class ImageSettingsWidget(QWidget):
     class AIBallSettings:
+        """
+        For future
+        これをROSserviceにしてRQTからカメラのパラメータ変更したかった
+        """
         def __init__(self):
             self.resolution = rospy.get_param('~resolution', DEFAULT_RESOLUTION)
             self.compress_mode = rospy.get_param('~compress_mode', DEFAULT_COMPRESS_MODE)
@@ -56,22 +60,26 @@ class ImageSettingsWidget(QWidget):
         self._updateTimer = QTimer(self)
         self._updateTimer.timeout.connect(self.timeout_callback)
 
+    # override
     def start(self):
         self._updateTimer.start(0.1)  # loop rate [ms]
         self.qt_services_combo.addItems(self._service_names)
         # for idx in range(len(self._services)):
         # self._call_service(idx)
 
+    # override
     def stop(self):
         self._updateTimer.stop()
 
+    # override
     def timeout_callback(self):
         self._selected_service_name = self.qt_services_combo.currentText()
 
-    # rqt override
+    # override
     def save_settings(self, plugin_settings, instance_settings):
         instance_settings.set_value('selected_service', self._selected_service_name)
 
+    # override
     def restore_settings(self, plugin_settings, instance_settings):
         selected_service = instance_settings.value('selected_service')
         try:
@@ -79,10 +87,16 @@ class ImageSettingsWidget(QWidget):
         except Exception:
             self.selected_service = DEFAULT_SERVICE_NAME_FRONT
 
+    # override
     def shutdown_plugin(self):
         self.stop()
 
     def _call_service(self, idx):
+        """
+        Call service
+        :param idx: index of the self._settings
+        :return:
+        """
         resolution, compress_mode, contrast, brightness = self._settings[idx].settings
         self._services[idx](resolution, compress_mode, contrast, brightness)
 

@@ -7,6 +7,9 @@ from .heat_sensor_viewer_widget import HeatSensorViewerWidget
 
 
 class HeatSensorViewer(Plugin):
+    """
+    テンプレ通り
+    """
     def __init__(self, context):
         super(HeatSensorViewer, self).__init__(context)
         self.setObjectName('HearSensorViewer')

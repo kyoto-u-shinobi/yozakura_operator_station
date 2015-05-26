@@ -52,12 +52,12 @@ class CO2SensorViewerWidget(QWidget):
         self._updateTimer = QTimer(self)
         self._updateTimer.timeout.connect(self.timeout_callback)
 
+    # override
     def start(self):
         self._updateTimer.start(1000)  # loop rate is 1000[ms]
         self._initialize_line_edit(self.data_edit, 0.0)
 
     def _initialize_line_edit(self, line_edit, init_data):
-
         line_edit.clear()
         line_edit.setReadOnly(True)
         line_edit.setAlignment(Qt.AlignCenter)
@@ -65,20 +65,25 @@ class CO2SensorViewerWidget(QWidget):
 
         line_edit.setText(str(init_data))
 
-
+    # override
     def stop(self):
         self._updateTimer.stop()
 
+    # override
     def timeout_callback(self):
+        """
+        周期的に呼ばれる関数
+        """
         if DEBUG:
             # 3[s]以内にデータ来なければすべて0.0を表示
             if self.data_received_time != None and time.time() - self.data_received_time > 3.0:
                 self._update_display_data(self.data_edit, False, None)
 
-    # rqt override
+    # override
     def save_settings(self, plugin_settings, instance_settings):
         instance_settings.set_value('topic_name', self._topic_name)
 
+    # override
     def restore_settings(self, plugin_settings, instance_settings):
         topic_name = instance_settings.value('topic_name')
         try:
@@ -86,11 +91,16 @@ class CO2SensorViewerWidget(QWidget):
         except Exception:
             self._topic_name = self.TOPIC_NAME
 
+    # override
     def shutdown_plugin(self):
         self.stop()
 
     @Slot()
     def on_subscribe_topic_button_clicked(self):
+        """
+        update topicname
+        :return:
+        """
         new_topic_name = str(self.topic_edit.text())
         if new_topic_name.find('/'):
             new_topic_name = new_topic_name[new_topic_name.find('/') + 1:]

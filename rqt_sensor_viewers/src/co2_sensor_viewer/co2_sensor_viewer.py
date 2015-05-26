@@ -7,6 +7,9 @@ from .co2_sensor_viewer_widget import CO2SensorViewerWidget
 
 
 class CO2SensorViewer(Plugin):
+    """
+    テンプレ通り
+    """
     def __init__(self, context):
         super(CO2SensorViewer, self).__init__(context)
         self.setObjectName('CO2SensorViewer')

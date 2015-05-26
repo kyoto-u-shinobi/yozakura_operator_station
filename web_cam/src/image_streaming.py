@@ -25,6 +25,10 @@ DEFAULT_SERVICE_NAME = 'web_cam_settings_service'
 
 class WebCamManager(object):
     class AIballSettings(object):
+        """
+        For Future
+        ROSserviceでカメラの各パラメータを変更する用
+        """
         def __init__(self, default_resolution, default_compress_modes):
             # key: service, value: postのcommand
             self.resolution = default_resolution
@@ -59,12 +63,17 @@ class WebCamManager(object):
         self._initialize_camera()
 
     def _initialize_camera(self):
+        """
+        普通のWhile True:にすると止められなくなるパターンがあるので
+        while not rospy.is_shutdown():にして，rosから止められるようにした
+        :return:
+        """
         while not rospy.is_shutdown():
             try:
                 self._send_command(self._aiball_setting.get_resolution_cmd())
                 self._send_command(self._aiball_setting.get_compress_mode_cmd())
             except urllib2.URLError:
-                rospy.loginfo('not connected to ' + self._overlayed_text + ' camera')
+                rospy.loginfo('unconnected to ' + self._overlayed_text + ' camera')
                 rospy.loginfo('try again...')
                 rospy.sleep(3.0)
             else:
@@ -80,12 +89,14 @@ class WebCamManager(object):
         self.pub_image = rospy.Publisher(self._topic_name, Image, queue_size=1)
 
     def _send_command(self, cmd):
+        """For AIballSettings"""
         res = urllib2.urlopen(urllib2.Request(self._cmd_uri + cmd))
         print('test')
         print(res.read())
         return res
 
     def _handle_aiball_settings(self, req):
+        """For AIballSettings"""
         if req.resolution is not self._aiball_setting.resolution:
             self._aiball_setting.resolution = req.resolution
             self._send_command(self._aiball_setting.get_resolution_cmd())
@@ -103,6 +114,10 @@ class WebCamManager(object):
         return AIballSettingsResponse()
 
     def publish_img(self):
+        """
+        publish text-layered image
+        :return:
+        """
         if not self.is_active:
             self.activate()
 

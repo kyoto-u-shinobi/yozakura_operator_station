@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+
+
 from __future__ import division
 import math
 import numpy
@@ -11,7 +14,7 @@ OpenGL.ERROR_CHECKING = True
 from OpenGL.GL import *
 from OpenGL.GLU import gluPerspective
 
-# REF: https://github.com/ros-visualization/rqt_robot_plugins/blob/hydro-devel/rqt_pose_view/src/rqt_pose_view/gl_widget.py
+# 参考: https://github.com/ros-visualization/rqt_robot_plugins/blob/hydro-devel/rqt_pose_view/src/rqt_pose_view/gl_widget.py
 
 # create an original class (GLWidget) that inherits QGLWidget
 

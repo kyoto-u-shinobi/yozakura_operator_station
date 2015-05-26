@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import rospy
 from sensor_msgs.msg import Image
@@ -7,7 +8,27 @@ from image_switcher.srv import ImageSwitcherService
 DEBUG = True
 
 
+"""
+コンセプト
+ImageSwitcherで各カメラの画像をsubするImageListenerのオブジェクトを作って
+それぞれのオブジェクトにimageを保持する配列(self._pub_img_msgs＠ImageSwitcher)を渡しておく
+ImageSwitcherではself._pub_img_msgsの0番目のimageがmain, 以下sub1, sub2, sub3となってpubされる
+mainが変わるROSserviceがリクエストされたら，_handle_image_switcher関数内でImageListenerのオブジェクトのset_order関数を使って
+self._pub_img_msgs＠ImageSwitcherが渡されたself._image_msgs＠ImageListenerの順番が変わる
+
+本来，pythonは全て参照渡しのはずなので，
+ImageListenerのオブジェクトのimageを保持するメンバ変数をImageSwitcherで使ったりすればいいはずなのだが，
+なんかうまくいかなかった．
+でもこれみたいに配列を渡すようにすればうまくいった．
+なんか画像関連のところの内部でC++が回ってて，配列渡したことでうまく画像のアドレスにアクセスできてるのかな
+と自分の中では（無理やり）納得させたが，単純に実装ミスってた可能性も十分あり
+"""
+
+
 class ImageListener:
+    """
+    Imageをsubってreceived_imagesに保持する
+    """
     def __init__(self, node_name, listening_topic_name, received_images, id, order):
         self._node_name = node_name
         self._topic_name = listening_topic_name

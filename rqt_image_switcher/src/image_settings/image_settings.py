@@ -7,6 +7,9 @@ from image_settings_widget import ImageSettingsWidget
 
 
 class ImageSettings(Plugin):
+    """
+    テンプレ通り
+    """
     def __init__(self, context):
         super(ImageSettings, self).__init__(context)
         self.setObjectName('ImageSettings')
