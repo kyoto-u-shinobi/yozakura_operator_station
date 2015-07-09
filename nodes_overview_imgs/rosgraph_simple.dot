@@ -1,0 +1,416 @@
+digraph graphname {
+	graph [bb="0,0,1738,668",
+		compound=True,
+		rank=same,
+		rankdir=LR,
+		ranksep=0.2
+	];
+	node [label="\N"];
+	subgraph cluster_back_cam {
+		graph [bb="45,336,161,411",
+			compound=True,
+			label=back_cam,
+			lheight=0.21,
+			lp="103,399.5",
+			lwidth=0.78,
+			rank=same,
+			rankdir=LR,
+			ranksep=0.2,
+			style=bold
+		];
+		_back_cam		 [URL=_back_cam,
+			height=0.5,
+			label="/back_cam",
+			pos="103,362",
+			shape=ellipse,
+			width=1.3721];
+	}
+	subgraph cluster_joystick {
+		graph [bb="54,87,152,162",
+			compound=True,
+			label=joystick,
+			lheight=0.21,
+			lp="103,150.5",
+			lwidth=0.60,
+			rank=same,
+			rankdir=LR,
+			ranksep=0.2,
+			style=bold
+		];
+		_joystick		 [URL=_joystick,
+			height=0.5,
+			label="/joystick",
+			pos="103,113",
+			shape=ellipse,
+			width=1.1374];
+	}
+	subgraph cluster_front_cam {
+		graph [bb="45,253,161,328",
+			compound=True,
+			label=front_cam,
+			lheight=0.21,
+			lp="103,316.5",
+			lwidth=0.79,
+			rank=same,
+			rankdir=LR,
+			ranksep=0.2,
+			style=bold
+		];
+		_front_cam		 [URL=_front_cam,
+			height=0.5,
+			label="/front_cam",
+			pos="103,279",
+			shape=ellipse,
+			width=1.3902];
+	}
+	subgraph cluster_joint_state_publisher {
+		graph [bb="1194,46,1384,121",
+			compound=True,
+			label=joint_state_publisher,
+			lheight=0.21,
+			lp="1289,109.5",
+			lwidth=1.58,
+			rank=same,
+			rankdir=LR,
+			ranksep=0.2,
+			style=bold
+		];
+		_joint_state_publisher		 [URL=_joint_state_publisher,
+			height=0.5,
+			label="/joint_state_publisher",
+			pos="1289,72",
+			shape=ellipse,
+			width=2.4192];
+	}
+	subgraph cluster_operator_station {
+		graph [bb="622,66,778,141",
+			compound=True,
+			label=operator_station,
+			lheight=0.21,
+			lp="700,129.5",
+			lwidth=1.22,
+			rank=same,
+			rankdir=LR,
+			ranksep=0.2,
+			style=bold
+		];
+		_operator_station		 [URL=_operator_station,
+			height=0.5,
+			label="/operator_station",
+			pos="700,92",
+			shape=ellipse,
+			width=1.9498];
+	}
+	subgraph cluster_urg {
+		graph [bb="68,170,138,245",
+			compound=True,
+			label=urg,
+			lheight=0.21,
+			lp="103,233.5",
+			lwidth=0.26,
+			rank=same,
+			rankdir=LR,
+			ranksep=0.2,
+			style=bold
+		];
+		_urg		 [URL=_urg,
+			height=0.5,
+			label="/urg",
+			pos="103,196",
+			shape=ellipse,
+			width=0.75];
+	}
+	subgraph cluster_theta_capture_server {
+		graph [bb="8,585,198,660",
+			compound=True,
+			label=theta_capture_server,
+			lheight=0.21,
+			lp="103,648.5",
+			lwidth=1.57,
+			rank=same,
+			rankdir=LR,
+			ranksep=0.2,
+			style=bold
+		];
+		_theta_capture_server		 [URL=_theta_capture_server,
+			height=0.5,
+			label="/theta_capture_server",
+			pos="103,611",
+			shape=ellipse,
+			width=2.4012];
+	}
+	subgraph cluster_service_provider {
+		graph [bb="314,149,474,224",
+			compound=True,
+			label=service_provider,
+			lheight=0.21,
+			lp="394,212.5",
+			lwidth=1.26,
+			rank=same,
+			rankdir=LR,
+			ranksep=0.2,
+			style=bold
+		];
+		_service_provider		 [URL=_service_provider,
+			height=0.5,
+			label="/service_provider",
+			pos="394,175",
+			shape=ellipse,
+			width=2.004];
+	}
+	subgraph cluster_data_distributor {
+		graph [bb="934,100,1088,175",
+			compound=True,
+			label=data_distributor,
+			lheight=0.21,
+			lp="1011,163.5",
+			lwidth=1.19,
+			rank=same,
+			rankdir=LR,
+			ranksep=0.2,
+			style=bold
+		];
+		_data_distributor		 [URL=_data_distributor,
+			height=0.5,
+			label="/data_distributor",
+			pos="1011,126",
+			shape=ellipse,
+			width=1.9137];
+	}
+	subgraph cluster_command_gen {
+		graph [bb="320,66,468,141",
+			compound=True,
+			label=command_gen,
+			lheight=0.21,
+			lp="394,129.5",
+			lwidth=1.14,
+			rank=same,
+			rankdir=LR,
+			ranksep=0.2,
+			style=bold
+		];
+		_command_gen		 [URL=_command_gen,
+			height=0.5,
+			label="/command_gen",
+			pos="394,92",
+			shape=ellipse,
+			width=1.8234];
+	}
+	subgraph cluster_overview_cam {
+		graph [bb="29,419,177,494",
+			compound=True,
+			label=overview_cam,
+			lheight=0.21,
+			lp="103,482.5",
+			lwidth=1.12,
+			rank=same,
+			rankdir=LR,
+			ranksep=0.2,
+			style=bold
+		];
+		_overview_cam		 [URL=_overview_cam,
+			height=0.5,
+			label="/overview_cam",
+			pos="103,445",
+			shape=ellipse,
+			width=1.8234];
+	}
+	subgraph cluster_robot_state_publisher {
+		graph [bb="1482,46,1676,121",
+			compound=True,
+			label=robot_state_publisher,
+			lheight=0.21,
+			lp="1579,109.5",
+			lwidth=1.64,
+			rank=same,
+			rankdir=LR,
+			ranksep=0.2,
+			style=bold
+		];
+		_robot_state_publisher		 [URL=_robot_state_publisher,
+			height=0.5,
+			label="/robot_state_publisher",
+			pos="1579,72",
+			shape=ellipse,
+			width=2.4734];
+	}
+	subgraph cluster_arm_cam {
+		graph [bb="48,502,158,577",
+			compound=True,
+			label=arm_cam,
+			lheight=0.21,
+			lp="103,565.5",
+			lwidth=0.72,
+			rank=same,
+			rankdir=LR,
+			ranksep=0.2,
+			style=bold
+		];
+		_arm_cam		 [URL=_arm_cam,
+			height=0.5,
+			label="/arm_cam",
+			pos="103,528",
+			shape=ellipse,
+			width=1.2999];
+	}
+	_yozakura_state	 [URL=topic_3A_yozakura_state,
+		height=0.5,
+		label="/yozakura_state",
+		pos="856,146",
+		shape=box,
+		width=1.4028];
+	_yozakura_state -> _data_distributor	 [penwidth=1,
+		pos="e,949.08,133.96 906.67,139.51 917.03,138.15 928.14,136.7 939.09,135.27"];
+	_joy	 [URL=topic_3A_joy,
+		height=0.5,
+		label="/joy",
+		pos="256,113",
+		shape=box,
+		width=0.75];
+	_joy -> _service_provider	 [penwidth=1,
+		pos="e,351.11,160.42 283.25,128.81 292.77,134.26 303.72,140.19 314,145 322.78,149.1 332.29,153.09 341.56,156.74"];
+	_joy -> _command_gen	 [penwidth=1,
+		pos="e,336.46,100.73 283.22,108.95 295.63,107.03 311.07,104.65 326.42,102.28"];
+	_heat_sensor	 [URL=topic_3A_heat_sensor,
+		height=0.5,
+		label="/heat_sensor",
+		pos="1141,288",
+		shape=box,
+		width=1.1667];
+	_yozakura_command	 [URL=topic_3A_yozakura_command,
+		height=0.5,
+		label="/yozakura_command",
+		pos="548,92",
+		shape=box,
+		width=1.8194];
+	_yozakura_command -> _operator_station	 [penwidth=1,
+		pos="e,629.69,92 613.92,92 615.72,92 617.52,92 619.33,92"];
+	_joint_states	 [URL=topic_3A_joint_states,
+		height=0.5,
+		label="/joint_states",
+		pos="1433,72",
+		shape=box,
+		width=1.1389];
+	_joint_states -> _robot_state_publisher	 [penwidth=1,
+		pos="e,1489.7,72 1474.1,72 1475.8,72 1477.6,72 1479.3,72"];
+	_tf	 [URL=topic_3A_tf,
+		height=0.5,
+		label="/tf",
+		pos="1711,72",
+		shape=box,
+		width=0.75];
+	_scan	 [URL=topic_3A_scan,
+		height=0.5,
+		label="/scan",
+		pos="256,196",
+		shape=box,
+		width=0.75];
+	_voltage_data	 [URL=topic_3A_voltage_data,
+		height=0.5,
+		label="/voltage_data",
+		pos="1141,234",
+		shape=box,
+		width=1.2361];
+	_input_mode	 [URL=topic_3A_input_mode,
+		height=0.5,
+		label="/input_mode",
+		pos="548,175",
+		shape=box,
+		width=1.1944];
+	_current_data	 [URL=topic_3A_current_data,
+		height=0.5,
+		label="/current_data",
+		pos="1141,180",
+		shape=box,
+		width=1.2222];
+	_co2_sensor	 [URL=topic_3A_co2_sensor,
+		height=0.5,
+		label="/co2_sensor",
+		pos="1141,126",
+		shape=box,
+		width=1.125];
+	_front_img	 [URL=topic_3A_front_img,
+		height=0.5,
+		label="/front_img",
+		pos="256,279",
+		shape=box,
+		width=1.0417];
+	_back_img	 [URL=topic_3A_back_img,
+		height=0.5,
+		label="/back_img",
+		pos="256,362",
+		shape=box,
+		width=1.0278];
+	_body_state	 [URL=topic_3A_body_state,
+		height=0.5,
+		label="/body_state",
+		pos="1141,72",
+		shape=box,
+		width=1.0972];
+	_body_state -> _joint_state_publisher	 [penwidth=1,
+		pos="e,1201.7,72 1180.7,72 1184.2,72 1187.9,72 1191.6,72"];
+	_yozakura_sensor_data	 [URL=topic_3A_yozakura_sensor_data,
+		height=0.5,
+		label="/yozakura_sensor_data",
+		pos="856,92",
+		shape=box,
+		width=1.9444];
+	_yozakura_sensor_data -> _data_distributor	 [penwidth=1,
+		pos="e,957.85,114.41 926.34,107.41 933.46,108.99 940.66,110.59 947.69,112.15"];
+	_arm_state	 [URL=topic_3A_arm_state,
+		height=0.5,
+		label="/arm_state",
+		pos="1141,18",
+		shape=box,
+		width=1.0278];
+	_arm_state -> _joint_state_publisher	 [penwidth=1,
+		pos="e,1245.6,56.314 1178.1,31.348 1195.6,37.814 1216.9,45.697 1236.1,52.795"];
+	_overview_img	 [URL=topic_3A_overview_img,
+		height=0.5,
+		label="/overview_img",
+		pos="256,445",
+		shape=box,
+		width=1.375];
+	_arm_img	 [URL=topic_3A_arm_img,
+		height=0.5,
+		label="/arm_img",
+		pos="256,528",
+		shape=box,
+		width=0.98611];
+	_back_cam -> _back_img	 [penwidth=1,
+		pos="e,218.94,362 152.61,362 170.63,362 190.99,362 208.79,362"];
+	_joystick -> _joy	 [penwidth=1,
+		pos="e,228.56,113 144.07,113 167.15,113 195.94,113 218.41,113"];
+	_front_cam -> _front_img	 [penwidth=1,
+		pos="e,218.38,279 153.44,279 170.97,279 190.62,279 207.94,279"];
+	_joint_state_publisher -> _joint_states	 [penwidth=1,
+		pos="e,1391.8,72 1376.3,72 1378.1,72 1379.9,72 1381.7,72"];
+	_operator_station -> _yozakura_state	 [penwidth=1,
+		pos="e,805.39,128.6 742.27,106.47 758.66,112.22 777.82,118.94 795.65,125.19"];
+	_operator_station -> _yozakura_sensor_data	 [penwidth=1,
+		pos="e,785.71,92 770.34,92 772.1,92 773.86,92 775.62,92"];
+	_urg -> _scan	 [penwidth=1,
+		pos="e,229,196 130.3,196 154.77,196 191.45,196 218.7,196"];
+	_service_provider -> _input_mode	 [penwidth=1,
+		pos="e,504.79,175 466.55,175 476.06,175 485.66,175 494.76,175"];
+	_data_distributor -> _heat_sensor	 [penwidth=1,
+		pos="e,1106.6,269.82 1019.9,143.99 1032.6,171.71 1060.2,225.39 1096,261 1096.8,261.79 1097.6,262.57 1098.5,263.33"];
+	_data_distributor -> _voltage_data	 [penwidth=1,
+		pos="e,1108.7,215.94 1028.1,143.58 1044.3,160.81 1070.5,187.28 1096,207 1097.4,208.06 1098.8,209.11 1100.2,210.14"];
+	_data_distributor -> _current_data	 [penwidth=1,
+		pos="e,1097,161.87 1048,141.19 1060.3,146.36 1074.2,152.25 1087.5,157.85"];
+	_data_distributor -> _co2_sensor	 [penwidth=1,
+		pos="e,1100.4,126 1080.1,126 1083.5,126 1086.8,126 1090.1,126"];
+	_data_distributor -> _body_state	 [penwidth=1,
+		pos="e,1101.1,88.394 1048,110.81 1061.6,105.08 1077.3,98.465 1091.8,92.337"];
+	_data_distributor -> _arm_state	 [penwidth=1,
+		pos="e,1108.7,36.063 1028.1,108.42 1044.3,91.19 1070.5,64.719 1096,45 1097.4,43.944 1098.8,42.894 1100.2,41.855"];
+	_command_gen -> _yozakura_command	 [penwidth=1,
+		pos="e,482.31,92 459.9,92 463.96,92 468.07,92 472.16,92"];
+	_overview_cam -> _overview_img	 [penwidth=1,
+		pos="e,206.1,445 168.91,445 177.88,445 187.04,445 195.89,445"];
+	_robot_state_publisher -> _tf	 [penwidth=1,
+		pos="e,1683.5,72 1668.2,72 1669.8,72 1671.5,72 1673.2,72"];
+	_arm_cam -> _arm_img	 [penwidth=1,
+		pos="e,220.18,528 150.13,528 169.15,528 191.13,528 210.03,528"];
+}
