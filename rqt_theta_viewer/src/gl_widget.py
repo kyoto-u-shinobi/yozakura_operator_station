@@ -1,11 +1,11 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
 
 from __future__ import division
 import math
 import numpy
 
-from python_qt_binding.QtCore import QPoint, Qt
+from python_qt_binding.QtCore import QPoint, Qt, QIODevice, QBuffer
 from python_qt_binding.QtOpenGL import QGLFormat, QGLWidget
 
 import OpenGL
@@ -13,6 +13,10 @@ import OpenGL
 OpenGL.ERROR_CHECKING = True
 from OpenGL.GL import *
 from OpenGL.GLU import gluPerspective
+
+import cStringIO
+import PIL
+from qrcode_detector import QRCodeSymbol, QRCodeDetector
 
 # 参考: https://github.com/ros-visualization/rqt_robot_plugins/blob/hydro-devel/rqt_pose_view/src/rqt_pose_view/gl_widget.py
 
@@ -35,6 +39,30 @@ class GLWidget(QGLWidget):
         self._last_point_2d = QPoint()
         self._last_point_3d = [0.0, 0.0, 0.0]
         self._last_point_3d_ok = False
+
+        self._qrcode_detector = QRCodeDetector()
+
+    def check_qrcode(self):
+        qimage = self.grabFrameBuffer(withAlpha=False)
+        width, height = qimage.width(), qimage.height()
+        print(width, height)
+        symbols = self._qrcode_detector.scan(self._qimage_to_pilimage(qimage),
+                                             width, height)
+        print(symbols)
+
+    def _qimage_to_pilimage(self, qimage):
+        """
+        http://doloopwhile.hatenablog.com/entry/20100305/1267782841
+        """
+        buffer = QBuffer()
+        buffer.open(QIODevice.WriteOnly)
+        qimage.save(buffer, "BMP")
+
+        fp = cStringIO.StringIO()
+        fp.write(buffer.data())
+        buffer.close()
+        fp.seek(0)
+        return PIL.Image.open(fp)
 
     ## ============================================
     ## callbacks for QGLWidget

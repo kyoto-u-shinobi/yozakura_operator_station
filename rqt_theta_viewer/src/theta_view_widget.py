@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+
 from __future__ import division
 import os
 import numpy as np
@@ -71,6 +75,7 @@ class ThetaViewWidget(QWidget):
     def update_timeout(self):
         self._glview.makeCurrent()
         self._glview.updateGL()
+        self._glview.check_qrcode()
         glRotated(45, 0, 0, 1)
 
     def glview_paintGL(self):
