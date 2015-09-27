@@ -4,8 +4,13 @@
 from __future__ import division
 import math
 import numpy
+import sip
+
+# http://tcha.org/blog/2011/08/27/pyqt-sipapi/
+sip.setapi('QString', 2)
 
 from python_qt_binding.QtCore import QPoint, Qt, QIODevice, QBuffer
+from python_qt_binding.QtGui import QFont
 from python_qt_binding.QtOpenGL import QGLFormat, QGLWidget
 
 import OpenGL
@@ -18,7 +23,9 @@ import cStringIO
 import PIL
 from qrcode_detector import QRCodeSymbol, QRCodeDetector
 
-# 参考: https://github.com/ros-visualization/rqt_robot_plugins/blob/hydro-devel/rqt_pose_view/src/rqt_pose_view/gl_widget.py
+
+
+# ref: https://github.com/ros-visualization/rqt_robot_plugins/blob/hydro-devel/rqt_pose_view/src/rqt_pose_view/gl_widget.py
 
 # create an original class (GLWidget) that inherits QGLWidget
 
@@ -41,14 +48,16 @@ class GLWidget(QGLWidget):
         self._last_point_3d_ok = False
 
         self._qrcode_detector = QRCodeDetector()
+        self._qrcode_data = []
 
     def check_qrcode(self):
         qimage = self.grabFrameBuffer(withAlpha=False)
         width, height = qimage.width(), qimage.height()
-        print(width, height)
         symbols = self._qrcode_detector.scan(self._qimage_to_pilimage(qimage),
                                              width, height)
-        print(symbols)
+        if len(symbols) != 0:
+            print(symbols)
+            self._qrcode_data = symbols
 
     def _qimage_to_pilimage(self, qimage):
         """
@@ -79,6 +88,7 @@ class GLWidget(QGLWidget):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glMatrixMode(GL_MODELVIEW)
         glLoadMatrixd(self._modelview_matrix)
+        self._draw_text(100, 100, 'test')
 
     def get_view_matrix(self):
         return self._modelview_matrix.tolist()
@@ -219,8 +229,13 @@ class GLWidget(QGLWidget):
     def get_texture(self, qimage):
         return self.bindTexture(qimage)
 
-
-
+    def _draw_text(self, x, y, qstr):
+        glDisable(GL_LIGHTING)
+        glDisable(GL_DEPTH_TEST)
+        self.qglColor(Qt.white)
+        self.renderText(x, y, qstr, QFont("Arial", 12, QFont.Bold, False))
+        glEnable(GL_DEPTH_TEST)
+        glEnable(GL_LIGHTING)
 
 
 

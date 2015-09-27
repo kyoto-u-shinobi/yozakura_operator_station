@@ -94,3 +94,6 @@ def draw_grand_gradation(width, depth, interval, power):
             glVertex3d(i, j + interval, 0.0)
     glEnd()
     glDisable(GL_BLEND)
+
+
+
