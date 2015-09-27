@@ -7,10 +7,10 @@ import numpy
 import sip
 
 # http://tcha.org/blog/2011/08/27/pyqt-sipapi/
-sip.setapi('QString', 2)
+# sip.setapi('QString', 2)
 
 from python_qt_binding.QtCore import QPoint, Qt, QIODevice, QBuffer
-from python_qt_binding.QtGui import QFont
+from python_qt_binding.QtGui import QFont, QStringListModel
 from python_qt_binding.QtOpenGL import QGLFormat, QGLWidget
 
 import OpenGL
@@ -18,11 +18,12 @@ import OpenGL
 OpenGL.ERROR_CHECKING = True
 from OpenGL.GL import *
 from OpenGL.GLU import gluPerspective
+from OpenGL.GLUT import *
 
 import cStringIO
 import PIL
 from qrcode_detector import QRCodeSymbol, QRCodeDetector
-
+from gl_painter import draw_square_on_screen, draw_texts
 
 
 # ref: https://github.com/ros-visualization/rqt_robot_plugins/blob/hydro-devel/rqt_pose_view/src/rqt_pose_view/gl_widget.py
@@ -46,18 +47,23 @@ class GLWidget(QGLWidget):
         self._last_point_2d = QPoint()
         self._last_point_3d = [0.0, 0.0, 0.0]
         self._last_point_3d_ok = False
+        self._width, self._height = 640, 480
 
         self._qrcode_detector = QRCodeDetector()
         self._qrcode_data = []
 
     def check_qrcode(self):
         qimage = self.grabFrameBuffer(withAlpha=False)
-        width, height = qimage.width(), qimage.height()
+        self._width, self._height = qimage.width(), qimage.height()
         symbols = self._qrcode_detector.scan(self._qimage_to_pilimage(qimage),
-                                             width, height)
+                                             self._width, self._height)
         if len(symbols) != 0:
-            print(symbols)
+            print(symbols.data)
             self._qrcode_data = symbols
+            draw_square_on_screen(self._width, self._height,
+                                  [(100, 100), (300, 300)], [(200, 100), (400, 300)],
+                                  [(100, 200), (300, 400)], [(200, 200), (400, 400)])
+
 
     def _qimage_to_pilimage(self, qimage):
         """
@@ -88,7 +94,6 @@ class GLWidget(QGLWidget):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glMatrixMode(GL_MODELVIEW)
         glLoadMatrixd(self._modelview_matrix)
-        self._draw_text(100, 100, 'test')
 
     def get_view_matrix(self):
         return self._modelview_matrix.tolist()
@@ -229,13 +234,13 @@ class GLWidget(QGLWidget):
     def get_texture(self, qimage):
         return self.bindTexture(qimage)
 
-    def _draw_text(self, x, y, qstr):
-        glDisable(GL_LIGHTING)
-        glDisable(GL_DEPTH_TEST)
-        self.qglColor(Qt.white)
-        self.renderText(x, y, qstr, QFont("Arial", 12, QFont.Bold, False))
-        glEnable(GL_DEPTH_TEST)
-        glEnable(GL_LIGHTING)
+        # def _draw_text(self, x, y, qstr):
+        # glDisable(GL_LIGHTING)
+        # glDisable(GL_DEPTH_TEST)
+        #     self.qglColor(Qt.white)
+        #     self.renderText(x, y, qstr, QFont("Arial", 12, QFont.Bold, False))
+        #     glEnable(GL_DEPTH_TEST)
+        #     glEnable(GL_LIGHTING)
 
 
 
