@@ -18,7 +18,6 @@ import OpenGL
 OpenGL.ERROR_CHECKING = True
 from OpenGL.GL import *
 from OpenGL.GLU import gluPerspective
-from OpenGL.GLUT import *
 
 import cStringIO
 import PIL
@@ -52,33 +51,6 @@ class GLWidget(QGLWidget):
         self._qrcode_detector = QRCodeDetector()
         self._qrcode_data = []
 
-    def check_qrcode(self):
-        qimage = self.grabFrameBuffer(withAlpha=False)
-        self._width, self._height = qimage.width(), qimage.height()
-        symbols = self._qrcode_detector.scan(self._qimage_to_pilimage(qimage),
-                                             self._width, self._height)
-        if len(symbols) != 0:
-            print(symbols.data)
-            self._qrcode_data = symbols
-            draw_square_on_screen(self._width, self._height,
-                                  [(100, 100), (300, 300)], [(200, 100), (400, 300)],
-                                  [(100, 200), (300, 400)], [(200, 200), (400, 400)])
-
-
-    def _qimage_to_pilimage(self, qimage):
-        """
-        http://doloopwhile.hatenablog.com/entry/20100305/1267782841
-        """
-        buffer = QBuffer()
-        buffer.open(QIODevice.WriteOnly)
-        qimage.save(buffer, "BMP")
-
-        fp = cStringIO.StringIO()
-        fp.write(buffer.data())
-        buffer.close()
-        fp.seek(0)
-        return PIL.Image.open(fp)
-
     ## ============================================
     ## callbacks for QGLWidget
     def initializeGL(self):
@@ -94,6 +66,8 @@ class GLWidget(QGLWidget):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glMatrixMode(GL_MODELVIEW)
         glLoadMatrixd(self._modelview_matrix)
+        # self._draw_text(100, 100, 'test')
+        self._draw_qrcode()
 
     def get_view_matrix(self):
         return self._modelview_matrix.tolist()
@@ -215,6 +189,8 @@ class GLWidget(QGLWidget):
     def mouseReleaseEvent(self, _event):
         self._last_point_3d_ok = False
 
+
+    ## ============================================
     def _map_to_sphere(self, pos):
         v = [0.0, 0.0, 0.0]
         # check if inside widget
@@ -234,20 +210,52 @@ class GLWidget(QGLWidget):
     def get_texture(self, qimage):
         return self.bindTexture(qimage)
 
-        # def _draw_text(self, x, y, qstr):
-        # glDisable(GL_LIGHTING)
-        # glDisable(GL_DEPTH_TEST)
-        #     self.qglColor(Qt.white)
-        #     self.renderText(x, y, qstr, QFont("Arial", 12, QFont.Bold, False))
-        #     glEnable(GL_DEPTH_TEST)
-        #     glEnable(GL_LIGHTING)
+    def check_qrcode(self):
+        qimage = self.grabFrameBuffer(withAlpha=False)
+        self._width, self._height = qimage.width(), qimage.height()
+        symbols = self._qrcode_detector.scan(self._qimage_to_pilimage(qimage),
+                                             self._width, self._height)
+        self._qrcode_data = symbols
+        if len(symbols) != 0:
+            for symbol in symbols:
+                print(symbol.data)
 
 
+    def _qimage_to_pilimage(self, qimage):
+        """
+        http://doloopwhile.hatenablog.com/entry/20100305/1267782841
+        """
+        buffer = QBuffer()
+        buffer.open(QIODevice.WriteOnly)
+        qimage.save(buffer, "BMP")
+
+        fp = cStringIO.StringIO()
+        fp.write(buffer.data())
+        buffer.close()
+        fp.seek(0)
+        return PIL.Image.open(fp)
 
 
+    def _draw_qrcode(self):
+        lu_lst, ru_lst, lb_lst, rb_lst, text_lst = [], [], [], [], []
+        for qr in self._qrcode_data:
+            if qr.type == 'QRCODE':
+                text_lst.append(qr.data)
+                lb_lst.append(qr.location[0])
+                rb_lst.append(qr.location[1])
+                ru_lst.append(qr.location[2])
+                lu_lst.append(qr.location[3])
+        draw_square_on_screen(self._width, self._height,
+                              lu_lst, ru_lst, lb_lst, rb_lst)
 
 
-
+    def _draw_text(self, x, y, qstr):
+        glDisable(GL_LIGHTING)
+        glDisable(GL_DEPTH_TEST)
+        self.qglColor(Qt.white)
+        self.renderText(x, y, qstr, QFont("Arial", 12, QFont.Bold, False))
+        glEnable(GL_DEPTH_TEST)
+        glEnable(GL_LIGHTING)
 
 
 

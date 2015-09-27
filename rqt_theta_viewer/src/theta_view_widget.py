@@ -16,7 +16,6 @@ from rostopic import get_topic_class
 from tf.transformations import quaternion_about_axis
 
 from OpenGL.GL import *
-from OpenGL.GLUT import *
 
 from gl_widget import GLWidget as MyGLWidget
 from theta_view_events import ThetaViewEvents
