@@ -101,7 +101,7 @@ def draw_grand_gradation(width, depth, interval, power):
 def draw_square_on_screen(width, height,
                           left_upper_wh_list, right_upper_wh_list,
                           left_bottom_wh_list, right_bottom_wh_list,
-                          rgb=(1.0, 0.0, 0.0), alpha=0.2):
+                          rgb=(1.0, 0.0, 0.0), alpha=0.8):
     glPushMatrix()
     glLoadIdentity()
     glMatrixMode(GL_PROJECTION)

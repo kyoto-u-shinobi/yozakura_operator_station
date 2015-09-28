@@ -66,7 +66,7 @@ class GLWidget(QGLWidget):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glMatrixMode(GL_MODELVIEW)
         glLoadMatrixd(self._modelview_matrix)
-        # self._draw_text(100, 100, 'test')
+        self._draw_text(100, 100, 'test')
         self._draw_qrcode()
 
     def get_view_matrix(self):
@@ -239,12 +239,12 @@ class GLWidget(QGLWidget):
     def _draw_qrcode(self):
         lu_lst, ru_lst, lb_lst, rb_lst, text_lst = [], [], [], [], []
         for qr in self._qrcode_data:
-            if qr.type == 'QRCODE':
+            if str(qr.type) == 'QRCODE':
                 text_lst.append(qr.data)
-                lb_lst.append(qr.location[0])
-                rb_lst.append(qr.location[1])
-                ru_lst.append(qr.location[2])
-                lu_lst.append(qr.location[3])
+                lb_lst.append((qr.location[0][0], self._height-qr.location[0][1]))
+                rb_lst.append((qr.location[1][0], self._height-qr.location[1][1]))
+                ru_lst.append((qr.location[2][0], self._height-qr.location[2][1]))
+                lu_lst.append((qr.location[3][0], self._height-qr.location[3][1]))
         draw_square_on_screen(self._width, self._height,
                               lu_lst, ru_lst, lb_lst, rb_lst)
 
