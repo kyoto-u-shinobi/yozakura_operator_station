@@ -54,4 +54,4 @@ if __name__ == "__main__":
     if theta_server.initialize():
         rospy.spin()
     else:
-        print 'fail to initialize theta'
+        print('fail to initialize theta')

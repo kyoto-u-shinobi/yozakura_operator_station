@@ -24,7 +24,7 @@ class Client(object):
         while True:
             print('client running')
             try:
-                self.request.send(str.encode("speeds"))  # Request speeds.
+                self.request.send(str.encode("commands"))  # Request commands.
                 result = self.request.recv(128)  # Receive speed data.
                 if not result:
                     continue
@@ -32,8 +32,8 @@ class Client(object):
                 continue
 
             try:
-                speeds, arms = pickle.loads(result)
-                print(speeds, arms)
+                commands, arms = pickle.loads(result)
+                print(commands, arms)
             except EOFError:
                 continue
 

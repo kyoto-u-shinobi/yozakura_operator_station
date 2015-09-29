@@ -80,9 +80,9 @@ class Handler(SocketServer.BaseRequestHandler):
             self.arm_yaw = yozakura_command.arm_vel.yaw
 
         def get_command(self):
-            speeds = self.lwheel, self.rwheel, self.lflipper, self.rflipper
+            commands = self.lwheel, self.rwheel, self.lflipper, self.rflipper
             arms = self.arm_mode, self.arm_linear, self.arm_pitch, self.arm_yaw
-            return speeds, arms
+            return commands, arms
 
     def __init__(self, request, client_address, server):
 
@@ -113,7 +113,7 @@ class Handler(SocketServer.BaseRequestHandler):
         objects.
 
         Requests handled:
-            - speeds : Perform calculations and send the required motor speed data.
+            - commands : Perform calculations and send the required motor speed data.
             - echo : Reply with what the client has said.
             - print : ``echo``, and print to ``stdout``.
 
@@ -154,7 +154,7 @@ class Handler(SocketServer.BaseRequestHandler):
                 print("Terminating client session")
                 break
 
-            elif data == "speeds":
+            elif data == "commands":
                 print(self._command.get_command())
                 reply = pickle.dumps(self._command.get_command())
 
