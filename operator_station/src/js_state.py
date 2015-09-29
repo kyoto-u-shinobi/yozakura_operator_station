@@ -170,11 +170,11 @@ class State(object):
     The state of the object.
     Parameters
     ----------
-    dpad : Position
+    dpad : Axis
         The position of the dpad.
-    lstick : Position
+    lstick : Axis
         The position of the left analog stick.
-    rstick : Position
+    rstick : Axis
         The position of the right analog stick.
     buttons : Buttons
         The state of the buttons.

@@ -1,3 +1,7 @@
+
+# 1: request to capture a image and send it
+# (means that the server responses the image that is captured after capturing)
+# others: request to send the currentest image from theta storage without capturing
 int64 capture_mode
 ---
 sensor_msgs/CompressedImage image_msg

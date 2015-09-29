@@ -1,8 +1,16 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from __future__ import division
 import math
 import numpy
+import sip
 
-from python_qt_binding.QtCore import QPoint, Qt
+# http://tcha.org/blog/2011/08/27/pyqt-sipapi/
+# sip.setapi('QString', 2)
+
+from python_qt_binding.QtCore import QPoint, Qt, QIODevice, QBuffer
+from python_qt_binding.QtGui import QFont, QStringListModel
 from python_qt_binding.QtOpenGL import QGLFormat, QGLWidget
 
 import OpenGL
@@ -11,7 +19,13 @@ OpenGL.ERROR_CHECKING = True
 from OpenGL.GL import *
 from OpenGL.GLU import gluPerspective
 
-# REF: https://github.com/ros-visualization/rqt_robot_plugins/blob/hydro-devel/rqt_pose_view/src/rqt_pose_view/gl_widget.py
+import cStringIO
+import PIL
+from qrcode_detector import QRCodeSymbol, QRCodeDetector
+from gl_painter import draw_square_on_screen, draw_texts
+
+
+# ref: https://github.com/ros-visualization/rqt_robot_plugins/blob/hydro-devel/rqt_pose_view/src/rqt_pose_view/gl_widget.py
 
 # create an original class (GLWidget) that inherits QGLWidget
 
@@ -32,6 +46,10 @@ class GLWidget(QGLWidget):
         self._last_point_2d = QPoint()
         self._last_point_3d = [0.0, 0.0, 0.0]
         self._last_point_3d_ok = False
+        self._width, self._height = 640, 480
+
+        self._qrcode_detector = QRCodeDetector()
+        self._qrcode_data = []
 
     ## ============================================
     ## callbacks for QGLWidget
@@ -48,6 +66,8 @@ class GLWidget(QGLWidget):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glMatrixMode(GL_MODELVIEW)
         glLoadMatrixd(self._modelview_matrix)
+        self._draw_text(100, 100, 'test')
+        self._draw_qrcode()
 
     def get_view_matrix(self):
         return self._modelview_matrix.tolist()
@@ -169,6 +189,8 @@ class GLWidget(QGLWidget):
     def mouseReleaseEvent(self, _event):
         self._last_point_3d_ok = False
 
+
+    ## ============================================
     def _map_to_sphere(self, pos):
         v = [0.0, 0.0, 0.0]
         # check if inside widget
@@ -188,15 +210,52 @@ class GLWidget(QGLWidget):
     def get_texture(self, qimage):
         return self.bindTexture(qimage)
 
+    def check_qrcode(self):
+        qimage = self.grabFrameBuffer(withAlpha=False)
+        self._width, self._height = qimage.width(), qimage.height()
+        symbols = self._qrcode_detector.scan(self._qimage_to_pilimage(qimage),
+                                             self._width, self._height)
+        self._qrcode_data = symbols
+        if len(symbols) != 0:
+            for symbol in symbols:
+                print(symbol.data)
 
 
+    def _qimage_to_pilimage(self, qimage):
+        """
+        http://doloopwhile.hatenablog.com/entry/20100305/1267782841
+        """
+        buffer = QBuffer()
+        buffer.open(QIODevice.WriteOnly)
+        qimage.save(buffer, "BMP")
+
+        fp = cStringIO.StringIO()
+        fp.write(buffer.data())
+        buffer.close()
+        fp.seek(0)
+        return PIL.Image.open(fp)
 
 
+    def _draw_qrcode(self):
+        lu_lst, ru_lst, lb_lst, rb_lst, text_lst = [], [], [], [], []
+        for qr in self._qrcode_data:
+            if str(qr.type) == 'QRCODE':
+                text_lst.append(qr.data)
+                lb_lst.append((qr.location[0][0], self._height-qr.location[0][1]))
+                rb_lst.append((qr.location[1][0], self._height-qr.location[1][1]))
+                ru_lst.append((qr.location[2][0], self._height-qr.location[2][1]))
+                lu_lst.append((qr.location[3][0], self._height-qr.location[3][1]))
+        draw_square_on_screen(self._width, self._height,
+                              lu_lst, ru_lst, lb_lst, rb_lst)
 
 
-
-
-
+    def _draw_text(self, x, y, qstr):
+        glDisable(GL_LIGHTING)
+        glDisable(GL_DEPTH_TEST)
+        self.qglColor(Qt.white)
+        self.renderText(x, y, qstr, QFont("Arial", 12, QFont.Bold, False))
+        glEnable(GL_DEPTH_TEST)
+        glEnable(GL_LIGHTING)
 
 
 

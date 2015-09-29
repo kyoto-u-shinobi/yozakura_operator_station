@@ -15,11 +15,14 @@ DEFAULT_PUB_COMMAND_TOPICNAME = "yozakura_command"
 
 
 class CommandGenerator(object):
-    def __init__(self, logger, main_jstopic_name, main_controller_name="main"):
-        self._logger = logger
-        self.main_controller_name = main_controller_name
-        self.js_controllers = {}
-        self.add_controller(main_jstopic_name, self.main_controller_name)
+    """
+    Generate command for yozakura
+    Subscribe: None
+    Publish: YozakuraCommand
+    Service Server: InputModeSwitchService
+    """
+    def __init__(self, main_jstopic_name):
+        self.js_controller = JoyStickController(main_jstopic_name)
 
         self._ycommand = YozakuraCommand()
         self._pub_command = rospy.Publisher(DEFAULT_PUB_COMMAND_TOPICNAME, YozakuraCommand, queue_size=10)
@@ -27,6 +30,7 @@ class CommandGenerator(object):
         # see: srv/InputModeSwitchService.srv
         self.js_mapping_mode = 1
         self.direction_flag = True
+        # TODO: add self.arm_mode to InputModeSwitchService (if necessary)
         self.arm_mode = 0
 
         self._calc_speed_command_funcs = [
@@ -37,75 +41,47 @@ class CommandGenerator(object):
             methods.calc_arm_command_default_mode
         ]
 
-    def add_controller(self, topic_name, controller_name=None):
-        controller = JoyStickController(topic_name, controller_name)
-        self.js_controllers[controller.name] = controller
-
-    def remove_controller(self, name):
-        del self.js_controllers[name]
-
-    def switch_main_controller(self, name):
-        self.main_controller_name = name
-
-    def _input_mode_switching_handler(self, req):
-        print(req)
-        self.js_mapping_mode = req.js_mapping_mode
-        self.direction_flag = req.direction_flag
-        self.main_controller_name = req.main_controller_name
+    def _input_mode_switching_handler(self, request):
+        """
+        Called when InputModeSwitchService is requested. Study ROS!
+        :param request: See InputModeSwitchService.srv
+        :return: InputModeSwitchServiceResponse
+        """
+        print(request)
+        self.js_mapping_mode = request.js_mapping_mode
+        self.direction_flag = request.direction_flag
+        self.main_controller_name = request.main_controller_name
         return InputModeSwitchServiceResponse()
 
     def activate(self):
-        # build server
+        """
+        Build server and run publisher for getting joystick data
+        """
         rospy.Service(DEFAULT_INPUT_MODE_SWITCH_SERVICENAME, InputModeSwitchService, self._input_mode_switching_handler)
 
-        # run publishers for getting joystick data
-        for controller in self.js_controllers.values():
-            if controller.is_active is not True:
-                controller.activate()
+        if self.js_controller.is_active is not True:
+            self.js_controller.activate()
 
     def publish_command(self):
-        base_vel_input_mode, vel1, vel2, lflipper, rflipper = self.get_speed_commands()
-
-        arm_mode, linear, pitch, yaw = self.get_arm_commands()
-
-        # self._ycommand.header.stamp = rospy.get_time()
-
-        self._ycommand.arm_vel.is_ok = True
-        self._ycommand.arm_vel.mode = arm_mode
-        self._ycommand.arm_vel.top_angle = linear
-        self._ycommand.arm_vel.pitch = pitch
-        self._ycommand.arm_vel.yaw = yaw
-
-        self._ycommand.base_vel_input_mode = base_vel_input_mode
-        if base_vel_input_mode == 1:
-            self._ycommand.wheel_left_vel = vel1
-            self._ycommand.wheel_right_vel = vel2
-            self._ycommand.base_vel.linear.x = 0.0
-            self._ycommand.base_vel.angular.z = 0.0
-        elif base_vel_input_mode == 2:
-            self._ycommand.wheel_left_vel = 0.0
-            self._ycommand.wheel_right_vel = 0.0
-            self._ycommand.base_vel.linear.x = vel1
-            self._ycommand.base_vel.angular.z = vel2
-        else:
-            self._ycommand.wheel_left_vel = 0.0
-            self._ycommand.wheel_right_vel = 0.0
-            self._ycommand.base_vel.linear.x = 0.0
-            self._ycommand.base_vel.angular.z = 0.0
-
-        self._ycommand.flipper_left_vel.is_ok = True
-        self._ycommand.flipper_left_vel.angle = lflipper
-        self._ycommand.flipper_right_vel.is_ok = True
-        self._ycommand.flipper_right_vel.angle = rflipper
+        """
+        Publish YozakuraCommand
+        """
+        self._update_yozakura_command(self._ycommand)
 
         self._pub_command.publish(self._ycommand)
 
-    def get_jsstate(self, controller_name=None):
-        if controller_name is not None:
-            self.main_controller_name = controller_name
-        return self.js_controllers[self.main_controller_name].state.data
+    def get_jsstate(self):
+        """
+        Getter
+        :return: JoyStickController.data
+        """
+        return self.js_controller.state.data
 
     def get_input(self):
+        """
+        Getter
+        :return: joystick state
+        """
         dpad, lstick, rstick, buttons = self.get_jsstate()
         return ((dpad.x, dpad.y),
                 (lstick.x, lstick.y),
@@ -113,26 +89,69 @@ class CommandGenerator(object):
                 buttons.buttons)
 
     def get_speed_commands(self):
+        """
+        Choose the command generation method from self._calc_speed_command_funcs
+        if base_vel_input_mode is 1, vel1 and vel2 are left and right wheel velocity ∈ [-1, 1]
+        if base_vel_input_mode is 2, vel1 and vel2 are v and w [m/s] (just for the future)
+        :return:base_vel_input_mode, vel1, vel2, lflipper, rflipper
+        """
         dpad, lstick, rstick, buttons = self.get_jsstate()
         return self._calc_speed_command_funcs[self.js_mapping_mode - 1](self.direction_flag,
                                                                         dpad, lstick, rstick, buttons)
 
     def get_arm_commands(self):
+        """
+        Choose the command generation method from self._calc_arm_command_funcs
+        :return:arm_mode, linear, pitch, yaw
+        """
         dpad, lstick, rstick, buttons = self.get_jsstate()
-        return self._calc_arm_command_funcs[0](self.direction_flag,
+        return self._calc_arm_command_funcs[self.arm_mode](self.direction_flag,
                                                dpad, lstick, rstick, buttons)
+
+    def _update_yozakura_command(self, yozakura_command):
+        base_vel_input_mode, vel1, vel2, lflipper, rflipper = self.get_speed_commands()
+        arm_mode, linear, pitch, yaw = self.get_arm_commands()
+
+        yozakura_command.header.stamp = rospy.Time.now()
+
+        yozakura_command.arm_vel.is_ok = True
+        yozakura_command.arm_vel.mode = arm_mode
+        yozakura_command.arm_vel.top_angle = linear
+        yozakura_command.arm_vel.pitch = pitch
+        yozakura_command.arm_vel.yaw = yaw
+
+        yozakura_command.base_vel_input_mode = base_vel_input_mode
+        if base_vel_input_mode == 1:
+            yozakura_command.wheel_left_vel = vel1
+            yozakura_command.wheel_right_vel = vel2
+            yozakura_command.base_vel.linear.x = 0.0
+            yozakura_command.base_vel.angular.z = 0.0
+        elif base_vel_input_mode == 2:
+            yozakura_command.wheel_left_vel = 0.0
+            yozakura_command.wheel_right_vel = 0.0
+            yozakura_command.base_vel.linear.x = vel1
+            yozakura_command.base_vel.angular.z = vel2
+        else:
+            yozakura_command.wheel_left_vel = 0.0
+            yozakura_command.wheel_right_vel = 0.0
+            yozakura_command.base_vel.linear.x = 0.0
+            yozakura_command.base_vel.angular.z = 0.0
+
+        yozakura_command.flipper_left_vel.is_ok = True
+        yozakura_command.flipper_left_vel.angle = lflipper
+        yozakura_command.flipper_right_vel.is_ok = True
+        yozakura_command.flipper_right_vel.angle = rflipper
+
+        return yozakura_command
 
 # -------------------------------------------------------------------------
 if __name__ == "__main__":
     rospy.init_node('command_generator', anonymous=True)
-    cmd_gen = CommandGenerator(logging, 'joy')
+    cmd_gen = CommandGenerator('joy')
     cmd_gen.activate()
 
     rate_mgr = rospy.Rate(30)  # hz
     while not rospy.is_shutdown():
-        # print(cmd_gen.get_jsstate())
-        # print(cmd_gen.get_input())
-        # print(cmd_gen.get_speed_commands())
         cmd_gen.publish_command()
         rate_mgr.sleep()
 

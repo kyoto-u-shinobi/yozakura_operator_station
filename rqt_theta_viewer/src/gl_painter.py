@@ -8,6 +8,7 @@ import numpy as np
 OpenGL.ERROR_CHECKING = True
 from OpenGL.GL import *
 from OpenGL.GLU import *
+from OpenGL.GLUT import *
 
 '''
 GL painting utils for theta viewer
@@ -29,7 +30,7 @@ def map_texture_on_sphere(texture, sphere_radius, h_division, v_division):
     _sphere = gluNewQuadric()
     gluQuadricDrawStyle(_sphere, GLU_FILL)
     gluQuadricNormals(_sphere, GLU_SMOOTH)
-    gluQuadricOrientation(_sphere, GLU_OUTSIDE) # GLU_INSIDE or GLU_OUTSIDE
+    gluQuadricOrientation(_sphere, GLU_OUTSIDE)  # GLU_INSIDE or GLU_OUTSIDE
     gluQuadricTexture(_sphere, GL_TRUE)
 
     # change texture's coordinate
@@ -40,7 +41,8 @@ def map_texture_on_sphere(texture, sphere_radius, h_division, v_division):
 
     # map the texture
     glEnable(GL_TEXTURE_2D)
-    gluSphere(_sphere, r, h_div, v_div) # http://seesaawiki.jp/w/mikk_ni3_92/d/GLU%A4%CB%A4%E8%A4%EB%CE%A9%C2%CE%C9%BD%BC%A8
+    gluSphere(_sphere, r, h_div,
+              v_div)  # http://seesaawiki.jp/w/mikk_ni3_92/d/GLU%A4%CB%A4%E8%A4%EB%CE%A9%C2%CE%C9%BD%BC%A8
     glDisable(GL_TEXTURE_2D)
 
     # not necessarily??
@@ -94,3 +96,55 @@ def draw_grand_gradation(width, depth, interval, power):
             glVertex3d(i, j + interval, 0.0)
     glEnd()
     glDisable(GL_BLEND)
+
+
+def draw_square_on_screen(width, height,
+                          left_upper_wh_list, right_upper_wh_list,
+                          left_bottom_wh_list, right_bottom_wh_list,
+                          rgb=(1.0, 0.0, 0.0), alpha=0.8):
+    glPushMatrix()
+    glLoadIdentity()
+    glMatrixMode(GL_PROJECTION)
+    glPushMatrix()
+    glLoadIdentity()
+    gluOrtho2D(0, width, 0, height)
+    glEnable(GL_BLEND)
+    glColor4d(rgb[0], rgb[1], rgb[2], alpha)
+    glBegin(GL_QUADS)
+    for lu, ru, rb, lb in zip(left_upper_wh_list, right_upper_wh_list,
+                              right_bottom_wh_list, left_bottom_wh_list):
+        glVertex3d(lu[0], lu[1], 0)
+        glVertex3d(ru[0], ru[1], 0)
+        glVertex3d(rb[0], rb[1], 0)
+        glVertex3d(lb[0], lb[1], 0)
+    glEnd()
+    glDisable(GL_BLEND)
+    glPopMatrix()
+    glMatrixMode(GL_MODELVIEW)
+    glPopMatrix()
+
+
+def draw_texts(width, height, texts, wh_list):
+    """
+    doesn't work
+    you have to add glutInit
+    """
+    glPushMatrix()
+
+    glLoadIdentity()
+    glMatrixMode(GL_PROJECTION)
+    glPushMatrix()
+    glLoadIdentity()
+    gluOrtho2D(0, width, 0, height)
+
+    for text, wh in zip(texts, wh_list):
+        glTranslated(wh[0], wh[1], 0.0)
+        glScaled(0.2, 0.2, 0.2)
+        for char in str(text):
+            glutStrokeCharacter(GLUT_STROKE_ROMAN, char)
+
+    glPopMatrix()
+    glMatrixMode(GL_MODELVIEW)
+
+    glPopMatrix()
+

@@ -28,22 +28,26 @@ class ImageSwitchWidget(QWidget):
         self._updateTimer = QTimer(self)
         self._updateTimer.timeout.connect(self.timeout_callback)
 
+    # override
     def start(self):
         self._updateTimer.start(0.1)  # loop rate is 1000[ms]
         self._image_switcher_server.activate()
 
+    # override
     def stop(self):
         self._image_switcher_server.deactivate()
         self._updateTimer.stop()
 
+    # override
     def timeout_callback(self):
         self._image_switcher_server.pub_images()
 
-    # rqt override
+    # override
     def save_settings(self, plugin_settings, instance_settings):
         pass
         # instance_settings.set_value('topic_name', self._topic_name)
 
+    # override
     def restore_settings(self, plugin_settings, instance_settings):
         pass
         # topic_name = instance_settings.value('topic_name')
@@ -52,6 +56,7 @@ class ImageSwitchWidget(QWidget):
         # except Exception:
         # self._topic_name = self.TOPIC_NAME
 
+    # override
     def shutdown_plugin(self):
         self.stop()
 

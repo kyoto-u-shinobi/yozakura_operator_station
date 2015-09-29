@@ -27,7 +27,7 @@ class BodyJointStateManager:
         # the return of np.rad2deg is numpy.array. map can convert numpy.array to list
         self.base_jointstate.position = [math.radians(0.0)] * len(self.base_jointstate.name)
 
-    def __base_callback(self, base_state):
+    def _base_callback(self, base_state):
         # rvizの表示に使っているdaeファイルの座標系的にbodyのpitchとflipperの向きが逆
         _positions = [-base_state.body_front.pitch,
                       base_state.body_front.roll,
@@ -44,6 +44,6 @@ class BodyJointStateManager:
         return self.base_jointstate
 
     def run(self):
-        rospy.Subscriber("body_state", BaseState, self.__base_callback)
+        rospy.Subscriber("body_state", BaseState, self._base_callback)
 
 

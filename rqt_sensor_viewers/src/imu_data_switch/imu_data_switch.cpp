@@ -5,6 +5,13 @@
 
 #include "imu_data_switch.h"
 
+/*
+これだけC++
+サンプルがC++でしか見つからなかったし
+rvizのプラグインはpython非対応ぽい？？？
+参考：https://github.com/jsk-ros-pkg/jsk_visualization/tree/master/jsk_rviz_plugins
+*/
+
 
 IMUDataSwitch::IMUDataSwitch(QWidget* parent)    : rviz::Panel(parent) {
 

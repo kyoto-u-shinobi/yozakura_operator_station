@@ -19,14 +19,20 @@ DEFAULT_JS_MAKER = "Elecom Wireless Gamepad"
 
 
 class ServiceProvider(object):
+    """
+    Yozakuraで使うROSserviceを扱う
+    """
     class InputMode():
+        """
+        InputModeSwitchServiceのリクエストを扱う
+        """
         def __init__(self, js_mapping_mode=1, direction_flag=True, main_controller_name="main"):
             self.input_mode = InputMode()
             self.input_mode.js_mapping_mode = js_mapping_mode
             self.input_mode.direction_flag = direction_flag
             self.input_mode.main_controller_name = main_controller_name
 
-            self.js_mapping_mode_max = 2  # 1: single-stick mode 2: dual-stick mode
+            self.js_mapping_mode_max = 2
 
         @property
         def next_js_mapping_mode(self):
@@ -65,6 +71,13 @@ class ServiceProvider(object):
         self.pub_current_mode.publish(self.input_mode.input_mode)
 
     def _switch_base_control_modes(self, time_stamp, buttons):
+        """
+        Switch input_mode
+        :param time_stamp: ROS original type
+        :param buttons: Button class(defined in js_state.py)
+        :return:
+        """
+
         # switch js_mapping_mode
         if buttons.is_pressed("L3"):
             self._base_mode_switch_time = time_stamp
@@ -82,6 +95,7 @@ class ServiceProvider(object):
     def _js_callback(self, joy_data):
         buttons = Buttons(self._js_maker_name, joy_data.buttons)
 
+        # 連打を防ぐ
         if joy_data.header.stamp.secs - self._base_mode_switch_time.secs >= 1.0:
             self._switch_base_control_modes(joy_data.header.stamp, buttons)
 

@@ -17,6 +17,10 @@ DEFAULT_TOPIC_NAME = 'input_mode'
 
 class InputModeViewerWidget(QWidget):
     class ExtendedInputMode():
+        """
+        ROSserviceのInputModeの拡張クラス
+        名前がよくない
+        """
         def __init__(self):
             self.input_mode = InputMode()
             self.input_mode.js_mapping_mode = 1
@@ -52,6 +56,7 @@ class InputModeViewerWidget(QWidget):
         self._updateTimer = QTimer(self)
         self._updateTimer.timeout.connect(self.timeout_callback)
 
+    # override
     def start(self):
         self._updateTimer.start(300)  # loop rate[ms]
         self._init_lineEdit()
@@ -66,6 +71,7 @@ class InputModeViewerWidget(QWidget):
         init_le(self.qt_command_mode_lineEdit)
         init_le(self.qt_direction_lineEdit)
 
+    # override
     def _update_lineEdit(self):
         self.qt_command_mode_lineEdit.setText(self.input_mode.command_mode)
         self.qt_direction_lineEdit.setText(self.input_mode.direction)
@@ -75,17 +81,20 @@ class InputModeViewerWidget(QWidget):
         self.input_mode.set_input_mode(input_mode)
         self._update_lineEdit()
 
+    # override
     def stop(self):
         self._subscriber.unregister()
         self._updateTimer.stop()
 
+    # override
     def timeout_callback(self):
         pass
 
-    # rqt override
+    # override
     def save_settings(self, plugin_settings, instance_settings):
         instance_settings.set_value('topic_name', self._topic_name)
 
+    # override
     def restore_settings(self, plugin_settings, instance_settings):
         topic_name = instance_settings.value('topic_name')
         try:
@@ -93,6 +102,7 @@ class InputModeViewerWidget(QWidget):
         except Exception:
             self._topic_name = DEFAULT_TOPIC_NAME
 
+    # override
     def shutdown_plugin(self):
         self.stop()
 

@@ -7,6 +7,9 @@ from .input_mode_viewer_widget import InputModeViewerWidget
 
 
 class InputModeViewer(Plugin):
+    """
+    テンプレ通り
+    """
     def __init__(self, context):
         super(InputModeViewer, self).__init__(context)
         self.setObjectName('InputModeViewer')

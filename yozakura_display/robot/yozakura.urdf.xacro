@@ -26,7 +26,6 @@
 
 
     <!-- ARM -->
-
     <joint name="virtualjoint_arm_base" type="fixed">
         <origin rpy="0 0 0" xyz="${-armBase_fromBodyCenter_X} 0 ${bodyFront_height/2.0}"/>
         <parent link="body_front"/>

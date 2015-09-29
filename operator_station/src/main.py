@@ -10,7 +10,7 @@ import rospy
 from common.networking import get_ip_address
 from server import Server, Handler
 
-IS_LOCAL_TEST = False
+IS_LOCAL_TEST = True
 
 
 def main():

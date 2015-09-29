@@ -7,6 +7,9 @@ from .image_switch_widget import ImageSwitchWidget
 
 
 class ImageSwitch(Plugin):
+    """
+    テンプレ通り
+    """
     def __init__(self, context):
         super(ImageSwitch, self).__init__(context)
         self.setObjectName('ImageSwitch')

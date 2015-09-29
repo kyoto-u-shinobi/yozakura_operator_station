@@ -51,11 +51,13 @@ class HeatSensorViewerWidget(QWidget):
         self._updateTimer = QTimer(self)
         self._updateTimer.timeout.connect(self.timeout_callback)
 
+    # override
     def start(self):
         self._updateTimer.start(1000)  # loop rate is 1000[ms]
         self._initialize_table(self.table_left, [0.0] * (self.MAX_COL * self.MAX_ROW))
         self._initialize_table(self.table_right, [0.0] * (self.MAX_COL * self.MAX_ROW))
 
+    # override
     def _initialize_table(self, table_widget, init_data_list):
 
         table_widget.clear()
@@ -77,19 +79,22 @@ class HeatSensorViewerWidget(QWidget):
         table_widget.resizeColumnsToContents()
         table_widget.resizeRowsToContents()
 
+    # override
     def stop(self):
         self._updateTimer.stop()
 
+    # override
     def timeout_callback(self):
         if DEBUG:
             if self.data_received_time != None and time.time() - self.data_received_time > 3.0:
                 self._update_display_data(self.table_left, False, [None] * (self.MAX_COL * self.MAX_ROW))
                 self._update_display_data(self.table_right, False, [None] * (self.MAX_COL * self.MAX_ROW))
 
-    # rqt override
+    # override
     def save_settings(self, plugin_settings, instance_settings):
         instance_settings.set_value('topic_name', self._topic_name)
 
+    # override
     def restore_settings(self, plugin_settings, instance_settings):
         topic_name = instance_settings.value('topic_name')
         try:
@@ -97,6 +102,7 @@ class HeatSensorViewerWidget(QWidget):
         except Exception:
             self._topic_name = self.TOPIC_NAME
 
+    # override
     def shutdown_plugin(self):
         self.stop()
 
@@ -136,6 +142,7 @@ class HeatSensorViewerWidget(QWidget):
                         item.setBackground(self._red_palette.brush(QPalette.Base))
 
         # debugでなければ常にデータ表示する
+        # robocupで得点をかせぐため．ホントはよくない
         if not DEBUG:
             is_ok = True
 

@@ -33,7 +33,7 @@ class ArmJointStateManager:
         self.arm_jointstate.name = self.basejoint_names + self.jackjoint_names_left + self.jackjoint_names_right
         self.arm_jointstate.position = [math.radians(0.0)] * len(self.arm_jointstate.name)
 
-    def __get_pos_jacks_arr(self, jackjoint_names, jack_base_angle, is_left):
+    def _get_pos_linear_list(self, jackjoint_names, jack_base_angle, is_left):
         '''
         urdfではアームの1リンクごとの姿勢を指定してやる必要があるので，
         ここでjack_triangle_base_angleを使って，そいつらを計算している．
@@ -58,25 +58,25 @@ class ArmJointStateManager:
                 ret_arr[idx] = 0.0
         return ret_arr
 
-    def __get_pos_jacks_arr_left(self, jack_base_angle):
-        return self.__get_pos_jacks_arr(self.jackjoint_names_left, jack_base_angle, True)
+    def _get_pos_linear_list_left(self, jack_base_angle):
+        return self._get_pos_linear_list(self.jackjoint_names_left, jack_base_angle, True)
 
-    def __get_pos_jacks_arr_right(self, jack_base_angle):
-        return self.__get_pos_jacks_arr(self.jackjoint_names_right, jack_base_angle, False)
+    def _get_pos_linear_list_right(self, jack_base_angle):
+        return self._get_pos_linear_list(self.jackjoint_names_right, jack_base_angle, False)
 
-    def __arm_callback(self, arm_state):
+    def _arm_callback(self, arm_state):
         if arm_state.is_ok:
             jack_base_angle = math.radians((360.0 - 2.0 * float(arm_state.top_angle)) / 2.0)
 
             # rvizの表示に使っているdaeファイルの座標系的にpitchの向きが逆
             _positions = [math.radians(data) for data in [arm_state.yaw, -arm_state.pitch]] \
-                         + self.__get_pos_jacks_arr_left(jack_base_angle) \
-                         + self.__get_pos_jacks_arr_right(jack_base_angle)
+                         + self._get_pos_linear_list_left(jack_base_angle) \
+                         + self._get_pos_linear_list_right(jack_base_angle)
             self.arm_jointstate.position = _positions
 
     def get_jointstate(self):
         return self.arm_jointstate
 
     def run(self):
-        rospy.Subscriber("arm_state", ArmState, self.__arm_callback)
+        rospy.Subscriber("arm_state", ArmState, self._arm_callback)
 
