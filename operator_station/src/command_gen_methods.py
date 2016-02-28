@@ -75,9 +75,9 @@ def calc_speed_command_dual_stick_mode(direction_flag, _dpad, _lstick, _rstick, 
 
 def calc_arm_command_default_mode(direction_flag, _dpad, _lstick, _rstick, _buttons):
     if _buttons.is_pressed("○"):
-        linear, pitch, yaw = _dpad.x, 0.0, 0.0
+        wrist_yaw, elbow_pitch, base_pitch, base_yaw = 0.0, 0.0, _dpad.x, _dpad.y
     else:
-        linear, pitch, yaw = 0.0, _dpad.x, _dpad.y
+        wrist_yaw, elbow_pitch, base_pitch, base_yaw = _dpad.y, _dpad.x, 0.0, 0.0
 
     if _buttons.all_pressed('start', 'select'):
         arm_mode = 3
@@ -91,4 +91,4 @@ def calc_arm_command_default_mode(direction_flag, _dpad, _lstick, _rstick, _butt
     else:
         arm_mode = 0
 
-    return arm_mode, linear, pitch, yaw
+    return arm_mode, wrist_yaw, elbow_pitch, base_pitch, base_yaw 

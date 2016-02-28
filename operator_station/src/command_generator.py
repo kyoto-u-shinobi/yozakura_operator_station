@@ -66,15 +66,16 @@ class CommandGenerator(object):
     def publish_command(self):
         base_vel_input_mode, vel1, vel2, lflipper, rflipper = self.get_speed_commands()
 
-        arm_mode, linear, pitch, yaw = self.get_arm_commands()
+        arm_mode, wrist_yaw, elbow_pitch, base_pitch, base_yaw = self.get_arm_commands()
 
         # self._ycommand.header.stamp = rospy.get_time()
 
         self._ycommand.arm_vel.is_ok = True
         self._ycommand.arm_vel.mode = arm_mode
-        self._ycommand.arm_vel.top_angle = linear
-        self._ycommand.arm_vel.pitch = pitch
-        self._ycommand.arm_vel.yaw = yaw
+        self._ycommand.arm_vel.wrist_yaw = wrist_yaw
+        self._ycommand.arm_vel.elbow_pitch = elbow_pitch
+        self._ycommand.arm_vel.base_pitch = base_pitch
+        self._ycommand.arm_vel.base_yaw = base_yaw
 
         self._ycommand.base_vel_input_mode = base_vel_input_mode
         if base_vel_input_mode == 1:
