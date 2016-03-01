@@ -64,7 +64,7 @@ class CommandGenerator(object):
                 controller.activate()
 
     def publish_command(self):
-        base_vel_input_mode, vel1, vel2, lflipper, rflipper = self.get_speed_commands()
+        base_vel_input_mode, vel1, vel2 = self.get_speed_commands()
 
         arm_mode, wrist_yaw, elbow_pitch, base_pitch, base_yaw = self.get_arm_commands()
 
@@ -93,11 +93,6 @@ class CommandGenerator(object):
             self._ycommand.wheel_right_vel = 0.0
             self._ycommand.base_vel.linear.x = 0.0
             self._ycommand.base_vel.angular.z = 0.0
-
-        self._ycommand.flipper_left_vel.is_ok = True
-        self._ycommand.flipper_left_vel.angle = lflipper
-        self._ycommand.flipper_right_vel.is_ok = True
-        self._ycommand.flipper_right_vel.angle = rflipper
 
         self._pub_command.publish(self._ycommand)
 

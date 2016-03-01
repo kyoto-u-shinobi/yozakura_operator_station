@@ -22,22 +22,7 @@ def calc_speed_command_single_stick_mode(direction_flag, _dpad, _lstick, _rstick
         lwheel = lstick.x * l_mult
         rwheel = lstick.x * r_mult
 
-    # Flippers
-    if _buttons.is_pressed(lu_button) and (not _buttons.is_pressed(ld_button)):
-        lflipper = 1
-    elif (not _buttons.is_pressed(lu_button)) and _buttons.is_pressed(ld_button):
-        lflipper = -1
-    else:
-        lflipper = 0
-
-    if _buttons.is_pressed(ru_button) and (not _buttons.is_pressed(rd_button)):
-        rflipper = 1
-    elif (not _buttons.is_pressed(ru_button)) and _buttons.is_pressed(rd_button):
-        rflipper = -1
-    else:
-        rflipper = 0
-
-    return base_vel_input_mode, lwheel, rwheel, lflipper, rflipper
+    return base_vel_input_mode, lwheel, rwheel
 
 
 def calc_speed_command_dual_stick_mode(direction_flag, _dpad, _lstick, _rstick, _buttons):
@@ -55,22 +40,7 @@ def calc_speed_command_dual_stick_mode(direction_flag, _dpad, _lstick, _rstick, 
     lwheel = lstick.x
     rwheel = rstick.x
 
-    # Flippers
-    if _buttons.is_pressed(lu_button) and (not _buttons.is_pressed(ld_button)):
-        lflipper = 1
-    elif (not _buttons.is_pressed(lu_button)) and _buttons.is_pressed(ld_button):
-        lflipper = -1
-    else:
-        lflipper = 0
-
-    if _buttons.is_pressed(ru_button) and (not _buttons.is_pressed(rd_button)):
-        rflipper = 1
-    elif (not _buttons.is_pressed(ru_button)) and _buttons.is_pressed(rd_button):
-        rflipper = -1
-    else:
-        rflipper = 0
-
-    return base_vel_input_mode, lwheel, rwheel, lflipper, rflipper
+    return base_vel_input_mode, lwheel, rwheel
 
 
 def calc_arm_command_default_mode(direction_flag, _dpad, _lstick, _rstick, _buttons):
