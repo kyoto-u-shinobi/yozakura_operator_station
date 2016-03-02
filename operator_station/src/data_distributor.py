@@ -14,7 +14,6 @@ DEFAULT_SUB_SENSOR_TOPIC_NAME = 'yozakura_sensor_data'
 DEFAULT_PUB_HEAT_TOPIC_NAME = 'heat_data'
 DEFAULT_PUB_CO2_TOPIC_NAME = 'co2_data'
 DEFAULT_PUB_I_TOPIC_NAME = 'current_data'
-DEFAULT_PUB_V_TOPIC_NAME = 'voltage_data'
 DEFAULT_SUB_STATE_TOPIC_NAME = 'yozakura_state'
 DEFAULT_PUB_BODY_STATE_TOPIC_NAME = 'body_state'
 DEFAULT_PUB_ARM_STATE_TOPIC_NAME = 'arm_state'
@@ -30,9 +29,6 @@ class DataDistributor(object):
 
         self._pub_i_data = rospy.Publisher(DEFAULT_PUB_I_TOPIC_NAME, Float32, queue_size=1)
         self._i_data = Float32()
-
-        self._pub_v_data = rospy.Publisher(DEFAULT_PUB_V_TOPIC_NAME, Float32, queue_size=1)
-        self._v_data = Float32()
 
         self._pub_base_state = rospy.Publisher(DEFAULT_PUB_BODY_STATE_TOPIC_NAME, BaseState, queue_size=1)
         self._base_state = BaseState()
@@ -55,15 +51,11 @@ class DataDistributor(object):
     def ysensor_data_callback(self, ysensor_data):
         self._heat_data = ysensor_data.heat
         self._co2_data = ysensor_data.co2
-        self._v_data = max(ysensor_data.wheel_left.voltage,
-                           ysensor_data.wheel_right.voltage,
-                           ysensor_data.flipper_left.voltage,
-                           ysensor_data.flipper_right.voltage)
 
-        self._i_data = abs(ysensor_data.wheel_left.current) + \
-                       abs(ysensor_data.wheel_right.current) + \
-                       abs(ysensor_data.flipper_left.current) + \
-                       abs(ysensor_data.flipper_right.current)
+        self._i_data = abs(ysensor_data.wheel_front_left.current) + \
+                       abs(ysensor_data.wheel_front_right.current) + \
+                       abs(ysensor_data.wheel_back_left.current) + \
+                       abs(ysensor_data.wheel_back_right.current)
 
 
     def publish_data(self):
@@ -73,7 +65,6 @@ class DataDistributor(object):
         self._pub_arm_state.publish(self._arm_state)
         self._pub_heat_data.publish(self._heat_data)
         self._pub_co2_data.publish(self._co2_data)
-        self._pub_v_data.publish(self._v_data)
         self._pub_i_data.publish(self._i_data)
 
 

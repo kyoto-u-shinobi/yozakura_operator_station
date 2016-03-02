@@ -23,26 +23,21 @@ class SensorDataManager(object):
         self._pub_ysensor_data = rospy.Publisher(DEFAULT_SENSORDATA_TOPIC_NAME, YozakuraSensorData, queue_size=10)
         self._ysensor_data.heat.data = [0.0] * 32
 
-        # ポテンショ生データ→角度[deg]: [0, 1]→[0, 3600]
-        # ギア比　ポテンショ[deg]:フリッパー[deg] = 50:16
-        self._flipper_raw2deg = 3600.0 * (16.0 / 50.0)
-        self._lflipper_center_raw_data = rospy.get_param('~lflipper_center_raw_data', 0.33780)
-        self._rflipper_center_raw_data = rospy.get_param('~rflipper_center_raw_data', 0.61080)
-
         # これをFalseにするとbodyの姿勢データがGUIに反映されなくなる
         # 姿勢データバグってるけど，urgだけは見たいというときのため
         self._body_pose_switch = True
         self.service = rospy.Service(DEFAULT_SERVICE_NAME, IMUDataSwitch, self._handle_imu_switch)
 
         # DXの角度を実際の角度に変換する
-        # linearはDXの角度からじゃばらアームリンクの作る菱型の広い方の角度に変換しないといけない
-        self._arm_linear_dxdeg2armdeg = (20.0 / 100.0)  # (実験的に作る)
-        self._arm_yaw_dxdeg2armdeg = -(1.0 / 5.0)
-        self._arm_pitch_dxdeg2armdeg = -(24.0 / 50.0)
+        self._arm_wrist_yaw_dxdeg2armdeg = 1.0
+        self._arm_elbow_pitch_dxdeg2armdeg = 1.0
+        self._arm_base_pitch_dxdeg2armdeg = 1.0
+        self._arm_base_yaw_dxdeg2armdeg = -(23.0 / 120.0)
         # DXの初期姿勢のときのDXの角度
-        self._arm_linear_center_dxdeg = rospy.get_param('~arm_linear_center_dxdeg', 570.0)
-        self._arm_yaw_center_dxdeg = rospy.get_param('~arm_yaw_center_dxdeg', 0.0)
-        self._arm_pitch_center_dxdeg = -rospy.get_param('~arm_pitch_center_dxdeg', 290.0)
+        self._arm_wrist_yaw_center_dxdeg = rospy.get_param('~_arm_wrist_yaw_center_dxdeg', 0.0)
+        self._arm_elbow_pitch_center_dxdeg = -rospy.get_param('~arm_elbow_pitch_center_dxdeg', 290.0)
+        self._arm_base_pitch_center_dxdeg = -rospy.get_param('~arm_base_pitch_center_dxdeg', 290.0)
+        self._arm_base_yaw_center_dxdeg = rospy.get_param('~arm_base_yaw_center_dxdeg', 0.0)
 
     def publish_data(self):
         self._pub_ystate.publish(self._ystate)
@@ -129,27 +124,20 @@ class SensorDataManager(object):
     def set_data(self, flipper_angles, current_sensor_data, imu_sensor_data, arm_data):
         # print(flipper_angles, current_sensor_data, imu_sensor_data)
 
-        self._set_flipper_angles(self._ystate.base.flipper_left,
-                                 flipper_angles[0],
-                                 scale=self._flipper_raw2deg, offset=-self._lflipper_center_raw_data)
-        self._set_flipper_angles(self._ystate.base.flipper_right,
-                                 flipper_angles[1],
-                                 scale=-self._flipper_raw2deg, offset=-self._rflipper_center_raw_data)
-
-        lwheel, rwheel, lflip, rflip = current_sensor_data
-        self._set_current_sensor_data(self._ysensor_data.wheel_left,
+        flwheel, frwheel, blwheel, brwheel = current_sensor_data
+        self._set_current_sensor_data(self._ysensor_data.wheel_front_left,
                                       lwheel,
                                       current_scale=1.0, current_offset=0.0,
                                       voltage_scale=1.0, voltage_offset=0.0)
-        self._set_current_sensor_data(self._ysensor_data.wheel_right,
+        self._set_current_sensor_data(self._ysensor_data.wheel_front_right,
                                       rwheel,
                                       current_scale=1.0, current_offset=0.0,
                                       voltage_scale=1.0, voltage_offset=0.0)
-        self._set_current_sensor_data(self._ysensor_data.flipper_left,
+        self._set_current_sensor_data(self._ysensor_data.wheel_back_left,
                                       lflip,
                                       current_scale=1.0, current_offset=0.0,
                                       voltage_scale=1.0, voltage_offset=0.0)
-        self._set_current_sensor_data(self._ysensor_data.flipper_right,
+        self._set_current_sensor_data(self._ysensor_data.wheel_back_right,
                                       rflip,
                                       current_scale=1.0, current_offset=0.0,
                                       voltage_scale=1.0, voltage_offset=0.0)
@@ -200,21 +188,20 @@ if __name__ == "__main__":
 
     rate_mgr = rospy.Rate(1)  # Hz
     while not rospy.is_shutdown():
-        flipper_angle = [0.0, 0.0]  # left, right
-        lwheel_current = [0.0, 0.0]  # current, voltage
-        rwheel_current = [0.0, 0.0]
-        lflipper_current = [0.0, 0.0]
-        rflipper_current = [0.0, 0.0]
+        flwheel_current = [0.0, 0.0]  # current, voltage
+        frwheel_current = [0.0, 0.0]
+        blwheel_current = [0.0, 0.0]
+        brwheel_current = [0.0, 0.0]
         front_pose = [0.0, 0.0, 0.0]  # roll, pitch, yaw [rad]
         back_pose = [0.0, 0.0, 0.0]
-        arm_state = [0.0, 0.0, 0.0]  # linear, pitch, yaw
+        arm_state = [0.0, 0.0, 0.0, 0.0]  # wrist_yaw, elbow_pitch, base_pitch, base_yaw
         arm_iv = [0.0, 0.0, 0.0]  # voltage, pithc_current, yaw_current
         heat = [0.0] * 16 + [0.0] * 16
         co2 = 0.0
 
         # set data
         sensor_data_mgr.set_data(flipper_angle,
-                                 (lwheel_current, rwheel_current, lflipper_current, rflipper_current),
+                                 (flwheel_current, frwheel_current, blwheel_current, brwheel_current)
                                  (front_pose, back_pose),
                                  (arm_state, arm_iv, heat, co2))
 
