@@ -5,6 +5,7 @@ bool is_ok
 # 3: reset
 # 4: shutdown
 int64 mode
+int64 home_command
 
 # [deg]
 float64 wrist_yaw
