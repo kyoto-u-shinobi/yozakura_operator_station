@@ -52,13 +52,17 @@ def calc_arm_command_default_mode(direction_flag, _dpad, _lstick, _rstick, _butt
     if _buttons.all_pressed('start', 'select'):
         arm_mode = 3
         linear, pitch, yaw = 0.0, 0.0, 0.0
+        arm_home_command = 0
     elif _buttons.is_pressed('start'):
         arm_mode = 1
         linear, pitch, yaw = 0.0, 0.0, 0.0
+        arm_home_command = 1
     elif _buttons.is_pressed('select'):
         arm_mode = 2
         linear, pitch, yaw = 0.0, 0.0, 0.0
+        arm_home_command = 0
     else:
         arm_mode = 0
+        arm_home_command = 0
 
-    return arm_mode, wrist_yaw, elbow_pitch, base_pitch, base_yaw 
+    return arm_mode, wrist_yaw, elbow_pitch, base_pitch, base_yaw arm_home_command
