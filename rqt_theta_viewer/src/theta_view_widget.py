@@ -16,6 +16,7 @@ from OpenGL.GLUT import *
 
 from gl_widget import GLWidget as MyGLWidget
 from theta_view_events import ThetaViewEvents
+from live_streamer import LiveView
 import gl_painter as gl_painter
 
 ## main class inherits from the ui window class
@@ -37,6 +38,8 @@ class ThetaViewWidget(QWidget):
         self.initialize_vals()
         self.initialize_glview()
         self.initialize_timer()
+
+        self.streamer = LiveView()
 
     # ==============================================
     # rqt requires
@@ -79,8 +82,8 @@ class ThetaViewWidget(QWidget):
         # draw the axis, the plain and something
         gl_painter.draw_basic_objects()
 
-        self.texture = self._glview.get_texture(self.qimage)
-        gl_painter.map_texture_on_sphere(self.texture, self.sphere_radius , 30, 30)
+        self.frame = self.streamer.GetNewRemappedFrame()
+        gl_painter.map_texture_on_sphere(self.frame, self.sphere_radius , 30, 30)
 
     def glview_mouseReleaseEvent(self, event):
         if event.button() == Qt.RightButton:
@@ -109,7 +112,7 @@ class ThetaViewWidget(QWidget):
 
         self.sphere_radius = 200
         self.qimage = None
-        self.texture = None
+        self.frame = None
 
         self.filename = None
         self.jpeg_data = None

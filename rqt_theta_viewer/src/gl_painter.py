@@ -18,10 +18,23 @@ if you do, the texture in GL doesn't work
 '''
 
 # http://www.cask.cc/wp/archives/51
-def map_texture_on_sphere(texture, sphere_radius, h_division, v_division):
+def map_texture_on_sphere(frame, sphere_radius, h_division, v_division):
     r = float(sphere_radius)
     h_div = int(h_division)
     v_div = int(v_division)
+
+    glDisable(GL_CULL_FACE)
+
+    texture = GLuint(0)
+    glGenTextures(1, texture)
+    glBindTexture(GL_TEXTURE_2D, texture)
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, len(frame[0]), len(frame), 0, GL_BGR, GL_UNSIGNED_BYTE, frame)
 
     glBindTexture(GL_TEXTURE_2D, texture)
 
@@ -34,9 +47,9 @@ def map_texture_on_sphere(texture, sphere_radius, h_division, v_division):
 
     # change texture's coordinate
     # (without this, the texture will be inside out)
-    glMatrixMode(GL_TEXTURE)
-    glLoadIdentity()
-    glScaled(1.0, -1.0, 1.0)
+    # glMatrixMode(GL_TEXTURE)
+    # glLoadIdentity()
+    # glScaled(1.0, -1.0, 1.0)
 
     # map the texture
     glEnable(GL_TEXTURE_2D)
