@@ -65,4 +65,4 @@ def calc_arm_command_default_mode(direction_flag, _dpad, _lstick, _rstick, _butt
         arm_mode = 0
         arm_home_command = 0
 
-    return arm_mode, wrist_yaw, elbow_pitch, base_pitch, base_yaw arm_home_command
+    return arm_mode, wrist_yaw, elbow_pitch, base_pitch, base_yaw, arm_home_command

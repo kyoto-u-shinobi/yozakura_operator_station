@@ -66,7 +66,7 @@ class CommandGenerator(object):
     def publish_command(self):
         base_vel_input_mode, vel1, vel2 = self.get_speed_commands()
 
-        arm_mode, wrist_yaw, elbow_pitch, base_pitch, base_yaw arm_home_command = self.get_arm_commands()
+        arm_mode, wrist_yaw, elbow_pitch, base_pitch, base_yaw, arm_home_command = self.get_arm_commands()
 
         # self._ycommand.header.stamp = rospy.get_time()
 
