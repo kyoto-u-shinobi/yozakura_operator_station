@@ -149,7 +149,7 @@ class ThetaViewWidget(QWidget):
         self.update_timer = QTimer(self)
         self.update_timer.timeout.connect(self.update_timeout)
         # init and start update timer with 40ms (25fps)
-        self.update_timer.start(40)
+        self.update_timer.start(20)
 
 
 
