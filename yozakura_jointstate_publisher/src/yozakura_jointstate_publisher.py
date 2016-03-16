@@ -11,10 +11,10 @@ if __name__ == '__main__':
     yozakura_jointstate = JointState()
 
     arm_js_mgr = ArmJointStateManager()
-    arm_js_mgr.run()
+    arm_js_mgr.sub()
 
     body_js_mgr = BodyJointStateManager()
-    body_js_mgr.run()
+#    body_js_mgr.run()
 
     try:
         pub = rospy.Publisher('joint_states', JointState, queue_size=10)

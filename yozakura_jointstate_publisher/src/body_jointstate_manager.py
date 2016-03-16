@@ -5,7 +5,7 @@ import rospy
 import math
 import numpy as np
 from sensor_msgs.msg import JointState
-from yozakura_msgs.msg import BaseState
+#from yozakura_msgs.msg import BaseState
 
 
 class BodyJointStateManager:
@@ -18,12 +18,10 @@ class BodyJointStateManager:
         bodyjoint_names = ['joint_body_front_pitch', 'joint_body_front_roll',
                            'joint_body_back_pitch', 'joint_body_back_roll']
 
-        flipperjoint_names = ['joint_flipper_left', 'joint_flipper_right']
-
         wheeljoint_names = ['joint_starwheel_front', 'joint_starwheel_back']
 
         self.base_jointstate = JointState()
-        self.base_jointstate.name = bodyjoint_names + flipperjoint_names + wheeljoint_names
+        self.base_jointstate.name = bodyjoint_names  + wheeljoint_names
         # the return of np.rad2deg is numpy.array. map can convert numpy.array to list
         self.base_jointstate.position = [math.radians(0.0)] * len(self.base_jointstate.name)
 
@@ -33,8 +31,6 @@ class BodyJointStateManager:
                       base_state.body_front.roll,
                       -(base_state.body_back.pitch - base_state.body_front.pitch),
                       base_state.body_back.roll - base_state.body_front.roll,
-                      -base_state.flipper_left.angle,
-                      -base_state.flipper_right.angle,
                       -base_state.wheel_left.rotation_angle,
                       -base_state.wheel_right.rotation_angle]
 
@@ -43,7 +39,7 @@ class BodyJointStateManager:
     def get_jointstate(self):
         return self.base_jointstate
 
-    def run(self):
-        rospy.Subscriber("body_state", BaseState, self.__base_callback)
+#    def run(self):
+#        rospy.Subscriber("body_state", BaseState, self.__base_callback)
 
 

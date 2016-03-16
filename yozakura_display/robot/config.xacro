@@ -4,10 +4,10 @@
     <property name="robotPackagePath" value="package://yozakura_display/robot"/>
     <property name="modelDataResourseFolder" value="daes"/>
 
-    <property name="urg_base_x" value="0.100"/>
-    <property name="urg_base_y" value="-0.050"/>
+    <property name="urg_base_x" value="0.150"/>
+    <property name="urg_base_y" value="0.0"/>
 
-    <property name="bodyFront_depth" value="0.262"/>
+    <property name="bodyFront_depth" value="0.312"/>
     <property name="bodyFront_height" value="0.072"/>
     <property name="bodyFront_width" value="0.262"/>
 
@@ -24,9 +24,9 @@
     <property name="starWheel_radius" value="0.134"/>
     <property name="starWheelAxis_radius" value="0.134"/>
 
-    <property name="frontwheelAxis_fromBodyCenter" value="0.070"/>
+    <property name="frontwheelAxis_fromBodyCenter" value="0.10"/>
     <property name="backwheelAxis_fromBodyCenter" value="-0.100"/>
-    <property name="frontwheel_tread" value="0.372"/>
+    <property name="frontwheel_tread" value="0.300"/>
     <!-- from outside to outside -->
     <property name="backwheel_tread" value="0.386"/>
     <!-- from outside to outside -->
@@ -48,8 +48,8 @@
     <property name="armPitchAngle_max" value="90"/>
     <property name="armPitchAngle_min" value="-90"/>
 
-    <property name="armBase_fromBodyCenter_X" value="0.040"/>
-    <property name="armYawStage_fromBodyTop" value="0.020"/>
+    <property name="armBase_fromBodyCenter_X" value="-0.061"/>
+    <property name="armYawStage_fromBodyTop" value="0.014"/>
     <property name="armPitchAxis_fromYawAxis" value="0.045"/>
     <property name="armPitchAxis_fromYawStage" value="0.045"/>
     <property name="armLinearAxis_fromPitchAxis" value="0.010"/>

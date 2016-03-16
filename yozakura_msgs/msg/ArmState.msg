@@ -6,6 +6,7 @@ bool is_ok
 # 4: shutdown
 int64 mode
 int64 home_command
+int64 reset_torque_command
 
 # [deg]
 float64 wrist_yaw
