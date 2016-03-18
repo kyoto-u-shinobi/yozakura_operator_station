@@ -138,7 +138,7 @@ class GLWidget(QGLWidget):
                 cos_angle = numpy.dot(self._last_point_3d, new_point_3d)
                 if abs(cos_angle) < 1.0:
                     axis = numpy.cross(self._last_point_3d, new_point_3d)
-                    angle = 2.0 * math.acos(cos_angle) * 180.0 / math.pi
+                    angle = -2.0 * math.acos(cos_angle) * 180.0 / math.pi
                     self.rotate(axis, angle)
 
         # middle button (or left + shift): move in x-y-direction
