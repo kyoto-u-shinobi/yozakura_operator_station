@@ -5,12 +5,13 @@ import time
 
 import rospy
 from yozakura_msgs.msg import YozakuraState, BaseState, ArmState, YozakuraSensorData, HeatSensorData, CO2SensorData
-from std_msgs.msg import Float32
+from std_msgs.msg import Float32, Float32MultiArray
 
 
 # remap-able
 DEFAULT_NODE_NAME = 'data_distributor'
 DEFAULT_SUB_SENSOR_TOPIC_NAME = 'yozakura_sensor_data'
+DEFAULT_SUB_HEAT_TOPIC_NAME = 'thermo_data'
 DEFAULT_PUB_HEAT_TOPIC_NAME = 'heat_data'
 DEFAULT_PUB_CO2_TOPIC_NAME = 'co2_data'
 DEFAULT_PUB_I_TOPIC_NAME = 'current_data'
@@ -41,7 +42,7 @@ class DataDistributor(object):
     def activate(self):
         rospy.Subscriber(DEFAULT_SUB_SENSOR_TOPIC_NAME, YozakuraSensorData, self.ysensor_data_callback)
         rospy.Subscriber(DEFAULT_SUB_STATE_TOPIC_NAME, YozakuraState, self.ystate_callback)
-
+        rospy.Subscriber(DEFAULT_SUB_HEAT_TOPIC_NAME, Float32MultiArray, self.heat_callback)
         self.is_active = True
 
     def ystate_callback(self, ystate):
@@ -49,13 +50,17 @@ class DataDistributor(object):
         self._arm_state = ystate.arm
 
     def ysensor_data_callback(self, ysensor_data):
-        self._heat_data = ysensor_data.heat
+#        self._heat_data = ysensor_data.heat
         self._co2_data = ysensor_data.co2
 
         self._i_data = abs(ysensor_data.wheel_front_left.current) + \
                        abs(ysensor_data.wheel_front_right.current) + \
                        abs(ysensor_data.wheel_back_left.current) + \
                        abs(ysensor_data.wheel_back_right.current)
+
+    def heat_callback(self, thermo_data):
+        self._heat_data.data = thermo_data.data
+        self._heat_data.is_ok = True
 
 
     def publish_data(self):
@@ -64,6 +69,7 @@ class DataDistributor(object):
         self._pub_base_state.publish(self._base_state)
         self._pub_arm_state.publish(self._arm_state)
         self._pub_heat_data.publish(self._heat_data)
+#        self._heat_data.is_ok = False
         self._pub_co2_data.publish(self._co2_data)
         self._pub_i_data.publish(self._i_data)
 
