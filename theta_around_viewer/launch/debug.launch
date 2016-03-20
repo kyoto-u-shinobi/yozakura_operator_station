@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+    <node name="around_viewer" pkg="theta_around_viewer" type="around_viewer.py">
+        <param name="stream_address" value="rtsp://10.249.255.204/stream1"/>
+    </node>
+</launch>
