@@ -13,9 +13,9 @@ class AroundViewer(object):
         self.valid_ratio_y = 0.88
         self.width = 800
         self.height = 800
-        # self.capture = cv2.VideoCapture(stream)
+        self.capture = cv2.VideoCapture(stream)
         # self.capture = cv2.VideoCapture(1)
-        self.capture = cv2.VideoCapture('http://10.249.255.137:8088')
+        # self.capture = cv2.VideoCapture('http://10.249.255.137:8088')
         self.UpdateMap()
 
         self._pub_image = rospy.Publisher('around_image', Image, queue_size = 10)
@@ -82,7 +82,7 @@ class AroundViewer(object):
         
 if __name__ == '__main__':
     rospy.init_node('around_viewer')
-    rate_mgr = rospy.Rate(30)
+    rate_mgr = rospy.Rate(50)
     around_viewer = AroundViewer()
     while not rospy.is_shutdown():
         around_viewer.GetNewRemappedFrame()
