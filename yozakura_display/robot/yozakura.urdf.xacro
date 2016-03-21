@@ -8,9 +8,19 @@
     <!-- BODY -->
     <link name="root">
         <origin rpy="0 0 0" xyz="0 0 0"/>
+    </link> 
+
+   <joint name="root_center" type="fixed">
+          <origin rpy="0 0 0"  xyz="0 0 0.1"/>
+          <parent link="root"/>
+          <child link="center_yozakura"/>
+    </joint>
+
+    <link name="center_yozakura">
+         <origin rpy="0 0 0" xyz="0 0 0"/>
     </link>
 
-    <xacro:yozakura_body parent_link="root"/>
+    <xacro:yozakura_body parent_link="center_yozakura"/>
 
     <!-- ARM -->
     <joint name="virtualjoint_arm_base" type="fixed">
