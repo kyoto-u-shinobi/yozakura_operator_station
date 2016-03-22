@@ -31,10 +31,10 @@
         <origin rpy="0 0 0"
                 xyz="0.060 0 0"/>
         <parent link="arm_yaw"/>
-        <child link="urg_base"/>
+        <child link="laser_link"/>
   </joint>
 
-  <link name="urg_base">
+  <link name="laser_link">
       <visual>
         <origin rpy="0 0 0" xyz="0 0 0.035"/>
         <geometry>

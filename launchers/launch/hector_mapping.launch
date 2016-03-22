@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <launch>
-  <arg name="tf_map_scanmatch_transform_frame_name" default="urg_base"/>
+  <arg name="tf_map_scanmatch_transform_frame_name" default="laser_link"/>
   <arg name="base_frame" default="root"/>
   <arg name="odom_frame" default="root"/>
   <arg name="pub_map_odom_transform" default="true"/>
