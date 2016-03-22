@@ -25,8 +25,8 @@ class HeatSensorViewerWidget(QWidget):
     FONT = "Helvetica"
     FONT_SIZE = 15
     FONT_WEIGHT = 20
-    DATA_BW_RY = 100
-    DATA_BW_YG = 50
+    DATA_BW_RY = 35
+    DATA_BW_YG = 30
 
     def __init__(self, widget):
         super(HeatSensorViewerWidget, self).__init__()
