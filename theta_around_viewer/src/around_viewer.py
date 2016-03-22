@@ -7,8 +7,10 @@ from math import sqrt, sin, cos, atan2, pi
 from cv_bridge import CvBridge
 from sensor_msgs.msg import Image
 
+DEFAULT_STREAM_ADDRESS = "rtsp://172.16.1.1/stream1"
+
 class AroundViewer(object):
-    def __init__(self, stream='rtsp:172.16.1.1/stream1'):
+    def __init__(self, stream):
         self.valid_ratio_x = 0.88
         self.valid_ratio_y = 0.88
         self.width = 800
@@ -66,8 +68,8 @@ class AroundViewer(object):
         return ret_x, ret_y
 
     def _Rotate3D(self, x_0, y_0, z_0):
-        x = x_0
-        y = y_0
+        x = y_0
+        y = x_0
         z = z_0
         return x, y, z
 
@@ -82,8 +84,9 @@ class AroundViewer(object):
         
 if __name__ == '__main__':
     rospy.init_node('around_viewer')
+    stream_address = rospy.get_param("~stream_address", DEFAULT_STREAM_ADDRESS)
     rate_mgr = rospy.Rate(50)
-    around_viewer = AroundViewer()
+    around_viewer = AroundViewer(stream_address)
     while not rospy.is_shutdown():
         around_viewer.GetNewRemappedFrame()
         around_viewer.PublishImage()
