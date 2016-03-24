@@ -64,9 +64,9 @@ def draw_basic_objects():
     glLineWidth(5)
     draw_axis(1000.0)
 
-    glLineWidth(1)
+#    glLineWidth(1)
     glColor4f(1.0, 1.0, 1.0, 1.0)
-    draw_grand_gradation(200, 200, 10, 2)
+#    draw_grand_gradation(200, 200, 10, 2)
 
 
 def draw_axis(length):
