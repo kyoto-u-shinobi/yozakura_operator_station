@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+    <group ns="yozakura">
+        <node name="rqt_gui" pkg="rqt_gui" type="rqt_gui"/>
+    </group>
+</launch>
