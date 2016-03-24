@@ -84,7 +84,8 @@ class AroundViewer(object):
         
 if __name__ == '__main__':
     rospy.init_node('around_viewer')
-    stream_address = rospy.get_param("~stream_address", DEFAULT_STREAM_ADDRESS)
+#    stream_address = rospy.get_param("stream_address", DEFAULT_STREAM_ADDRESS)
+    stream_address = 'rtsp://192.168.54.150/stream1'
     rate_mgr = rospy.Rate(50)
     around_viewer = AroundViewer(stream_address)
     while not rospy.is_shutdown():

@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 
 class LiveView(object):
-    def __init__(self, stream='rtsp://172.16.1.1/stream1'):
+    def __init__(self, stream='rtsp://192.168.54.150/stream1'):
         self.valid_ratio_x = 0.88
         self.valid_ratio_y = 0.88
         self.capture = cv2.VideoCapture(stream)
