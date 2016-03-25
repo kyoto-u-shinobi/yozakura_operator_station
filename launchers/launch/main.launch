@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <launch>
-  <group ns="yozakura">
     <node name="joystick" pkg="joy" type="joy_node">
         <remap from="joy" to="joy"/>
         <param name="dev" value="/dev/input/js0"/>
@@ -26,5 +25,4 @@
     </node>
     <node name="around_viewer" pkg="theta_around_viewer" type="around_viewer.py"/>
     <node name="rqt_gui" pkg="rqt_gui" type="rqt_gui"/>
-  </group>
 </launch>
