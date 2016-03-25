@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<launch>
-    <node name="qr_streamer" pkg="qr_detector" type="qr_streamer.py"/>
-    <node name="qr_decoder" pkg="qr_detector" type="qr_decoder.py" output="screen"/>
-</launch>
