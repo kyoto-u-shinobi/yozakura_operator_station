@@ -72,20 +72,20 @@ def draw_basic_objects():
 def draw_axis(length):
     glColor4d(1.0, 0.0, 0.0, 1.0)
     glBegin(GL_LINES)
-    glVertex3d(0.0, 0.0, 0.0)
-    glVertex3d(length, 0.0, 0.0)
+    glVertex3d(-length/2, 0.0, 0.0)
+    glVertex3d(length/2, 0.0, 0.0)
     glEnd()
 
     glColor4d(0.0, 1.0, 0.0, 1.0)
     glBegin(GL_LINES)
-    glVertex3d(0.0, 0.0, 0.0)
-    glVertex3d(0.0, length, 0.0)
+    glVertex3d(0.0, -length/2, 0.0)
+    glVertex3d(0.0, length/2, 0.0)
     glEnd()
 
     glColor4d(0.0, 0.0, 1.0, 1.0)
     glBegin(GL_LINES)
-    glVertex3d(0.0, 0.0, 0.0)
-    glVertex3d(0.0, 0.0, length)
+    glVertex3d(0.0, 0.0, -length/2)
+    glVertex3d(0.0, 0.0, length/2)
     glEnd()
 
 

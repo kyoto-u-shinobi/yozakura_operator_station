@@ -79,8 +79,8 @@ class ThetaViewWidget(QWidget):
     def glview_paintGL(self):
         self._glview.paintGL_original()
 
-        # # draw the axis, the plain and something
-        # gl_painter.draw_basic_objects()
+        # draw the axis, the plain and something
+        gl_painter.draw_basic_objects()
 
         self.frame = self.streamer.GetNewRemappedFrame()
         gl_painter.map_texture_on_sphere(self.frame, self.sphere_radius , 30, 30)
@@ -149,7 +149,7 @@ class ThetaViewWidget(QWidget):
         self.update_timer = QTimer(self)
         self.update_timer.timeout.connect(self.update_timeout)
         # init and start update timer with 40ms (25fps)
-        self.update_timer.start(10)
+        self.update_timer.start(20)
 
 
 
