@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 
 <launch>
+<group ns="yozakura">
   <arg name="tf_map_scanmatch_transform_frame_name" default="laser_link"/>
   <arg name="base_frame" default="root"/>
   <arg name="odom_frame" default="root"/>
@@ -54,6 +55,7 @@
   </node>
     
   <!--<node pkg="tf" type="static_transform_publisher" name="map_nav_broadcaster" args="0 0 0 0 0 0 map nav 100"/>-->
+</group>
 </launch>
   
   

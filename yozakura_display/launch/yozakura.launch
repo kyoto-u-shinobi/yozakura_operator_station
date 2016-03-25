@@ -1,11 +1,14 @@
 <?xml version="1.0"?>
 <launch>  
+<group ns="yozakura">
 	<param name="robot_description" 
 			command="$(find xacro)/xacro.py '$(find yozakura_display)/robot/yozakura.urdf.xacro'"/>
 	<param name="use_gui" value="true"/>  
         <node name="jointstate_manager" pkg="yozakura_jointstate_publisher" type="yozakura_jointstate_publisher.py" />
 	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />  
-	<node name="rviz" pkg="rviz" type="rviz"/>  
+       <node name="scan_data_modifier" pkg="operator_station" type="scan_data_modifier.py" />
+	<node name="rviz" pkg="rviz" type="rviz"/>
+</group>  
 </launch>  
 
 

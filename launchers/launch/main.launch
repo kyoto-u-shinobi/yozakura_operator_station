@@ -25,5 +25,6 @@
 	<remap from="current_data" to="current_data"/>
     </node>
     <node name="around_viewer" pkg="theta_around_viewer" type="around_viewer.py"/>
+    <node name="rqt_gui" pkg="rqt_gui" type="rqt_gui"/>
   </group>
 </launch>
