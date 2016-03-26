@@ -8,6 +8,7 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   python_qt_binding
   rospy
+  cv_bridge
   rostopic
   rqt_gui
   rqt_gui_py

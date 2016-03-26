@@ -1,14 +1,22 @@
 from math import sqrt, sin, cos, tan, atan, pi
 import cv2
 import numpy as np
+import rospy
+from cv_bridge import CvBridge
+from sensor_msgs.msg import Image
 
 class LiveView(object):
     def __init__(self, stream='rtsp://192.168.54.150/stream1'):
         self.valid_ratio_x = 0.88
         self.valid_ratio_y = 0.88
-        self.capture = cv2.VideoCapture(stream)
+        self._sub_image = rospy.Subscriber('camera_image', Image, self.image_callback)
+        # self.capture = cv2.VideoCapture(stream)
         # self.capture = cv2.VideoCapture(1)
+        self.bridge = CvBridge()
         self.UpdateMap()
+
+    def image_callback(self, img):
+        self.frame = self.bridge.imgmsg_to_cv2(img)
 
     def UpdateMap(self):
         """
@@ -16,8 +24,9 @@ class LiveView(object):
 
         Call this function when the resolution has been changed.
         """
-        _, frame = self.capture.read()
-        self.rows, self.cols = frame.shape[:2]
+        # _, frame = self.capture.read()
+        # self.rows, self.cols = frame.shape[:2]
+        self.rows, self.cols = 1080, 1920
         self.map_x = np.zeros((self.cols / 2, self.cols), np.float32)
         self.map_y = np.zeros((self.cols / 2, self.cols), np.float32)
         square_side = self.cols / 2
@@ -54,6 +63,6 @@ class LiveView(object):
             return x, y
 
     def GetNewRemappedFrame(self):
-        _, self.frame = self.capture.read()
+        # _, self.frame = self.capture.read()
         self.frame_remapped = cv2.remap(self.frame, self.map_x, self.map_y, cv2.INTER_AREA)
         return self.frame_remapped
