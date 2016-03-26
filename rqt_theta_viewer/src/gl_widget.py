@@ -138,7 +138,7 @@ class GLWidget(QGLWidget):
                 cos_angle = numpy.dot(self._last_point_3d, new_point_3d)
                 if abs(cos_angle) < 1.0:
                     axis = numpy.cross(self._last_point_3d, new_point_3d)
-                    angle = -2.0 * math.acos(cos_angle) * 180.0 / math.pi
+                    angle = 2.0 * math.acos(cos_angle) * 180.0 / math.pi
                     self.rotate(axis, angle)
 
         # middle button (or left + shift): move in x-y-direction
@@ -174,8 +174,8 @@ class GLWidget(QGLWidget):
         # check if inside widget
         if self.rect().contains(pos):
             # map widget coordinates to the centered unit square [-0.5..0.5] x [-0.5..0.5]
-            v[0] = float(pos.x() - 0.5 * self.width()) / self.width()
-            v[1] = float(0.5 * self.height() - pos.y()) / self.height()
+            v[0] = -float(pos.x() - 0.5 * self.width()) / self.width()
+            v[1] = -float(0.5 * self.height() - pos.y()) / self.height()
             # use Pythagoras to compute z (the sphere has radius sqrt(2.0*0.5*0.5))
             v[2] = math.sqrt(max(0.5 - v[0] * v[0] - v[1] * v[1], 0.0))
             # normalize direction to unit sphere
