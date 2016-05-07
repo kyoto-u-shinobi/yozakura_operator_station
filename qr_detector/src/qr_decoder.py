@@ -14,7 +14,9 @@ class Decoder(object):
         self._detect_pub = rospy.Publisher('detected_image', Image, queue_size=10)
         self.scanner = zbar.ImageScanner()
         self.scanner.parse_config('enable')
+
     def camera_callback(self, imgmsg):
+        # scan image from camera
         frame = self.bridge.imgmsg_to_cv2(imgmsg, "bgr8")
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         pil = Img.fromarray(gray)
@@ -22,6 +24,8 @@ class Decoder(object):
         raw = pil.tostring()
         img = zbar.Image(width, height, 'Y800', raw)
         self.scanner.scan(img)
+
+        # output string to ROS and draw square
         symbolPos = []
         disp_img = imgmsg
         for symbol in img:

@@ -10,6 +10,7 @@ class Streamer(object):
         self.cap = cv2.VideoCapture(stream_address)
         self.bridge = CvBridge()
         self.camera_pub = rospy.Publisher('camera_image', Image, queue_size = 10)
+
     def GetLatestAndPublish(self):
         _, self.frame = self.cap.read()
         self.image = self.bridge.cv2_to_imgmsg(self.frame, "bgr8")
